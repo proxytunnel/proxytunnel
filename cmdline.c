@@ -59,6 +59,8 @@ cmdline_parser_print_help (void)
 #endif
 "   -u STRING  --user=STRING       Username to send to HTTPS proxy for auth\n"
 "   -s STRING  --pass=STRING       Password to send to HTTPS proxy for auth\n"
+"   -U STRING  --uservar=STRING    Env var with Username for HTTPS proxy auth\n"
+"   -S STRING  --passvar=STRING    Env var with Password for HTTPS proxy auth\n"
 "   -g STRING  --proxyhost=STRING  HTTPS Proxy host to connect to\n"
 "   -G INT     --proxyport=INT     HTTPS Proxy portnumber to connect to\n"
 "   -d STRING  --desthost=STRING   Destination host to built the tunnel to\n"
@@ -71,7 +73,8 @@ cmdline_parser_print_help (void)
   printf( "\nExamples:\n"
 "%s [ -h | -V ]\n"
 "%s -i [ -u user -s pass ] -g host -G port -d host -D port [ -n ] [ -v | -q ]\n"
-"%s -a port [ -u user -s pass ] -g host -G port -d host -D port [ -n ] [ -v | -q ]\n", PACKAGE, PACKAGE, PACKAGE );
+"%s -i [ -U envvar -S envvar ] -g host -G port -d host -D port [ -n ] [ -v | -q ]\n"
+"%s -a port [ -u user -s pass ] -g host -G port -d host -D port [ -n ] [ -v | -q ]\n", PACKAGE, PACKAGE, PACKAGE, PACKAGE );
 
 
 #ifndef HAVE_GETOPT_LONG
@@ -134,6 +137,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
   clear_args();
 
   optarg = 0;
+  char * tmp_env_var;
 
 #ifdef HAVE_GETOPT_LONG
   optind = 1;
@@ -152,6 +156,8 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
         { "version",	0, NULL, 'V' },
         { "user",	1, NULL, 'u' },
         { "pass",	1, NULL, 's' },
+        { "uservar",	1, NULL, 'U' },
+        { "passvar",	1, NULL, 'S' },
         { "proxyhost",	1, NULL, 'g' },
         { "proxyport",	1, NULL, 'G' },
         { "desthost",	1, NULL, 'd' },
@@ -165,9 +171,9 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
         { NULL,	0, NULL, 0 }
       };
 
-      c = getopt_long (argc, argv, "hVia:u:s:g:G:d:D:H:nvq", long_options, &option_index);
+      c = getopt_long (argc, argv, "hVia:u:s:U:S:g:G:d:D:H:nvq", long_options, &option_index);
 #else
-      c = getopt( argc, argv, "hVia:u:s:g:G:d:D:H:nvq" );
+      c = getopt( argc, argv, "hVia:u:s:U:S:g:G:d:D:H:nvq" );
 #endif
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
@@ -209,7 +215,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
         case 'u':	/* Username to send to HTTPS proxy for authentication.  */
           if (args_info->user_given)
             {
-              fprintf (stderr, "%s: `--user' (`-u') option given more than once\n", PACKAGE);
+              fprintf (stderr, "%s: `--user' (`-u') or `--uservar' (`-U') option given more than once\n", PACKAGE);
               clear_args ();
               exit (1);
             }
@@ -217,15 +223,49 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
           args_info->user_arg = gengetopt_strdup (optarg);
           break;
 
+        case 'U':	/* Env Var with Username to send to HTTPS proxy for authentication.  */
+          if (args_info->user_given)
+            {
+              fprintf (stderr, "%s: `--user' (`-u') or `--uservar' (`-U') option given more than once\n", PACKAGE);
+              clear_args ();
+              exit (1);
+            }
+	  tmp_env_var = getenv(optarg) ;
+	  if (!tmp_env_var) {
+	      fprintf (stderr, "%s Invalid environment variable\n", optarg) ;
+	      clear_args ();
+	      exit (1);
+	  }
+          args_info->user_given = 1;
+          args_info->user_arg = gengetopt_strdup (tmp_env_var);
+          break;
+
         case 's':	/* Password to send to HTTPS proxy for authentication.  */
           if (args_info->pass_given)
             {
-              fprintf (stderr, "%s: `--pass' (`-s') option given more than once\n", PACKAGE);
+              fprintf (stderr, "%s: `--pass' (`-s') or `--passvar' (`-S') option given more than once\n", PACKAGE);
               clear_args ();
               exit (1);
             }
           args_info->pass_given = 1;
           args_info->pass_arg = gengetopt_strdup (optarg);
+          break;
+
+        case 'S':	/* Env Var with Password to send to HTTPS proxy for authentication.  */
+          if (args_info->pass_given)
+            {
+              fprintf (stderr, "%s: `--pass' (`-s') or `--passvar' (`-S') option given more than once\n", PACKAGE);
+              clear_args ();
+              exit (1);
+            }
+	  tmp_env_var = getenv(optarg) ;
+	  if (!tmp_env_var) {
+	      fprintf (stderr, "%s Invalid environment variable\n", optarg) ;
+	      clear_args ();
+	      exit (1);
+	  }
+          args_info->user_given = 1;
+          args_info->user_arg = gengetopt_strdup (tmp_env_var);
           break;
 
         case 'g':	/* HTTPS Proxy host to connect to.  */

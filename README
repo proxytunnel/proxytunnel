@@ -3,8 +3,8 @@ proxytunnel
 -----------
 
 Author:		Jos Visser <josv@osp.nl>, Mark Janssen <maniac@maniac.nl>
-Date: 		Wed Jun 23 21:06:26 CEST 2004
-Version:	1.1.4
+Date: 		Thu Sep 30 11:22:03 CEST 2004
+Version:	1.2.0
 
 Hi all,
 
@@ -22,7 +22,7 @@ Proxytunnel is very easy to use, when running proxytunnel with the help
 option it specifies it's command-line options.
 
 $ ./proxytunnel --help
-Proxytunnel 1.0.7
+Proxytunnel 1.2.0
 Jos Visser (Muppet) <josv@osp.nl>, Mark Janssen (Maniac) <maniac@maniac.nl>
 
 Purpose:
@@ -32,15 +32,25 @@ Usage: Proxytunnel [OPTIONS]...
    -h         --help              Print help and exit
    -V         --version           Print version and exit
    -i         --inetd             Run from inetd (default=off)
+   -a INT     --standalone=INT    Run as standalone daemon on specified port
    -u STRING  --user=STRING       Username to send to HTTPS proxy for auth
    -s STRING  --pass=STRING       Password to send to HTTPS proxy for auth
+   -U STRING  --uservar=STRING    Env var with Username for HTTPS proxy auth
+   -S STRING  --passvar=STRING    Env var with Password for HTTPS proxy auth
    -g STRING  --proxyhost=STRING  HTTPS Proxy host to connect to
    -G INT     --proxyport=INT     HTTPS Proxy portnumber to connect to
    -d STRING  --desthost=STRING   Destination host to built the tunnel to
    -D INT     --destport=INT      Destination portnumber to built the tunnel to
+   -H STRING  --header=STRING     Add STRING to HTTP headers sent to proxy
    -n         --dottedquad        Convert destination hostname to dotted quad
    -v         --verbose           Turn on verbosity (default=off)
    -q         --quiet             Suppress messages  (default=off)
+
+Examples:
+Proxytunnel [ -h | -V ]
+Proxytunnel -i [ -u user -s pass ] -g host -G port -d host -D port [ -n ] [ -v | -q ]
+Proxytunnel -i [ -U envvar -S envvar ] -g host -G port -d host -D port [ -n ] [ -v | -q ]
+Proxytunnel -a port [ -u user -s pass ] -g host -G port -d host -D port [ -n ] [ -v | -q ]
 
 
 To use this program with OpenSSH to connect to a host somewhere, create
@@ -62,7 +72,9 @@ With:
 - 443			The port number of the SSH daemon on mybox.athome.nl
 
 If your proxy doesn't require the username and password for using it,
-you can skip these options.
+you can skip these options. If you are on a 'shared' system it's recommendable
+to store your proxy user/password data in environment variables and then tell
+proxytunnel which variables to check for this data.
 
 If you want to run proxytunnel from inetd add the '--inetd' option.
 

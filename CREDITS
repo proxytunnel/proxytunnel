@@ -11,6 +11,7 @@ people.
 	Martin Senft <martin@illicon.de>	- Solaris patches
 	Andrew Griffiths <nullptr@tasmail.com>	- String format fixes
 	Dieter Heiliger <dieter.heiliger@gmx.de>- User-agent header idea
+	Fred Donck <fd0@donck.com>		- User/Pass Env Vars
 
 
 Furthermore we would like to thank the wonderful people at SourceForge

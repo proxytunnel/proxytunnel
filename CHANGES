@@ -1,3 +1,17 @@
+Changes to proxytunnel version 1.2.0 -- Thu Sep 30 11:22:03 CEST 2004
+
+- Added patch by Fred Donck <fd0 at donck dot com> to store proxy username
+  and password in environment variables.
+
+  Security fix
+  ------------
+
+  - Modified cmdline.c to allow passing of proxyuser and proxypass as
+    environment variables to prevent other users on same machine from
+    snooping sensitive info.
+    -U for env var that contains the proxy user
+    -S for env var that contains the proxy user's password
+
 Changes to proxytunnel version 1.1.4 -- Wed Jun 23 21:05:35 CEST 2004
 
 - Small solaris fix
