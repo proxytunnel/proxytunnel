@@ -46,24 +46,27 @@ cmdline_parser_print_help (void)
 "Purpose:\n"
 "  Build generic tunnels trough HTTPS proxy's, supports HTTP authorization\n"
 "\n"
-"Usage: %s [OPTIONS]...\n\
-   -h         --help              Print help and exit\n\
-   -V         --version           Print version and exit\n\
-   -c         --config=FILE       Read config options from file (FIXME)\n\
-   -i         --inetd             Run from inetd (default=off)\n\
-   -a INT     --standalone=INT    Run as standalone daemon on specified port\n\
-   -f         --nobackground      Don't for to background in standalone mode (FIXME)\n\
-   -u STRING  --user=STRING       Username to send to HTTPS proxy for auth\n\
-   -s STRING  --pass=STRING       Password to send to HTTPS proxy for auth\n\
-   -g STRING  --proxyhost=STRING  HTTPS Proxy host to connect to\n\
-   -G INT     --proxyport=INT     HTTPS Proxy portnumber to connect to\n\
-   -d STRING  --desthost=STRING   Destination host to built the tunnel to\n\
-   -D INT     --destport=INT      Destination portnumber to built the tunnel to\n\
-   -H STRING  --header=STRING     Add STRING to HTTP headers sent to proxy\n\
-   -n         --dottedquad        Convert destination hostname to dotted quad\n\
-   -v         --verbose           Turn on verbosity (default=off)\n\
-   -q         --quiet             Suppress messages  (default=off)\n\
-", PACKAGE);
+"Usage: %s [OPTIONS]...\n"
+"   -h         --help              Print help and exit\n"
+"   -V         --version           Print version and exit\n"
+#if 0
+"   -c         --config=FILE       Read config options from file (FIXME)\n"
+#endif
+"   -i         --inetd             Run from inetd (default=off)\n"
+"   -a INT     --standalone=INT    Run as standalone daemon on specified port\n"
+#if 0
+"   -f         --nobackground      Don't for to background in standalone mode (FIXME)\n"
+#endif
+"   -u STRING  --user=STRING       Username to send to HTTPS proxy for auth\n"
+"   -s STRING  --pass=STRING       Password to send to HTTPS proxy for auth\n"
+"   -g STRING  --proxyhost=STRING  HTTPS Proxy host to connect to\n"
+"   -G INT     --proxyport=INT     HTTPS Proxy portnumber to connect to\n"
+"   -d STRING  --desthost=STRING   Destination host to built the tunnel to\n"
+"   -D INT     --destport=INT      Destination portnumber to built the tunnel to\n"
+"   -H STRING  --header=STRING     Add STRING to HTTP headers sent to proxy\n"
+"   -n         --dottedquad        Convert destination hostname to dotted quad\n"
+"   -v         --verbose           Turn on verbosity (default=off)\n"
+"   -q         --quiet             Suppress messages  (default=off)\n", PACKAGE);
 
   printf( "\nExamples:\n"
 "%s [ -h | -V ]\n"
