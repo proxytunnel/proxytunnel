@@ -132,8 +132,12 @@ void tunnel_connect() {
  * Leave a goodbye message
  */
 void einde() {
+#ifdef CYGWIN
+   	message( "Goodbye" );
+#else
         syslog(LOG_NOTICE,"Goodbye...");
         closelog();
+#endif
 }
 
 /*
@@ -170,6 +174,12 @@ void do_daemon()
 	signal(SIGHUP,SIG_IGN);
 	signal(SIGCHLD,SIG_IGN);
 
+/* For the moment, turn of forking into background on the cygwin platform
+ * so users can run it in a command window and ctrl-c it to cancel.
+ * Also so we can put logging there, since there's nog syslog on cygwin (AFAIK)
+ * 	-- Maniac
+ */
+#ifndef CYGWIN
 	if ( ( pid = fork( ) ) < 0 )
 	{
 		my_perror( "Cannot fork into the background" );
@@ -183,23 +193,35 @@ void do_daemon()
 
 	openlog( program_name, LOG_CONS|LOG_PID,LOG_DAEMON );
 	i_am_daemon = 1;
+#endif /* CYGWIN */
 	atexit( einde );
 	listen( listen_sd, 5 );
 
 	while (1==1)
 	{
+#ifdef CYGWIN
+	   /* 2002/04/21
+	    *
+	    * Workaround a CYGWIN bug, see:
+	    * 	http://www.gnu.org/software/serveez/manual/BUGS
+	    * for bug #B0007
+	    *
+	    * 	-- Maniac
+	    */
+	   client_len = sizeof( sa_cli );
+#endif /* CYGWIN */
 		sd_client = accept( listen_sd,
 			(struct sockaddr *)&sa_cli, &client_len );
 
 		if ( sd_client < 0 )
 		{
-        		syslog( LOG_ERR, "accept() failed. Bailing out..." );
+        		my_perror( "accept() failed. Bailing out..." );
         		exit(1);
 		}
 
 		if ( ( pid = fork() ) < 0 )
 		{
-        		syslog( LOG_ERR, "Cannot fork worker" );
+        		my_perror( "Cannot fork worker" );
 		}
 		else if ( pid == 0 )
 		{
@@ -212,8 +234,14 @@ void do_daemon()
 
 		memcpy( &addr, &sa_cli.sin_addr.s_addr, 4 );
 		sprintf( buf, "%u.%u.%u.%u", addr[0], addr[1], addr[2], addr[3] );
+#ifdef CYGWIN
+		message( "Started tunnel pid=%d for connection from %s",
+		      pid, buf );
+#else
 		syslog( LOG_NOTICE,
-			"Started tunnel pid=%d for connection from %s", pid, buf );
+		"Started tunnel pid=%d for connection from %s", pid, buf );
+
+#endif
 		close( sd_client );
 	}
 }
