@@ -29,11 +29,13 @@ struct gengetopt_args_info {
   char * proxyhost_arg;	/* HTTPS Proxy host to connect to. */
   int proxyport_arg;	/* HTTPS Proxy host portnumber to connect to. */
   char * desthost_arg;	/* Destination host to built the tunnel to. */
+  char * header_arg;	/* Extra headers to send to HTTPS proxy */
   int destport_arg;	/* Dest host portnumber to built the tunnel to. */
   int dottedquad_flag;	/* Resolve hostname to dottedquad notation. */
   int verbose_flag;	/* Turn on verbosity (default=off). */
   int inetd_flag;	/* Turn on inetd (default=off). */
   int quiet_flag;	/* Turn on quiet mode (default=off). */
+  int standalone_arg;	/* Turn on stdalone (-a) on port */
 
   int help_given;	/* Whether help was given. */
   int version_given;	/* Whether version was given. */
@@ -47,7 +49,7 @@ struct gengetopt_args_info {
   int verbose_given;	/* Whether verbose was given. */
   int inetd_given;	/* Whether inetd was given. */
   int quiet_given;	/* Whether quiet mode was given. */
-  int standalone_arg;	/* Turn on stdalone (-a) on port */
+  int header_given;	/* Whenther extra headers are given */
 } ;
 
 int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *args_info );

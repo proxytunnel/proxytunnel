@@ -113,8 +113,10 @@ void proxy_protocol()
 		/*
 		 * Add extra header(s)
 		 */
-		sprintf( buf, "%s%s\r\n\r\n", buf, args_info.header_arg );
+		sprintf( buf, "%s%s\r\n", buf, args_info.header_arg );
 	}
+
+	sprintf( buf, "%s\r\n\r\n", buf );
 	
 	if( args_info.verbose_flag )
 		message( "Connect string sent to Proxy: '%s'\n", buf);
