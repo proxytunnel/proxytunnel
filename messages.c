@@ -37,7 +37,7 @@ void message( char *s, ... )
 	va_end( ap );
 
 	if ( i_am_daemon )
-		syslog( LOG_NOTICE, buf );
+		syslog( LOG_NOTICE, "%s", buf );
 	else
 		fputs( buf, stderr );
 }
