@@ -1,3 +1,8 @@
+proxytunnel (1.1.2-1) unstable; urgency=low
+
+  * More cleaning up, added manpage.
+  * Added patches/suggestions by Loïc Le Guyader <loic.leguyader@laposte.net>
+
 proxytunnel (1.1-2) unstable; urgency=low
 
   * Some more cleaning up build-environment
