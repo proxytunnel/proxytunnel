@@ -4,7 +4,7 @@ proxytunnel
 
 Author:		Jos Visser <josv@osp.nl>, Mark Janssen <maniac@maniac.nl>
 Date: 		Mon Nov 19 21:26:45 CET 2001
-Version:	1.0.5
+Version:	1.0.7
 
 Hi all,
 
@@ -22,7 +22,7 @@ Proxytunnel is very easy to use, when running proxytunnel with the help
 option it specifies it's commandline options.
 
 # proxytunnel --help
-Proxytunnel 1.0.6
+Proxytunnel 1.0.7
 Jos Visser (Muppet) <josv@osp.nl>, Mark Janssen (Maniac) <maniac@maniac.nl>
 
 Purpose:
