@@ -24,7 +24,7 @@
 #include "config.h"
 
 #ifndef HAVE_GETOPT_LONG
-	char * optarg;
+	extern char * optarg;
 #else
 #include <getopt.h>
 #endif
@@ -104,6 +104,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 {
   int c;	/* Character of the parsed option.  */
   int missing_required_options = 0;	
+  char * tmp_env_var;
 
   args_info->help_given = 0;
   args_info->version_given = 0;
@@ -137,7 +138,6 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
   clear_args();
 
   optarg = 0;
-  char * tmp_env_var;
 
 #ifdef HAVE_GETOPT_LONG
   optind = 1;

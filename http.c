@@ -44,7 +44,7 @@ void analyze_HTTP()
 		exit( 1 );
 	}
 
-	p = strtok( 0, " ");
+	p = strtok( 0, "\n\r");
 
 	if( strcmp( p, "200" ) != 0 )
 	{

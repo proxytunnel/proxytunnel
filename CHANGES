@@ -1,3 +1,8 @@
+Changes to proxytunnel version 1.2.1 -- Fri Oct  1 08:50:03 CEST 2004
+
+- Added patch by drwr that fixes some compiler warnings and introduces
+  Makefile.cc for non-gnu compilers
+
 Changes to proxytunnel version 1.2.0 -- Thu Sep 30 11:22:03 CEST 2004
 
 - Added patch by Fred Donck <fd0 at donck dot com> to store proxy username
