@@ -3,7 +3,7 @@ proxytunnel (1.1.2-1) unstable; urgency=low
   * More cleaning up, added manpage.
   * Added patches/suggestions by Loïc Le Guyader <loic.leguyader@laposte.net>
 
- -- Mark Janssen <maniac@maniac.nl>  Wed, 20 Nov 2002 15:12:10 CET
+ -- Mark Janssen <maniac@maniac.nl>  Wed, 20 Nov 2002 15:12:10 +0200
 
 proxytunnel (1.1-2) unstable; urgency=low
 
