@@ -5,9 +5,10 @@
 CC = gcc
 CFLAGS = -Wall -DHAVE_GETOPT_LONG
 LDFLAGS =
+INSTALLPATH = /usr/local/bin
 
 # Solaris needs this (According to Martin Senft <martin@illicon.de>)
-# CFLAGS = -I/usr/include -Wall
+# CFLAGS = -I /usr/include -Wall
 # LDFLAGS = -lsocket -lnsl
 
 PROGNAME = proxytunnel
@@ -21,5 +22,5 @@ clean:
 	@rm -f $(PROGNAME) $(OBJ)
 
 install:
-		mkdir -p /usr/local/bin
-		install -g root -m755 -o root $(PROGNAME) /usr/local/bin/$(PROGNAME)
+		mkdir -p $(INSTALLPATH)
+		install -g root -m755 -o root $(PROGNAME) $(INSTALLPATH)/$(PROGNAME)

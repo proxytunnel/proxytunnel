@@ -15,6 +15,8 @@ and came with the following copyright notice:
  * redistribution of source. 
  */
 
+Other contributors can be found in the CREDITS file
+
 
 		    GNU GENERAL PUBLIC LICENSE
 		       Version 2, June 1991

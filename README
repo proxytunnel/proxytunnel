@@ -3,7 +3,7 @@ proxytunnel
 -----------
 
 Author:		Jos Visser <josv@osp.nl>, Mark Janssen <maniac@maniac.nl>
-Date: 		Mon Nov 19 21:26:45 CET 2001
+Date: 		Wed Nov 28 09:46:19 CET 2001
 Version:	1.0.7
 
 Hi all,
@@ -21,7 +21,7 @@ Usage:
 Proxytunnel is very easy to use, when running proxytunnel with the help
 option it specifies it's commandline options.
 
-# proxytunnel --help
+$ ./proxytunnel --help
 Proxytunnel 1.0.7
 Jos Visser (Muppet) <josv@osp.nl>, Mark Janssen (Maniac) <maniac@maniac.nl>
 
@@ -38,14 +38,17 @@ Usage: Proxytunnel [OPTIONS]...
    -G INT     --proxyport=INT     HTTPS Proxy portnumber to connect to
    -d STRING  --desthost=STRING   Destination host to built the tunnel to
    -D INT     --destport=INT      Destination portnumber to built the tunnel to
-   -n         --dottedquad        Locally resolve destination hostname
+   -n         --dottedquad        Convert destination hostname to dotted quad
    -v         --verbose           Turn on verbosity (default=off)
+   -q         --quiet             Suppress messages  (default=off)
+
 
 To use this program with OpenSSH to connect to a host somewhere, create
 a $HOME/.ssh/config file with the following content:
 
 Host foobar
-ProxyCommand /path/to/proxytunnel -g proxy.customer.com -G 8080 -u user
+	ProtocolKeepAlives 30
+	ProxyCommand /path/to/proxytunnel -g proxy.customer.com -G 8080 -u user
 -s password -d mybox.athome.nl -D 443
 
 With:

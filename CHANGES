@@ -1,3 +1,8 @@
+Changes to proxytunnel version 1.0.7 -- Wed Nov 28 09:49:41 CET 2001
+
+- Added rpm spec file by Ralph Loader <suckfish@ihug.co.nz> -- Maniac
+- Updated textfiles
+
 Changes to proxytunnel version 1.0.7 -- Sat Nov 24 12:32:02 CET 2001
 
 - Applied patch from "Andrew Griffiths" <nullptr@tasmail.com> to fix
