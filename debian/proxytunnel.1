@@ -1,0 +1,108 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" First parameter, NAME, should be all caps
+.\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
+.\" other parameters are allowed: see man(7), man(1)
+.TH PROXYTUNNEL 1 "november 20, 2002"
+.\" Please adjust this date whenever revising the manpage.
+.\"
+.\" Some roff macros, for reference:
+.\" .nh        disable hyphenation
+.\" .hy        enable hyphenation
+.\" .ad l      left justify
+.\" .ad b      justify to both left and right margins
+.\" .nf        disable filling
+.\" .fi        enable filling
+.\" .br        insert line break
+.\" .sp <n>    insert n+1 empty lines
+.\" for manpage-specific macros, see man(7)
+.SH NAME
+proxytunnel \- program to tunnel a connection throught an standard
+HTTPS proxy.
+.SH SYNOPSIS
+.B proxytunnel
+.RI [ options ]
+
+.SH DESCRIPTION
+This manual page documents the
+.B proxytunnel
+command.
+
+\fBproxytunnel\fP is a program that open a tunnel through a HTTPS
+proxy.
+.SH OPTIONS
+This program follow the usual GNU command line syntax, with long
+options starting with two dashes (`-').
+.TP
+.B \-h, \-\-help
+Print help and exit.
+.TP
+.B \-V, \-\-version
+kPrint the version of the program and exit.
+.TP
+.B \-i, \-\-inetd
+Run from inetd. Default is of.
+.TP
+.B \-u STRING, \-\-user=STRING
+The username to send to HTTPS proxy for authentification.
+.TP
+.B \-s STRING, \-\-pass=STRING
+The password to send to HTTPS proxy for authentification.
+.TP
+.B \-g STRING, \-\-proxyhost=STRING
+The HTTPS Proxy hostname to connect to.
+.TP
+.B \-G INT, \-\-proxyport=INT
+The HTTPS PRoxy prot number to connect to.
+.TP
+.B \-d STRING, \-\-desthost=STRING
+The destination hostname to built the tunnel to.
+.TP
+.B \-D INT, \-\-destport=INT
+The destination prot number to built the tunnel to.
+.TP
+.B \-n, \-\-dottedquad
+Convert destination hostname to dotted quad.
+.TP
+.B \-v, \-\-verbose
+Turn on verbosity. Default is off.
+.TP
+.B \-q, \-\-quiet
+Suppress messages. Default is off.
+
+.SH NOTES
+To use this program with OpenSSH to connect to a host somewhere, create
+a $HOME/.ssh/config file with the following content:
+
+Host foobar
+.br
+	ProtocolKeepAlives 30
+.br
+	ProxyCommand /usr/bin/proxytunnel -g proxy.customer.com -G 8080 -u user
+-s password -d mybox.athome.nl -D 443
+
+If your proxy doesn't require the username and password for using it,
+you can skip these options.
+
+If you want to run proxytunnel from inetd add the '--inetd' option.
+
+If you have a broken proxy and use a destination host with dynamic DNS,
+add the -n or --dottedquad, the DNS name will then be resolved locally
+before sending it to the proxy. (Original patch from Ralph Loader
+<suckfish@ihug.co.nz>)
+
+Most HTTPS proxies do not allow access to ports other than 443 (HTTPS)
+and 563 (SNEWS), so some hacking is necessary to start the SSH daemon on
+the required port. (On the server side add an extra Port statement in
+the sshd_config file)
+
+
+.\".SH SEE ALSO
+.\".BR bar (1),
+.\".BR baz (1).
+.\".br
+.\"The programs are documented fully by
+.\".IR "The Rise and Fall of a Fooish Bar" ,
+.\"available via the Info system.
+.SH AUTHOR
+This manual page was written by Loïc Le Guyader <loic.leguyader@laposte.net>,
+for the Debian GNU/Linux system (but may be used by others).
