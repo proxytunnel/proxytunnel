@@ -66,16 +66,16 @@ binary-arch: build install
 	dh_testroot
 #	dh_installdebconf	
 	dh_installdocs
-	dh_installexamples
-	dh_installmenu
+#	dh_installexamples
+#	dh_installmenu
 #	dh_installlogrotate
 #	dh_installemacsen
 #	dh_installpam
 #	dh_installmime
 #	dh_installinit
-	dh_installcron
-	dh_installman
-	dh_installinfo
+#	dh_installcron
+	dh_installman debian/proxytunnel.1
+#	dh_installinfo
 #	dh_undocumented
 	dh_installchangelogs CHANGES
 	dh_link

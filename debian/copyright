@@ -1,4 +1,4 @@
-This package was debianized by Mark Janssen <maniac@unknown> on
+This package was debianized by Mark Janssen <maniac@maniac.nl> on
 Wed,  4 Sep 2002 13:55:15 +0200.
 
 It was downloaded from http://proxytunnel.sourceforge.net
@@ -8,3 +8,24 @@ Upstream Author(s): Mark Janssen <maniac@maniac.nl> and Jos Visser <josv@osp.nl>
 Copyright:
 
 Proxytunnel is (C) Copyright 2001, 2002 Mark Janssen and Jos Visser
+
+Proxytunnel is covered by the GNU GPL. It can be found in
+/usr/share/common-licenses/GPL. Most of the code was written by Jos
+Visser and Mark Janssen, the snippet of base64 code came from mutt,
+and was written by: Brendan Cully <brendan@kublai.com> and came with
+the following copyright notice:
+
+/* 
+ * This code is heavily modified from fetchmail (also GPL'd, of
+ * course) by Brendan Cully <brendan@kublai.com>.
+ * 
+ * Original copyright notice:
+ * 
+ * The code in the fetchmail distribution is Copyright 1997 by Eric
+ * S. Raymond.  Portions are also copyrighted by Carl Harris, 1993
+ * and 1995.  Copyright retained for the purpose of protecting free
+ * redistribution of source. 
+ */
+
+Other contributors can be found in the CREDITS file
+
