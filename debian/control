@@ -1,0 +1,16 @@
+Source: proxytunnel
+Section: net
+Priority: optional
+Maintainer: Mark Janssen <maniac@maniac.nl>
+Build-Depends: debhelper (>> 3.0.0)
+Standards-Version: 3.5.2
+
+Package: proxytunnel
+Architecture: any
+Depends: ${shlibs:Depends}
+Suggests: ssh
+Description: Create tcp tunnels trough HTTPS proxies, for using with SSH
+ Proxytunnel is a program that connects stdin and stdout
+ to an origin server somewhere in the Internet through an industry
+ standard HTTPS proxy. I originally wrote this program to be used
+ as an extension to SSH, to be able to SSH to my box at home.

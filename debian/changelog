@@ -1,0 +1,13 @@
+proxytunnel (1.1-2) unstable; urgency=low
+
+  * Some more cleaning up build-environment
+  * Added Suggests: ssh
+
+ -- Mark Janssen <maniac@maniac.nl>  Wed,  4 Sep 2002 14:46:20 +0200
+
+proxytunnel (1.1-1) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Mark Janssen <maniac@maniac.nl>  Wed,  4 Sep 2002 13:55:15 +0200
+
