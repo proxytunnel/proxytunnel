@@ -8,7 +8,7 @@ LDFLAGS =
 INSTALLPATH = /usr/local/bin
 
 # Solaris needs this (According to Martin Senft <martin@illicon.de>)
-# CFLAGS = -I /usr/include -Wall
+# CFLAGS = -I/usr/include -Wall
 # LDFLAGS = -lsocket -lnsl
 
 PROGNAME = proxytunnel

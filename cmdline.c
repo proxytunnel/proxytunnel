@@ -1,5 +1,5 @@
-/* Proxytunnel - (C) 2001 Jos Visser / Mark Janssen    */
-/* Contact:             josv@osp.nl / maniac@maniac.nl */
+/* Proxytunnel - (C) 2001-2002 Jos Visser / Mark Janssen    */
+/* Contact:                  josv@osp.nl / maniac@maniac.nl */
 
 /*
  * This program is free software; you can redistribute it and/or modify
@@ -49,7 +49,10 @@ cmdline_parser_print_help (void)
 "Usage: %s [OPTIONS]...\n\
    -h         --help              Print help and exit\n\
    -V         --version           Print version and exit\n\
+   -c         --config=FILE       Read config options from file (FIXME)\n\
    -i         --inetd             Run from inetd (default=off)\n\
+   -a INT     --standalone=INT    Run as standalone daemon on specified port\n\
+   -f         --nobackground      Don't for to background in standalone mode (FIXME)\n\
    -u STRING  --user=STRING       Username to send to HTTPS proxy for auth\n\
    -s STRING  --pass=STRING       Password to send to HTTPS proxy for auth\n\
    -g STRING  --proxyhost=STRING  HTTPS Proxy host to connect to\n\
@@ -60,6 +63,12 @@ cmdline_parser_print_help (void)
    -v         --verbose           Turn on verbosity (default=off)\n\
    -q         --quiet             Suppress messages  (default=off)\n\
 ", PACKAGE);
+
+  printf( "\nExamples:\n"
+"%s [ -h | -V ]\n"
+"%s -i [ -u user -s pass ] -g host -G port -d host -D port [ -n ] [ -v | -q ]\n"
+"%s -a port [ -u user -s pass ] -g host -G port -d host -D port [ -n ] [ -v | -q ]\n", PACKAGE, PACKAGE, PACKAGE );
+
 
 #ifndef HAVE_GETOPT_LONG
   printf( "\n"
@@ -113,6 +122,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	args_info->verbose_flag = 0; \
 	args_info->inetd_flag = 0; \
 	args_info->quiet_flag = 0; \
+	args_info->standalone_arg = 0; \
 } 
 
   clear_args();
@@ -142,13 +152,14 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
         { "dottedquad",	0, NULL, 'n' },
         { "verbose",	0, NULL, 'v' },
 	{ "inetd",	0, NULL, 'i' },
+	{ "standalone", 1, NULL, 'a' },
 	{ "quiet",	0, NULL, 'q' },
         { NULL,	0, NULL, 0 }
       };
 
-      c = getopt_long (argc, argv, "hViu:s:g:G:d:D:nvq", long_options, &option_index);
+      c = getopt_long (argc, argv, "hVia:u:s:g:G:d:D:nvq", long_options, &option_index);
 #else
-      c = getopt( argc, argv, "hViu:s:g:G:d:D:nvq" );
+      c = getopt( argc, argv, "hVia:u:s:g:G:d:D:nvq" );
 #endif
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
@@ -161,8 +172,26 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
           exit (0);
 
 	case 'i':	/* Run from inetd. */
+	  if ( args_info->standalone_arg > 0 )
+	  {
+	    fprintf( stderr, "%s: '--inetd' ('-i') conflicts with '--standalone' ('-a')\n", PACKAGE );
+	    exit( 1 );
+	  }
 	  args_info->inetd_flag = !(args_info->inetd_flag);
 	  break;
+
+        case 'a':       /* Run as standalone daemon */
+          if ( args_info->inetd_flag )
+          {
+            fprintf( stderr, "%s: `--standalone' (`-a') conflicts with `--inetd' (`-i')\n", PACKAGE );
+              exit (1);
+          }
+          if ( ( args_info->standalone_arg = atoi( optarg ) ) < 1 )
+          {
+            fprintf( stderr, "%s: Illegal port value for `--standalone' (`-a')\n", PACKAGE);
+            exit (1);
+          }
+          break;
 
         case 'V':	/* Print version and exit.  */
           clear_args ();

@@ -1,3 +1,11 @@
+Changes to proxytunnel version 1.1.0 -- Sat Apr 20 16:00:00 CET 2002
+
+- Added the -a (--standalone=INT) option. It is mutually exclusive with
+  -i (--inetd), and it instructs proxytunnel to fork in the background
+  as a standalone daemon, listening on connections on the specified
+  port and forwarding these connections through the specified
+  proxy/tunnel.
+
 Changes to proxytunnel version 1.0.8 -- Fri Apr 19 10:25:00 CET 2002
 
 - Fixed help-text when system doesn't support long-options
@@ -15,7 +23,7 @@ Changes to proxytunnel version 1.0.7 -- Sat Nov 24 12:32:02 CET 2001
   possible string format attacks. -- Maniac
 - Some code cleanup and reformatting -- Maniac
 - Added '-q' / '--quiet' flag to suppress status messages, Proxytunnel
-  can not be completely quiet and transparant. (Not when also providing
+  can now be completely quiet and transparent. (Not when also providing
   the '-v' flag naturally) -- Maniac
 - Changed ipbuf size to 16, which should be enough. -- Maniac
 
@@ -50,8 +58,8 @@ Changes to proxytunnel version 1.0.3 -- Sat Nov 10 21:36:42 CET 2001
 - Due to getopts, some error handling when entering incorrect command
   line options -- Maniac
 
-- In addition to using http auth, which we allready had, we can now also
-  connect to proxy's that do NOT use http auth, simply do not specify a
+- In addition to using HTTP auth, which we already had, we can now also
+  connect to proxy's that do NOT use HTTP auth, simply do not specify a
   username and password. If you specify these, they will be passed on to
   the proxy, otherwise we won't go into auth phase. -- Maniac
 

@@ -1,5 +1,5 @@
-/* Proxytunnel - (C) 2001 Jos Visser / Mark Janssen    */
-/* Contact:             josv@osp.nl / maniac@maniac.nl */
+/* Proxytunnel - (C) 2001-2002 Jos Visser / Mark Janssen    */
+/* Contact:                  josv@osp.nl / maniac@maniac.nl */
 
 /*
  * This program is free software; you can redistribute it and/or modify
@@ -47,6 +47,7 @@ struct gengetopt_args_info {
   int verbose_given;	/* Whether verbose was given. */
   int inetd_given;	/* Whether inetd was given. */
   int quiet_given;	/* Whether quiet mode was given. */
+  int standalone_arg;	/* Turn on stdalone (-a) on port */
 } ;
 
 int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *args_info );

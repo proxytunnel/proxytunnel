@@ -1,5 +1,5 @@
-/* Proxytunnel - (C) 2001 Jos Visser / Mark Janssen    */
-/* Contact:             josv@osp.nl / maniac@maniac.nl */
+/* Proxytunnel - (C) 2001-2002 Jos Visser / Mark Janssen    */
+/* Contact:                  josv@osp.nl / maniac@maniac.nl */
 
 /*
  * This program is free software; you can redistribute it and/or modify
@@ -19,5 +19,5 @@
 
 #define VERSION	"1.0.8"
 #define PACKAGE	"Proxytunnel"
-#define PURPOSE "Build generic tunnels through HTTPS proxys"
+#define PURPOSE "Build generic tunnels through HTTPS proxies"
 #define AUTHORS "Jos Visser (Muppet) <josv@osp.nl>, Mark Janssen (Maniac) <maniac@maniac.nl>"

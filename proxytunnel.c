@@ -1,5 +1,5 @@
-/* Proxytunnel - (C) 2001 Jos Visser / Mark Janssen    */
-/* Contact:             josv@osp.nl / maniac@maniac.nl */
+/* Proxytunnel - (C) 2001-2002 Jos Visser / Mark Janssen    */
+/* Contact:                  josv@osp.nl / maniac@maniac.nl */
 
 /*
  * This program is free software; you can redistribute it and/or modify
@@ -29,6 +29,8 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <signal.h>
+#include <syslog.h>
+#include <stdarg.h>
 
 #include "config.h"
 #include "cmdline.h"
@@ -43,6 +45,9 @@ static const char base64digits[] =
 int sd;				/* The tunnel's socket descriptor */
 int read_fd=0;			/* The file descriptor to read from */
 int write_fd=1;			/* The file destriptor to write to */
+char *program_name;		/* Guess what? */
+int i_am_daemon;		/* Also... */
+
 
 /*
  * All the command line options
@@ -50,7 +55,7 @@ int write_fd=1;			/* The file destriptor to write to */
 struct gengetopt_args_info args_info;
 
 #define SIZE 80
-char basicauth[SIZE];		/* Buffer to hold the proxy's basic auth */
+char basicauth[SIZE];	/* Buffer to hold the proxies basic authentication data */
 
 #define SIZE2 65536
 char buf[SIZE2];		/* Data transfer buffer */
@@ -62,17 +67,46 @@ char buf[SIZE2];		/* Data transfer buffer */
 #define MAX( x, y )	( ( (x)>(y) ) ? (x) : (y) )
 #endif
 
+/*
+ * Give a message to the user
+ */
+void message( char *s, ... )
+{
+	va_list	ap;
+	char	buf[1024];
+
+	va_start( ap, s );
+	vsnprintf( buf, sizeof( buf ), s, ap );
+	va_end( ap );
+
+	if ( i_am_daemon )
+		syslog( LOG_NOTICE, buf );
+	else
+		fputs( buf, stderr );
+}
+
+/*
+ * My own perror function (uses the internal message)
+ */
+void my_perror( char *msg )
+{
+	char *err = strerror( errno );
+
+	message( "Error! %s: %s\n", msg, err );
+}
 
 /*
  * Kill the program (signal handler)
  */
-void signal_handler(int signal) {
+void signal_handler( int signal )
+{
 	close(0);
 	close(1);
 
-	if (sd!=0) close(sd);
+	if ( sd != 0 )
+		close( sd );
 
-	fprintf(stderr,"Tunnel closed on signal %d\n",signal);
+	message( "Tunnel closed on signal %d\n", signal );
 	exit(1);
 }
 
@@ -130,7 +164,7 @@ void tunnel_connect() {
 	 */
 	if( ( sd = socket( AF_INET, SOCK_STREAM, 0 ) ) < 0 )
 	{
-		perror("Can not create socket");
+		my_perror("Can not create socket");
 		exit(1);
 	}
 
@@ -139,13 +173,13 @@ void tunnel_connect() {
 	 */
 	if( ! ( he = gethostbyname( args_info.proxyhost_arg ) ) )
 	{
-		perror("Proxy host not found");
+		my_perror("Proxy host not found");
 		exit(1);
 	}
  
  	if( args_info.verbose_flag )
 	{
- 		fprintf( stderr, "%s is %d.%d.%d.%d\n",
+ 		message( "%s is %d.%d.%d.%d\n",
 				args_info.proxyhost_arg,
 				he->h_addr[0] & 255,
 				he->h_addr[1] & 255,
@@ -166,16 +200,19 @@ void tunnel_connect() {
 	 */
   	if( connect( sd, (struct sockaddr*) &sa, sizeof( sa ) ) < 0 )
 	{
-		perror("connect() failed");
+		my_perror("connect() failed");
 		exit(1);
 	}
 
 	if( ! args_info.quiet_flag )
 	{
-		fprintf( stderr, "Connected to %s:%d\n",
+		message( "Connected to %s:%d\n",
 			args_info.proxyhost_arg,
 			args_info.proxyport_arg );
 	}
+
+	/* Make sure we get warned when someone hangs up on us */
+	signal(SIGHUP,signal_handler);
 }
 
 /*
@@ -201,7 +238,7 @@ void make_basicauth()
 
 	if( args_info.verbose_flag )
 	{
-		fprintf( stderr, "Proxy basic auth is %s\n", basicauth );
+		message( "Proxy basic auth is %s\n", basicauth );
 	}
 
 	free( p );
@@ -225,7 +262,7 @@ void readline()
 	{
 		if( recv( sd, &c ,1 ,0 ) < 0)
 		{
-			perror( "Socket read error" );
+			my_perror( "Socket read error" );
 			exit( 1 );
 		}
 
@@ -237,7 +274,7 @@ void readline()
 	*p = 0;
 
 	if( args_info.verbose_flag )
-		fprintf( stderr, "%s", buf );
+		message( "%s", buf );
 }
 
 /*
@@ -250,17 +287,17 @@ void analyze_HTTP()
 
 	if (strcmp( p, "HTTP/1.0" ) != 0 && strcmp( p, "HTTP/1.1" ) != 0)
 	{
-		fprintf(stderr,"Unsupported HTTP version number %s\n",p);
-		exit(1);
+		message( "Unsupported HTTP version number %s\n", p );
+		exit( 1 );
 	}
 
 	p = strtok( 0, " ");
 
 	if( strcmp( p, "200" ) != 0 )
 	{
-		fprintf( stderr, "HTTP return code: '%s'\n", p );
+		message( "HTTP return code: '%s'\n", p );
 		p += strlen( p ) + 1;
-		fprintf( stderr, "%s\n", p );
+		message( "%s\n", p );
 		exit( 1 );
 	}
 }
@@ -289,20 +326,20 @@ void proxy_protocol()
 
 			if( args_info.verbose_flag )
 			{
-			   fprintf( stderr, "DEBUG: ipbuf = '%s'\n", ipbuf );
-			   fprintf( stderr, "DEBUG: desthost = '%s'\n",
+			   message( "DEBUG: ipbuf = '%s'\n", ipbuf );
+			   message( "DEBUG: desthost = '%s'\n",
 					   args_info.desthost_arg );
 			}
 
 			args_info.desthost_arg = ipbuf;
 
 			if( args_info.verbose_flag )
-			   fprintf( stderr, "DEBUG: desthost = '%s'\n",
+			   message( "DEBUG: desthost = '%s'\n",
 					   args_info.desthost_arg );
 
 		}
 		else if( args_info.verbose_flag )
-			fprintf( stderr, "Can't lookup dest host: %s.\n",
+			message( "Can't lookup dest host: %s.\n",
 					args_info.desthost_arg );
 
 	}
@@ -328,14 +365,14 @@ void proxy_protocol()
 	}
 	
 	if( args_info.verbose_flag )
-		fprintf( stderr, "%s", buf);
+		message( "%s", buf);
 	
 	/*
 	 * Send the CONNECT instruction to the proxy
 	 */
 	if( send( sd, buf, strlen( buf ), 0 ) < 0 )
 	{
-		perror( "Socket write error" );
+		my_perror( "Socket write error" );
 		exit( 1 );
 	}
 
@@ -367,7 +404,7 @@ int copy(int from, int to)
 	 */
 	if ( ( n = read( from, buf, SIZE2 ) ) < 0 )
 	{
-		perror( "Socket read error" );
+		my_perror( "Socket read error" );
 		exit( 1 );
 	}
 
@@ -382,7 +419,7 @@ int copy(int from, int to)
 	 */
 	if ( write( to, buf, n ) != n )
 	{
-		perror( "Socket write error" );
+		my_perror( "Socket write error" );
 		exit( 1 );
 	}
 
@@ -419,7 +456,7 @@ void cpio()
 
 	if( ! args_info.quiet_flag )
 	{
-		fprintf( stderr, "Starting tunnel\n" );
+		message( "Starting tunnel\n" );
 	}
 
 	/*
@@ -477,7 +514,7 @@ void cpio()
 		}
 		else
 		{
-			perror( "Exceptional condition" );
+			my_perror( "Exceptional condition" );
 			break;
 		}
 	}
@@ -495,15 +532,108 @@ void cpio()
 
 	if( args_info.verbose_flag )
 	{
-		fprintf( stderr, "Tunnel closed\n" );
+		message( "Tunnel closed\n" );
 	}
 }
+
+/*
+ * Leave a goodbye message
+ */
+void einde() {
+        syslog(LOG_NOTICE,"Goodbye...");
+        closelog();
+}
+
+/*
+ * Run as a standalone daemon
+ */
+void do_daemon()
+{
+	int			listen_sd;
+	struct sockaddr_in	sa_serv;
+	struct sockaddr_in	sa_cli;
+	size_t			client_len;
+	int			pid = 0;
+	int			sd_client;
+	char			buf[80];
+	unsigned char		addr[4];
+
+	if ( ( listen_sd = socket( AF_INET, SOCK_STREAM, 0 ) ) < 0 )
+	{
+		my_perror( "Server socket creation failed" );
+		exit(1);
+	}
+
+	memset( &sa_serv, '\0', sizeof( sa_serv ) );
+	sa_serv.sin_family = AF_INET;
+	sa_serv.sin_addr.s_addr = INADDR_ANY;
+	sa_serv.sin_port = htons( args_info.standalone_arg );
+
+	if ( bind( listen_sd, (struct sockaddr * )&sa_serv, sizeof( sa_serv ) ) < 0)
+	{
+		my_perror("Server socket bind failed");
+		exit(1);
+	}
+
+	signal(SIGHUP,SIG_IGN);
+	signal(SIGCHLD,SIG_IGN);
+
+	if ( ( pid = fork( ) ) < 0 )
+	{
+		my_perror( "Cannot fork into the background" );
+		exit( 1 );
+	}
+	else if ( pid > 0 )
+	{
+       		message( "Forked into the background with pid %d\n", pid );
+       		exit(0);
+	}
+
+	openlog( program_name, LOG_CONS|LOG_PID,LOG_DAEMON );
+	i_am_daemon = 1;
+	atexit( einde );
+	listen( listen_sd, 5 );
+
+	while (1==1)
+	{
+		sd_client = accept( listen_sd,
+			(struct sockaddr *)&sa_cli, &client_len );
+
+		if ( sd_client < 0 )
+		{
+        		syslog( LOG_ERR, "accept() failed. Bailing out..." );
+        		exit(1);
+		}
+
+		if ( ( pid = fork() ) < 0 )
+		{
+        		syslog( LOG_ERR, "Cannot fork worker" );
+		}
+		else if ( pid == 0 )
+		{
+        		read_fd = write_fd = sd_client;
+			tunnel_connect();
+			proxy_protocol();
+			cpio();
+			exit( 0 );
+		}
+
+		memcpy( &addr, &sa_cli.sin_addr.s_addr, 4 );
+		sprintf( buf, "%u.%u.%u.%u", addr[0], addr[1], addr[2], addr[3] );
+		syslog( LOG_NOTICE,
+			"Started tunnel pid=%d for connection from %s", pid, buf );
+		close( sd_client );
+	}
+}
+
 
 /*
  * We begin at the beginning
  */
 int main( int argc, char *argv[] )
 {
+	program_name = argv[0];
+
 	/*
 	 * New and improved option handling, using GNU getopts  -- Maniac
 	 */
@@ -512,6 +642,8 @@ int main( int argc, char *argv[] )
 
 	/*
 	 * This is what we do:
+	 * - Check if we need to run as a daemon. If so, a completely
+	 *   different mainline is needed...
 	 * - Set a signal for the hangup (HUP) signal
 	 * - Optionally create the proxy basic authenticcation cookie
 	 * - Connect the sd socket to the proxy
@@ -520,19 +652,31 @@ int main( int argc, char *argv[] )
 	 */
 
 	signal( SIGHUP, signal_handler );
+
 	if( args_info.user_given && args_info.pass_given )
 	{
 		make_basicauth();
 	}
 
-	/* Inetd */
-	if( args_info.inetd_flag )
+	/* Do we need to run as a standalone daemon? */
+	if ( args_info.standalone_arg > 0 )
 	{
-		write_fd=0;
+		/* Do processing in the other mainline... */
+		do_daemon();
+	}
+	else
+	{
+		/* Inetd trick */
+		if( args_info.inetd_flag )
+		{
+			write_fd=0;
+		}
+
+		/* Main processing */
+		tunnel_connect();
+		proxy_protocol();
+		cpio();
 	}
 
-	tunnel_connect();
-	proxy_protocol();
-	cpio();
 	exit( 0 );
 }
