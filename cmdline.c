@@ -20,19 +20,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-/* If we use autoconf.  */
-#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
-/* Check for configure's getopt check result.  */
+
 #ifndef HAVE_GETOPT_LONG
-#include "getopt.h"
+	char * optarg;
 #else
 #include <getopt.h>
 #endif
 
 #include "cmdline.h"
-#include "config.h"
 
 
 void
@@ -108,13 +104,18 @@ cmdline_parser (int argc, char * const *argv, struct gengetopt_args_info *args_i
   clear_args();
 
   optarg = 0;
+
+#ifdef HAVE_GETOPT_LONG
   optind = 1;
   opterr = 1;
   optopt = '?';
+#endif
 
   while (1)
     {
       int option_index = 0;
+
+#ifdef HAVE_GETOPT_LONG
       static struct option long_options[] = {
         { "help",	0, NULL, 'h' },
         { "version",	0, NULL, 'V' },
@@ -130,6 +131,9 @@ cmdline_parser (int argc, char * const *argv, struct gengetopt_args_info *args_i
       };
 
       c = getopt_long (argc, argv, "hViu:s:g:G:d:D:v", long_options, &option_index);
+#else
+      c = getopt( argc, argv, "hViu:s:g:G:d:D:v" );
+#endif
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
 

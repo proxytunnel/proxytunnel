@@ -195,8 +195,6 @@ void make_basicauth() {
 	 * Base64 encode the clear text cookie to create the HTTP base64
 	 * authentication cookie
 	 */
-	//lutil_b64_ntop(p,strlen(p),basicauth,SIZE);
-	//rs_base64( p, strlen(p), &basicauth );
 	base64( basicauth, p, strlen(p));
 	fprintf(stderr,"Proxy basic authentication is %s\n",basicauth);
 

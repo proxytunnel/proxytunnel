@@ -1,3 +1,12 @@
+Changes to proxytunnel version 1.0.6 -- Thu Nov 22 09:35:13 CET 2001
+
+- Added support for compiling on Solaris, uncomment some lines in the
+  Makefile to enable this, patch from: Martin Senft <martin@illicon.de>
+- Included (modified) patch from Ralph Loader <suckfish@ihug.co.nz> to
+  work around broken DNS resolving in some proxies when using DynDNS
+  hosts (you need to apply this patch yourself if you want this, it
+  isn't enabled by default) -- Maniac
+
 Changes to proxytunnel version 1.0.5 -- Mon Nov 19 21:26:45 CET 2001
 
 - Added support for running from inetd, using the --inetd option or
