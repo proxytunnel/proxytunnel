@@ -96,28 +96,28 @@ void proxy_protocol()
 
 	}
 
+	sprintf( buf, "CONNECT %s:%d HTTP/1.0\r\n",
+			args_info.desthost_arg, args_info.destport_arg );
+	
 	if ( args_info.user_given && args_info.pass_given )
 	{
 		/*
 		 * Create connect string including the authorization part
 		 */
-		sprintf( buf,
-	"CONNECT %s:%d HTTP/1.0\r\nProxy-authorization: Basic %s \r\nProxy-Connection: Keep-Alive\r\n\r\n",
-			args_info.desthost_arg,
-			args_info.destport_arg,basicauth );
+		sprintf( buf, "%sProxy-authorization: Basic %s\r\n",
+				buf, basicauth );
 	}
-	else
+	
+	if ( args_info.header_given )
 	{
 		/*
-		 * Create connect string without authorization part
+		 * Add extra header(s)
 		 */
-		sprintf( buf, "CONNECT %s:%d HTTP/1.0\r\nProxy-Connection: Keep-Alive\r\n\r\n",
-				args_info.desthost_arg,
-				args_info.destport_arg );
+		sprintf( buf, "%s%s\r\n\r\n", buf, args_info.header_arg );
 	}
 	
 	if( args_info.verbose_flag )
-		message( "%s", buf);
+		message( "Connect string sent to Proxy: '%s'\n", buf);
 	
 	/*
 	 * Send the CONNECT instruction to the proxy

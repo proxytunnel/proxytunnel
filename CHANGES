@@ -1,3 +1,10 @@
+Changes to proxytunnel version 1.1.1 -- Tue May 14 12:09:07 CEST 2002
+
+- Added a reworked version of Dieter Heiliger's idea to add a switch to
+  specify a User-Agent header to the CONNECT message. I made it into a
+  generic 'Header' function, so you can add whatever you like to the
+  connect string ( --header "MyCustomHeader: Value" )
+
 Changes to proxytunnel version 1.1.0 -- Mon Apr 22 22:58:05 CEST 2002
 
 - Ported new features (like stand-alone mode) to CYGWIN and fixed some

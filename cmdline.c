@@ -59,6 +59,7 @@ cmdline_parser_print_help (void)
    -G INT     --proxyport=INT     HTTPS Proxy portnumber to connect to\n\
    -d STRING  --desthost=STRING   Destination host to built the tunnel to\n\
    -D INT     --destport=INT      Destination portnumber to built the tunnel to\n\
+   -H STRING  --header=STRING     Add STRING to HTTP headers sent to proxy\n\
    -n         --dottedquad        Convert destination hostname to dotted quad\n\
    -v         --verbose           Turn on verbosity (default=off)\n\
    -q         --quiet             Suppress messages  (default=off)\n\
@@ -110,6 +111,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
   args_info->verbose_given = 0;
   args_info->inetd_given = 0;
   args_info->quiet_given = 0;
+  args_info->header_given = 0;
 
 /* No... we can't make this a function... -- Maniac */
 #define clear_args() \
@@ -118,6 +120,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	args_info->pass_arg = NULL; \
 	args_info->proxyhost_arg = NULL; \
 	args_info->desthost_arg = NULL; \
+	args_info->header_arg = NULL; \
 	args_info->dottedquad_flag = 0; \
 	args_info->verbose_flag = 0; \
 	args_info->inetd_flag = 0; \
@@ -140,6 +143,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 #ifdef HAVE_GETOPT_LONG
       int option_index = 0;
 
+      /* Struct option: Name, Has_arg, Flag, Value */
       static struct option long_options[] = {
         { "help",	0, NULL, 'h' },
         { "version",	0, NULL, 'V' },
@@ -149,6 +153,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
         { "proxyport",	1, NULL, 'G' },
         { "desthost",	1, NULL, 'd' },
         { "destport",	1, NULL, 'D' },
+	{ "header",     1, NULL, 'H' },
         { "dottedquad",	0, NULL, 'n' },
         { "verbose",	0, NULL, 'v' },
 	{ "inetd",	0, NULL, 'i' },
@@ -157,9 +162,9 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
         { NULL,	0, NULL, 0 }
       };
 
-      c = getopt_long (argc, argv, "hVia:u:s:g:G:d:D:nvq", long_options, &option_index);
+      c = getopt_long (argc, argv, "hVia:u:s:g:G:d:D:H:nvq", long_options, &option_index);
 #else
-      c = getopt( argc, argv, "hVia:u:s:g:G:d:D:nvq" );
+      c = getopt( argc, argv, "hVia:u:s:g:G:d:D:H:nvq" );
 #endif
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
@@ -262,6 +267,12 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
             }
           args_info->destport_given = 1;
           args_info->destport_arg = atoi (optarg);
+          break;
+
+        case 'H':	/* Extra headers to send to HTTPS proxy. */
+          args_info->header_given++;
+	  /* FIXME in case of multiple headers, later... */
+          args_info->header_arg = gengetopt_strdup (optarg);
           break;
 
 	case 'n':	/* Turn on resolve to Dotted Quad */
