@@ -6,7 +6,12 @@ Changes to proxytunnel version 1.1.0 -- Sat Apr 20 16:00:00 CET 2002
   port and forwarding these connections through the specified
   proxy/tunnel.
 
-- Forked base64 encoding code to base64.[ch] file
+- Forked base64 encoding code to base64.[ch] file, authentication to
+  basicauth.[ch], messaging to messages.c and io handling to io.[ch]
+
+- Tested and ported on Linux(i386/ppc/alpha/sparc), Freebsd(i386),
+  Solaris(Sparc) and Mac-OS-X(Darwin/ppc). Created some new makefiles
+  for the non-complient systems (Solaris, Darwin)
 
 Changes to proxytunnel version 1.0.8 -- Fri Apr 19 10:25:00 CET 2002
 
