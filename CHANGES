@@ -1,3 +1,13 @@
+Changes to proxytunnel version 1.0.7 -- Sat Nov 24 12:32:02 CET 2001
+
+- Applied patch from "Andrew Griffiths" <nullptr@tasmail.com> to fix
+  possible string format attacks. -- Maniac
+- Some code cleanup and reformatting -- Maniac
+- Added '-q' / '--quiet' flag to suppress status messages, Proxytunnel
+  can not be completely quiet and transparant. (Not when also providing
+  the '-v' flag naturally) -- Maniac
+- Changed ipbuf size to 16, which should be enough. -- Maniac
+
 Changes to proxytunnel version 1.0.6 -- Thu Nov 22 10:38:10 CET 2001
 
 - Added support for compiling on Solaris, uncomment some lines in the

@@ -57,6 +57,7 @@ cmdline_parser_print_help (void)
    -D INT     --destport=INT      Destination portnumber to built the tunnel to\n\
    -n         --dottedquad        Convert destination hostname to dotted quad\n\
    -v         --verbose           Turn on verbosity (default=off)\n\
+   -q         --quiet             Suppress messages  (default=off)\n\
 ", PACKAGE);
 }
 
@@ -76,33 +77,36 @@ gengetopt_strdup (char * s)
   return n;
 }
 
-
-int
-cmdline_parser (int argc, char * const *argv, struct gengetopt_args_info *args_info)
+int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *args_info )
 {
   int c;	/* Character of the parsed option.  */
   int missing_required_options = 0;	
 
-  args_info->help_given = 0 ;
-  args_info->version_given = 0 ;
-  args_info->user_given = 0 ;
-  args_info->pass_given = 0 ;
-  args_info->proxyhost_given = 0 ;
-  args_info->proxyport_given = 0 ;
-  args_info->desthost_given = 0 ;
-  args_info->destport_given = 0 ;
+  args_info->help_given = 0;
+  args_info->version_given = 0;
+  args_info->user_given = 0;
+  args_info->pass_given = 0;
+  args_info->proxyhost_given = 0;
+  args_info->proxyport_given = 0;
+  args_info->desthost_given = 0;
+  args_info->destport_given = 0;
   args_info->dottedquad_given = 0;
-  args_info->verbose_given = 0 ;
+  args_info->verbose_given = 0;
   args_info->inetd_given = 0;
-#define clear_args() { \
-  args_info->user_arg = NULL; \
-  args_info->pass_arg = NULL; \
-  args_info->proxyhost_arg = NULL; \
-  args_info->desthost_arg = NULL; \
-  args_info->dottedquad_flag = 0;\
-  args_info->verbose_flag = 0;\
-  args_info->inetd_flag = 0;\
-}
+  args_info->quiet_given = 0;
+
+/* No... we can't make this a function... -- Maniac */
+#define clear_args() \
+{ \
+	args_info->user_arg = NULL; \
+	args_info->pass_arg = NULL; \
+	args_info->proxyhost_arg = NULL; \
+	args_info->desthost_arg = NULL; \
+	args_info->dottedquad_flag = 0; \
+	args_info->verbose_flag = 0; \
+	args_info->inetd_flag = 0; \
+	args_info->quiet_flag = 0; \
+} 
 
   clear_args();
 
@@ -131,12 +135,13 @@ cmdline_parser (int argc, char * const *argv, struct gengetopt_args_info *args_i
         { "dottedquad",	0, NULL, 'n' },
         { "verbose",	0, NULL, 'v' },
 	{ "inetd",	0, NULL, 'i' },
+	{ "quiet",	0, NULL, 'q' },
         { NULL,	0, NULL, 0 }
       };
 
-      c = getopt_long (argc, argv, "hViu:s:g:G:d:D:nv", long_options, &option_index);
+      c = getopt_long (argc, argv, "hViu:s:g:G:d:D:nvq", long_options, &option_index);
 #else
-      c = getopt( argc, argv, "hViu:s:g:G:d:D:nv" );
+      c = getopt( argc, argv, "hViu:s:g:G:d:D:nvq" );
 #endif
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
@@ -230,6 +235,10 @@ cmdline_parser (int argc, char * const *argv, struct gengetopt_args_info *args_i
         case 'v':	/* Turn on verbosity.  */
           args_info->verbose_flag = !(args_info->verbose_flag);
           break;
+
+	case 'q':	/* Suppress messages -- Quiet mode */
+	  args_info->quiet_flag = !(args_info->quiet_flag);
+	  break;
 
         case 0:	/* Long option with no short option */
 

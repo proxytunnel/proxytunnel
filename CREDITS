@@ -8,6 +8,7 @@ people.
 
 	Ralph Loader <suckfish@ihug.co.nz>	- Broken DNS w/ DynDNS patch
 	Martin Senft <martin@illicon.de>	- Solaris patches
+	Andrew Griffiths" <nullptr@tasmail.com> - String format fixes
 
 
 Furthermore we would like to thank the wonderfull people at SourceForge

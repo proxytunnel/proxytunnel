@@ -24,32 +24,34 @@
 #define _cmdline_h
 
 struct gengetopt_args_info {
-  char * user_arg;	/* Username to send to HTTPS proxy for authentication.  */
-  char * pass_arg;	/* Password to send to HTTPS proxy for authentication.  */
-  char * proxyhost_arg;	/* HTTPS Proxy host to connect to.  */
-  int proxyport_arg;	/* HTTPS Proxy host portnumber to connect to.  */
-  char * desthost_arg;	/* Destination host to built the tunnel to.  */
-  int destport_arg;	/* Destination host portnumber to built the tunnel to.  */
+  char * user_arg;	/* Username to send to HTTPS proxy for auth. */
+  char * pass_arg;	/* Password to send to HTTPS proxy for auth. */
+  char * proxyhost_arg;	/* HTTPS Proxy host to connect to. */
+  int proxyport_arg;	/* HTTPS Proxy host portnumber to connect to. */
+  char * desthost_arg;	/* Destination host to built the tunnel to. */
+  int destport_arg;	/* Dest host portnumber to built the tunnel to. */
   int dottedquad_flag;	/* Resolve hostname to dottedquad notation. */
-  int verbose_flag;	/* Turn on verbosity (default=off).  */
-  int inetd_flag;	/* Turn on inetd (default=off).  */
+  int verbose_flag;	/* Turn on verbosity (default=off). */
+  int inetd_flag;	/* Turn on inetd (default=off). */
+  int quiet_flag;	/* Turn on quiet mode (default=off). */
 
-  int help_given ;	/* Whether help was given.  */
-  int version_given ;	/* Whether version was given.  */
-  int user_given ;	/* Whether user was given.  */
-  int pass_given ;	/* Whether pass was given.  */
-  int proxyhost_given ;	/* Whether proxyhost was given.  */
-  int proxyport_given ;	/* Whether proxyport was given.  */
-  int desthost_given ;	/* Whether desthost was given.  */
-  int destport_given ;	/* Whether destport was given.  */
+  int help_given;	/* Whether help was given. */
+  int version_given;	/* Whether version was given. */
+  int user_given;	/* Whether user was given. */
+  int pass_given;	/* Whether pass was given. */
+  int proxyhost_given;	/* Whether proxyhost was given. */
+  int proxyport_given;	/* Whether proxyport was given. */
+  int desthost_given;	/* Whether desthost was given. */
+  int destport_given;	/* Whether destport was given. */
   int dottedquad_given;	/* Whether dottedquad was given. */
-  int verbose_given ;	/* Whether verbose was given.  */
-  int inetd_given ;	/* Whether inetd was given.  */
+  int verbose_given;	/* Whether verbose was given. */
+  int inetd_given;	/* Whether inetd was given. */
+  int quiet_given;	/* Whether quiet mode was given. */
 } ;
 
-int cmdline_parser (int argc, char * const *argv, struct gengetopt_args_info *args_info);
+int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *args_info );
 
-void cmdline_parser_print_help(void);
-void cmdline_parser_print_version(void);
+void cmdline_parser_print_help( void );
+void cmdline_parser_print_version( void );
 
 #endif /* _cmdline_h */
