@@ -39,7 +39,7 @@
 #include "proxytunnel.h"
 
 /* Define DARWIN if compiling on MacOS-X (Darwin), to work around some
- * inconsistencies. (Darwin doesn't know socklen_t)
+ * inconsistencies. (Darwin doesn't know socklen_t) */
 #ifdef DARWIN
 #define socklen_t int
 #endif
