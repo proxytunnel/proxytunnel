@@ -13,7 +13,8 @@ INSTALLPATH = /usr/local/bin
 
 PROGNAME = proxytunnel
 OBJ = proxytunnel.o \
-	 cmdline.o
+	base64.o \
+	cmdline.o
 
 proxytunnel: $(OBJ)
 	$(CC) -o $(PROGNAME) $(LDFLAGS) $(OBJ)

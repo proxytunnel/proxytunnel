@@ -34,10 +34,7 @@
 
 #include "config.h"
 #include "cmdline.h"
-
-/* Needed for base64 encoding... */
-static const char base64digits[] =
-  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+#include "base64.h"
 
 /* 
  * Some variables
@@ -54,11 +51,8 @@ int i_am_daemon;		/* Also... */
  */
 struct gengetopt_args_info args_info;
 
-#define SIZE 80
-char basicauth[SIZE];	/* Buffer to hold the proxies basic authentication data */
-
-#define SIZE2 65536
-char buf[SIZE2];		/* Data transfer buffer */
+#define SIZE 65536
+char buf[SIZE];		/* Data transfer buffer */
 
 /*
  * Small MAX macro
@@ -109,47 +103,6 @@ void signal_handler( int signal )
 	message( "Tunnel closed on signal %d\n", signal );
 	exit(1);
 }
-
-/* 
- * This base64 code is heavily modified from fetchmail (also GPL'd, of
- * course) by Brendan Cully <brendan@kublai.com>.
- * 
- * Original copyright notice:
- * 
- * The code in the fetchmail distribution is Copyright 1997 by Eric
- * S. Raymond.  Portions are also copyrighted by Carl Harris, 1993
- * and 1995.  Copyright retained for the purpose of protecting free
- * redistribution of source. 
- * 
- */
-
-/* raw bytes to null-terminated base 64 string */
-void base64(unsigned char *out, const unsigned char *in, int len)
-{
-  while (len >= 3) {
-    *out++ = base64digits[in[0] >> 2];
-    *out++ = base64digits[((in[0] << 4) & 0x30) | (in[1] >> 4)];
-    *out++ = base64digits[((in[1] << 2) & 0x3c) | (in[2] >> 6)];
-    *out++ = base64digits[in[2] & 0x3f];
-    len -= 3;
-    in += 3;
- }
-
-  /* clean up remainder */
-  if (len > 0) {
-    unsigned char fragment;
-
-    *out++ = base64digits[in[0] >> 2];
-    fragment = (in[0] << 4) & 0x30;
-    if (len > 1)
-      fragment |= in[1] >> 4;
-    *out++ = base64digits[fragment];
-    *out++ = (len < 2) ? '=' : base64digits[(in[1] << 2) & 0x3c];
-    *out++ = '=';
-  }
-  *out = '\0';
-}
-
 
 /*
  * Create and connect the socket that connects to the proxy. After
@@ -258,7 +211,7 @@ void readline()
 	 * Read one character at a time into buf, until a newline is
 	 * encountered.
 	 */
-	while ( c != 10 && i < SIZE2 - 1 )
+	while ( c != 10 && i < SIZE - 1 )
 	{
 		if( recv( sd, &c ,1 ,0 ) < 0)
 		{
@@ -402,7 +355,7 @@ int copy(int from, int to)
 	/* 
 	 * Read a buffer from the source socket
 	 */
-	if ( ( n = read( from, buf, SIZE2 ) ) < 0 )
+	if ( ( n = read( from, buf, SIZE ) ) < 0 )
 	{
 		my_perror( "Socket read error" );
 		exit( 1 );

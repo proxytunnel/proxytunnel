@@ -6,6 +6,8 @@ Changes to proxytunnel version 1.1.0 -- Sat Apr 20 16:00:00 CET 2002
   port and forwarding these connections through the specified
   proxy/tunnel.
 
+- Forked base64 encoding code to base64.[ch] file
+
 Changes to proxytunnel version 1.0.8 -- Fri Apr 19 10:25:00 CET 2002
 
 - Fixed help-text when system doesn't support long-options
