@@ -264,8 +264,8 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	      clear_args ();
 	      exit (1);
 	  }
-          args_info->user_given = 1;
-          args_info->user_arg = gengetopt_strdup (tmp_env_var);
+          args_info->pass_given = 1;
+          args_info->pass_arg = gengetopt_strdup (tmp_env_var);
           break;
 
         case 'g':	/* HTTPS Proxy host to connect to.  */
