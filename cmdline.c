@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include "config.h"
 
 #ifndef HAVE_GETOPT_LONG
@@ -59,6 +60,12 @@ cmdline_parser_print_help (void)
    -v         --verbose           Turn on verbosity (default=off)\n\
    -q         --quiet             Suppress messages  (default=off)\n\
 ", PACKAGE);
+
+#ifndef HAVE_GETOPT_LONG
+  printf( "\n"
+"Notice: This version is compiled without support for long options.\n"
+"This means you can only use the short (1 letter) options on the commandline.\n" );
+#endif
 }
 
 
@@ -120,9 +127,9 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 
   while (1)
     {
+#ifdef HAVE_GETOPT_LONG
       int option_index = 0;
 
-#ifdef HAVE_GETOPT_LONG
       static struct option long_options[] = {
         { "help",	0, NULL, 'h' },
         { "version",	0, NULL, 'V' },

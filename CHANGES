@@ -1,3 +1,9 @@
+Changes to proxytunnel version 1.0.8 -- Fri Apr 19 10:25:00 CET 2002
+
+- Fixed help-text when system doesn't support long-options
+- Cleaned up some code w.r.t short and/or long options, added includes
+  for getopt on freebsd.
+
 Changes to proxytunnel version 1.0.7 -- Wed Nov 28 09:49:41 CET 2001
 
 - Added rpm spec file by Ralph Loader <suckfish@ihug.co.nz> -- Maniac
