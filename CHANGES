@@ -1,3 +1,8 @@
+Changes to proxytunnel version 1.2.3 -- Tue Nov  2 17:03:00 CET 2004
+
+- Patched a possible buffer overflow as reported by Dan Margolis 
+  <krispykringle at gentoo dot org> of the Gentoo Security Team
+
 Changes to proxytunnel version 1.2.2 -- Tue Oct 12 16:43:16 CEST 2004
 
 - Added patch from Fred Donck to fix his previous patch, after testing at
