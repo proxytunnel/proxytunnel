@@ -55,6 +55,7 @@ cmdline_parser_print_help (void)
    -G INT     --proxyport=INT     HTTPS Proxy portnumber to connect to\n\
    -d STRING  --desthost=STRING   Destination host to built the tunnel to\n\
    -D INT     --destport=INT      Destination portnumber to built the tunnel to\n\
+   -n         --dottedquad        Convert destination hostname to dotted quad\n\
    -v         --verbose           Turn on verbosity (default=off)\n\
 ", PACKAGE);
 }
@@ -90,6 +91,7 @@ cmdline_parser (int argc, char * const *argv, struct gengetopt_args_info *args_i
   args_info->proxyport_given = 0 ;
   args_info->desthost_given = 0 ;
   args_info->destport_given = 0 ;
+  args_info->dottedquad_given = 0;
   args_info->verbose_given = 0 ;
   args_info->inetd_given = 0;
 #define clear_args() { \
@@ -97,6 +99,7 @@ cmdline_parser (int argc, char * const *argv, struct gengetopt_args_info *args_i
   args_info->pass_arg = NULL; \
   args_info->proxyhost_arg = NULL; \
   args_info->desthost_arg = NULL; \
+  args_info->dottedquad_flag = 0;\
   args_info->verbose_flag = 0;\
   args_info->inetd_flag = 0;\
 }
@@ -125,14 +128,15 @@ cmdline_parser (int argc, char * const *argv, struct gengetopt_args_info *args_i
         { "proxyport",	1, NULL, 'G' },
         { "desthost",	1, NULL, 'd' },
         { "destport",	1, NULL, 'D' },
+        { "dottedquad",	0, NULL, 'n' },
         { "verbose",	0, NULL, 'v' },
 	{ "inetd",	0, NULL, 'i' },
         { NULL,	0, NULL, 0 }
       };
 
-      c = getopt_long (argc, argv, "hViu:s:g:G:d:D:v", long_options, &option_index);
+      c = getopt_long (argc, argv, "hViu:s:g:G:d:D:nv", long_options, &option_index);
 #else
-      c = getopt( argc, argv, "hViu:s:g:G:d:D:v" );
+      c = getopt( argc, argv, "hViu:s:g:G:d:D:nv" );
 #endif
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
@@ -218,6 +222,10 @@ cmdline_parser (int argc, char * const *argv, struct gengetopt_args_info *args_i
           args_info->destport_given = 1;
           args_info->destport_arg = atoi (optarg);
           break;
+
+	case 'n':	/* Turn on resolve to Dotted Quad */
+	  args_info->dottedquad_flag = !(args_info->dottedquad_flag);
+	  break;
 
         case 'v':	/* Turn on verbosity.  */
           args_info->verbose_flag = !(args_info->verbose_flag);

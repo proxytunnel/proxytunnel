@@ -22,7 +22,7 @@ Proxytunnel is very easy to use, when running proxytunnel with the help
 option it specifies it's commandline options.
 
 # proxytunnel --help
-Proxytunnel 1.0.5
+Proxytunnel 1.0.6
 Jos Visser (Muppet) <josv@osp.nl>, Mark Janssen (Maniac) <maniac@maniac.nl>
 
 Purpose:
@@ -38,6 +38,7 @@ Usage: Proxytunnel [OPTIONS]...
    -G INT     --proxyport=INT     HTTPS Proxy portnumber to connect to
    -d STRING  --desthost=STRING   Destination host to built the tunnel to
    -D INT     --destport=INT      Destination portnumber to built the tunnel to
+   -n         --dottedquad        Locally resolve destination hostname
    -v         --verbose           Turn on verbosity (default=off)
 
 To use this program with OpenSSH to connect to a host somewhere, create
@@ -58,8 +59,14 @@ With:
 - 443			The port number of the SSH daemon on mybox.athome.nl
 
 If your proxy doesn't require the username and password for using it,
-you can skip these options. If you want to run proxytunnel from inetd
-add the '--inetd' option.
+you can skip these options.
+
+If you want to run proxytunnel from inetd add the '--inetd' option.
+
+If you have a broken proxy and use a destination host with dynamic DNS,
+add the -n or --dottedquad, the DNS name will then be resolved locally
+before sending it to the proxy. (Original patch from Ralph Loader
+<suckfish@ihug.co.nz>)
 
 Most HTTPS proxies do not allow access to ports other than 443 (HTTPS)
 and 563 (SNEWS), so some hacking is necessary to start the SSH daemon on

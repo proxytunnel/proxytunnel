@@ -260,10 +260,42 @@ void analyze_HTTP() {
  * Execute the basic proxy protocol of CONNECT and response, until the
  * last line of the response has been read. The tunnel is then open.
  */
-void proxy_protocol() {
+void proxy_protocol()
+{
 	/*
 	 * Create the proxy CONNECT command into buf
 	 */
+
+	if (args_info.dottedquad_flag)
+	{
+		static char ipbuf[64];
+		struct hostent * he = gethostbyname( args_info.desthost_arg);
+		if ( he )
+		{
+			sprintf( ipbuf, "%d.%d.%d.%d", 
+				he->h_addr[0] & 255,
+				he->h_addr[1] & 255,
+				he->h_addr[2] & 255,
+				he->h_addr[3] & 255 );
+
+			if( args_info.verbose_flag )
+			{
+			   fprintf( stderr, "DEBUG: ipbuf = '%s'\n", ipbuf );
+			   fprintf( stderr, "DEBUG: desthost = '%s'\n", args_info.desthost_arg );
+			}
+
+			args_info.desthost_arg = ipbuf;
+
+			if( args_info.verbose_flag )
+			   fprintf( stderr, "DEBUG: desthost = '%s'\n", args_info.desthost_arg );
+
+		}
+		else if( args_info.verbose_flag )
+			fprintf( stderr,
+			"Cannot lookup destination host: %s.\n", args_info.desthost_arg );
+
+	}
+
 	if ( args_info.user_given && args_info.pass_given )
 	{
 		/*

@@ -30,6 +30,7 @@ struct gengetopt_args_info {
   int proxyport_arg;	/* HTTPS Proxy host portnumber to connect to.  */
   char * desthost_arg;	/* Destination host to built the tunnel to.  */
   int destport_arg;	/* Destination host portnumber to built the tunnel to.  */
+  int dottedquad_flag;	/* Resolve hostname to dottedquad notation. */
   int verbose_flag;	/* Turn on verbosity (default=off).  */
   int inetd_flag;	/* Turn on inetd (default=off).  */
 
@@ -41,6 +42,7 @@ struct gengetopt_args_info {
   int proxyport_given ;	/* Whether proxyport was given.  */
   int desthost_given ;	/* Whether desthost was given.  */
   int destport_given ;	/* Whether destport was given.  */
+  int dottedquad_given;	/* Whether dottedquad was given. */
   int verbose_given ;	/* Whether verbose was given.  */
   int inetd_given ;	/* Whether inetd was given.  */
 } ;
