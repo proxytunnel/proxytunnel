@@ -199,17 +199,20 @@ void do_daemon()
 
 	while (1==1)
 	{
-#ifdef CYGWIN
-	   /* 2002/04/21
-	    *
-	    * Workaround a CYGWIN bug, see:
-	    * 	http://www.gnu.org/software/serveez/manual/BUGS
-	    * for bug #B0007
-	    *
-	    * 	-- Maniac
-	    */
-	   client_len = sizeof( sa_cli );
-#endif /* CYGWIN */
+		/* 2002/04/21
+		 *
+		 * Workaround a CYGWIN bug, see:
+		 * http://www.gnu.org/software/serveez/manual/BUGS
+		 * for bug #B0007
+		 *
+		 * 2004/06/23: Apparently Solaris needs this too, so 
+		 * we'll do it by default, can't hurt
+		 *
+		 * -- Maniac
+		 */
+
+		client_len = sizeof( sa_cli );
+
 		sd_client = accept( listen_sd,
 			(struct sockaddr *)&sa_cli, &client_len );
 
