@@ -1,9 +1,10 @@
 # Makefile for proxytunnel
 #
 # Please uncomment the appropriate settings
+# Customized for MacOS-X (Darwin)
 
-CC = gcc
-CFLAGS = -Wall -DHAVE_GETOPT_LONG
+CC = cc
+CFLAGS = -Wall -DDARWIN
 LDFLAGS =
 INSTALLPATH = /usr/local/bin
 

@@ -3,7 +3,7 @@
 # Please uncomment the appropriate settings
 
 CC = gcc
-CFLAGS = -Wall -DHAVE_GETOPT_LONG
+CFLAGS = -Wall
 LDFLAGS =
 INSTALLPATH = /usr/local/bin
 

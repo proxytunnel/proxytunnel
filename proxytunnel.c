@@ -38,6 +38,12 @@
 #include "basicauth.h"
 #include "proxytunnel.h"
 
+/* Define DARWIN if compiling on MacOS-X (Darwin), to work around some
+ * inconsistencies. (Darwin doesn't know socklen_t)
+#ifdef DARWIN
+#define socklen_t int
+#endif
+
 /* Globals */
 int read_fd=0;                  /* The file descriptor to read from */
 int write_fd=1;                 /* The file destriptor to write to */
