@@ -5,8 +5,8 @@
 CC = gcc
 CFLAGS = -Wall -DHAVE_GETOPT_LONG
 LDFLAGS =
-INSTALLPATH = $(DESTDIR)/usr/bin
-MANPATH = $(DESTDIR)/usr/man/man1
+INSTALLPATH = $(DESTDIR)/usr/local/bin
+MANPATH = $(DESTDIR)/usr/local/man/man1
 
 PROGNAME = proxytunnel
 OBJ = proxytunnel.o	\

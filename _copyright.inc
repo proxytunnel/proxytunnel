@@ -1,4 +1,4 @@
-/* Proxytunnel - (C) 2001-2002 Jos Visser / Mark Janssen    */
+/* Proxytunnel - (C) 2001-2004 Jos Visser / Mark Janssen    */
 /* Contact:                  josv@osp.nl / maniac@maniac.nl */
 
 /*

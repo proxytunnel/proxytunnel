@@ -1,3 +1,10 @@
+proxytunnel (1.2.0-1) unstable; urgency=low
+
+  * Added patch by Fred Donck <fd0 at donck dot com> to store proxy username
+    and password in environment variables.
+
+ -- Mark Janssen <maniac@maniac.nl>  Thu Sep 30 11:22:03 CEST 2004
+
 proxytunnel (1.1.2-1) unstable; urgency=low
 
   * More cleaning up, added manpage.

@@ -1,12 +1,12 @@
 # Makefile for proxytunnel
 #
 # Please uncomment the appropriate settings
-# Customized for MacOS-X (Darwin)
 
-CC = cc
+CC = gcc
 CFLAGS = -Wall -DDARWIN
 LDFLAGS =
-INSTALLPATH = /usr/local/bin
+INSTALLPATH = $(DESTDIR)/usr/local/bin
+MANPATH = $(DESTDIR)/usr/local/man/man1
 
 PROGNAME = proxytunnel
 OBJ = proxytunnel.o	\
@@ -26,3 +26,4 @@ clean:
 install:
 		mkdir -p $(INSTALLPATH)
 		install -g root -m755 -o root $(PROGNAME) $(INSTALLPATH)/$(PROGNAME)
+		install -g root -m644 -o root debian/$(PROGNAME).1 $(MANPATH)/$(PROGNAME).1
