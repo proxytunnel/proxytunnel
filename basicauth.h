@@ -17,6 +17,10 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-/* base64.h */
+/* basicauth.h */
+char basicauth[80];   /* Buffer to hold the proxies basic authentication data */
 
-void base64(unsigned char *out, const unsigned char *in, int len);
+/* Functions */
+void make_basicauth();
+
+

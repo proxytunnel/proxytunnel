@@ -17,6 +17,37 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-/* base64.h */
+#include <stdio.h>
+#include <stdarg.h>
+#include <string.h>
+#include <errno.h>
+#include <syslog.h>
+#include "proxytunnel.h"
 
-void base64(unsigned char *out, const unsigned char *in, int len);
+/*
+ * Give a message to the user
+ */
+void message( char *s, ... )
+{
+	va_list	ap;
+	char	buf[1024];
+
+	va_start( ap, s );
+	vsnprintf( buf, sizeof( buf ), s, ap );
+	va_end( ap );
+
+	if ( i_am_daemon )
+		syslog( LOG_NOTICE, buf );
+	else
+		fputs( buf, stderr );
+}
+
+/*
+ * My own perror function (uses the internal message)
+ */
+void my_perror( char *msg )
+{
+	char *err = strerror( errno );
+
+	message( "Error! %s: %s\n", msg, err );
+}

@@ -12,8 +12,12 @@ INSTALLPATH = /usr/local/bin
 # LDFLAGS = -lsocket -lnsl
 
 PROGNAME = proxytunnel
-OBJ = proxytunnel.o \
-	base64.o \
+OBJ = proxytunnel.o	\
+	base64.o	\
+	io.o		\
+	http.o		\
+	basicauth.o	\
+	messages.o	\
 	cmdline.o
 
 proxytunnel: $(OBJ)

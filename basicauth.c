@@ -17,6 +17,41 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-/* base64.h */
+#include <stdio.h>
+#include <stdlib.h>
 
-void base64(unsigned char *out, const unsigned char *in, int len);
+#include "base64.h"
+#include "config.h"
+#include "cmdline.h"
+#include "proxytunnel.h"
+#include "basicauth.h"
+
+/*
+ * Create the HTTP basic authentication cookie for use by the proxy. Result
+ * is stored in basicauth.
+ */
+void make_basicauth()
+{
+	int len = strlen( args_info.user_arg ) + \
+		strlen( args_info.pass_arg ) + 2;
+	char *p = (char *) malloc( len );
+
+	/*
+	 * Set up the cookie in clear text
+	 */
+	sprintf( p, "%s:%s", args_info.user_arg, args_info.pass_arg );
+
+	/*
+	 * Base64 encode the clear text cookie to create the HTTP base64
+	 * authentication cookie
+	 */
+	base64( basicauth, p, strlen( p ) );
+
+	if( args_info.verbose_flag )
+	{
+		message( "Proxy basic auth is %s\n", basicauth );
+	}
+
+	free( p );
+}
+

@@ -17,6 +17,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-/* base64.h */
+/* io.h */
+void readline();
+int copy(int from, int to);
+void cpio();
 
-void base64(unsigned char *out, const unsigned char *in, int len);
