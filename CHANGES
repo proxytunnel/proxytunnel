@@ -1,0 +1,24 @@
+Changes to proxytunnel version 1.0.4 -- Sun Nov 11 00:44:39 CET 2001
+
+- All the code by Jos and Mark now covered under GPL, the few lines of
+  base64 code came from mutt (also GPL), so the entire program is now
+  covered by the GPL -- Maniac
+
+Changes to proxytunnel version 1.0.3 -- Sat Nov 10 21:36:42 CET 2001
+
+- Supporting GNU getopts, the entire command line processing has
+  changed. If you were using an old version, please check up on the
+  '--help' option, and update your .ssh/config files :) -- Maniac
+
+- Added a --verbose option, which occasionally can print some
+  interesting details -- Maniac
+
+- Due to getopts, some error handling when entering incorrect command
+  line options -- Maniac
+
+- In addition to using http auth, which we allready had, we can now also
+  connect to proxy's that do NOT use http auth, simply do not specify a
+  username and password. If you specify these, they will be passed on to
+  the proxy, otherwise we won't go into auth phase. -- Maniac
+
+- Added simple 'make install' to the makefile -- Maniac

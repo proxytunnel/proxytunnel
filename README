@@ -1,0 +1,74 @@
+-----------
+proxytunnel
+-----------
+
+Author:		Jos Visser <josv@osp.nl>, Mark Janssen <maniac@maniac.nl>
+Date: 		Mon Nov 19 21:26:45 CET 2001
+Version:	1.0.5
+
+Hi all,
+
+This is proxytunnel, a program that connects stdin and stdout
+to an origin server somewhere in the Internet through an industry
+standard HTTPS proxy. I originally wrote this program to be used
+as an extension to SSH, to be able to SSH to my box at home. In 
+this file, I will describe the use with SSH. If you want to use it
+with some other application, feel free, and let me know!
+
+
+Usage:
+
+Proxytunnel is very easy to use, when running proxytunnel with the help
+option it specifies it's commandline options.
+
+# proxytunnel --help
+Proxytunnel 1.0.5
+Jos Visser (Muppet) <josv@osp.nl>, Mark Janssen (Maniac) <maniac@maniac.nl>
+
+Purpose:
+  Build generic tunnels trough HTTPS proxy's, supports HTTP authorization
+
+Usage: Proxytunnel [OPTIONS]...
+   -h         --help              Print help and exit
+   -V         --version           Print version and exit
+   -i         --inetd             Run from inetd (default=off)
+   -u STRING  --user=STRING       Username to send to HTTPS proxy for auth
+   -s STRING  --pass=STRING       Password to send to HTTPS proxy for auth
+   -g STRING  --proxyhost=STRING  HTTPS Proxy host to connect to
+   -G INT     --proxyport=INT     HTTPS Proxy portnumber to connect to
+   -d STRING  --desthost=STRING   Destination host to built the tunnel to
+   -D INT     --destport=INT      Destination portnumber to built the tunnel to
+   -v         --verbose           Turn on verbosity (default=off)
+
+To use this program with OpenSSH to connect to a host somewhere, create
+a $HOME/.ssh/config file with the following content:
+
+Host foobar
+ProxyCommand /path/to/proxytunnel -g proxy.customer.com -G 8080 -u user
+-s password -d mybox.athome.nl -D 443
+
+With:
+
+- foobar		The symbolic name of the host you want to connect to
+- proxy.customer.com	The host name of the proxy you want to connect through
+- 8080			The port number where the proxy software listens to
+- user			Your proxy userid
+- password		Your proxy password
+- mybox.athome.nl	The hostname of the box you want to connect to (ultimately)
+- 443			The port number of the SSH daemon on mybox.athome.nl
+
+If your proxy doesn't require the username and password for using it,
+you can skip these options. If you want to run proxytunnel from inetd
+add the '--inetd' option.
+
+Most HTTPS proxies do not allow access to ports other than 443 (HTTPS)
+and 563 (SNEWS), so some hacking is necessary to start the SSH daemon on
+the required port. (On the server side add an extra Port statement in
+the sshd_config file)
+
+When all this is in place, execute an "ssh foobar" and you're in business!
+
+Share and Enjoy!
+
+Jos Visser <josv@osp.nl>
+Mark Janssen <maniac@maniac.nl>
