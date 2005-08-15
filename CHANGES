@@ -1,3 +1,11 @@
+Changes to proxytunnel version 1.5.0 -- Mon Aug 15 12:18:41 CEST 2005
+
+- Allow overriding of NTLM 'DOMAIN', using -t
+
+Changes to proxytunnel version 1.4.0 -- Mon Aug 15 11:40:18 CEST 2005
+
+- Included version-2 of the NTLM patch by Paul Solomon
+
 Changes to proxytunnel version 1.2.3 -- Tue Nov  2 17:03:00 CET 2004
 
 - Patched a possible buffer overflow as reported by Dan Margolis 

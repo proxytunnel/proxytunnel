@@ -59,6 +59,7 @@ cmdline_parser_print_help (void)
 #endif
 "   -u STRING  --user=STRING       Username to send to HTTPS proxy for auth\n"
 "   -s STRING  --pass=STRING       Password to send to HTTPS proxy for auth\n"
+"   -t STRING  --domain=STRING	   NTLM Domain (default: autodetect)\n"
 "   -U STRING  --uservar=STRING    Env var with Username for HTTPS proxy auth\n"
 "   -S STRING  --passvar=STRING    Env var with Password for HTTPS proxy auth\n"
 "   -g STRING  --proxyhost=STRING  HTTPS Proxy host to connect to\n"
@@ -66,6 +67,7 @@ cmdline_parser_print_help (void)
 "   -d STRING  --desthost=STRING   Destination host to built the tunnel to\n"
 "   -D INT     --destport=INT      Destination portnumber to built the tunnel to\n"
 "   -H STRING  --header=STRING     Add STRING to HTTP headers sent to proxy\n"
+"   -N         --ntlm              Use NTLM Based Authentication\n"
 "   -n         --dottedquad        Convert destination hostname to dotted quad\n"
 "   -v         --verbose           Turn on verbosity (default=off)\n"
 "   -q         --quiet             Suppress messages  (default=off)\n", PACKAGE);
@@ -116,20 +118,24 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
   args_info->destport_given = 0;
   args_info->dottedquad_given = 0;
   args_info->verbose_given = 0;
+  args_info->ntlm_given = 0;
   args_info->inetd_given = 0;
   args_info->quiet_given = 0;
   args_info->header_given = 0;
+  args_info->domain_given = 0;
 
 /* No... we can't make this a function... -- Maniac */
 #define clear_args() \
 { \
 	args_info->user_arg = NULL; \
 	args_info->pass_arg = NULL; \
+	args_info->domain_arg = NULL; \
 	args_info->proxyhost_arg = NULL; \
 	args_info->desthost_arg = NULL; \
 	args_info->header_arg = NULL; \
 	args_info->dottedquad_flag = 0; \
 	args_info->verbose_flag = 0; \
+	args_info->ntlm_flag = 0; \
 	args_info->inetd_flag = 0; \
 	args_info->quiet_flag = 0; \
 	args_info->standalone_arg = 0; \
@@ -156,6 +162,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
         { "version",	0, NULL, 'V' },
         { "user",	1, NULL, 'u' },
         { "pass",	1, NULL, 's' },
+        { "domain",	1, NULL, 't' },
         { "uservar",	1, NULL, 'U' },
         { "passvar",	1, NULL, 'S' },
         { "proxyhost",	1, NULL, 'g' },
@@ -165,15 +172,16 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	{ "header",     1, NULL, 'H' },
         { "dottedquad",	0, NULL, 'n' },
         { "verbose",	0, NULL, 'v' },
+        { "ntlm",	0, NULL, 'N' },
 	{ "inetd",	0, NULL, 'i' },
 	{ "standalone", 1, NULL, 'a' },
 	{ "quiet",	0, NULL, 'q' },
         { NULL,	0, NULL, 0 }
       };
 
-      c = getopt_long (argc, argv, "hVia:u:s:U:S:g:G:d:D:H:nvq", long_options, &option_index);
+      c = getopt_long (argc, argv, "hVia:u:s:t:U:S:g:G:d:D:H:nvNq", long_options, &option_index);
 #else
-      c = getopt( argc, argv, "hVia:u:s:U:S:g:G:d:D:H:nvq" );
+      c = getopt( argc, argv, "hVia:u:s:t:U:S:g:G:d:D:H:nvNq" );
 #endif
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
@@ -251,6 +259,17 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
           args_info->pass_arg = gengetopt_strdup (optarg);
           break;
 
+        case 't':	/* Env Var with NTLM DOMAIN (when overriding).  */
+          if (args_info->domain_given)
+            {
+              fprintf (stderr, "%s: `--domain' (`-t') option given more than once\n", PACKAGE);
+              clear_args ();
+              exit (1);
+            }
+	  args_info->domain_given = 1;
+          args_info->domain_arg = gengetopt_strdup (optarg);
+          break;
+
         case 'S':	/* Env Var with Password to send to HTTPS proxy for authentication.  */
           if (args_info->pass_given)
             {
@@ -326,6 +345,10 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
           args_info->verbose_flag = !(args_info->verbose_flag);
           break;
 
+		case 'N':	/* Turn on NTLM.  */
+          args_info->ntlm_flag = !(args_info->ntlm_flag);
+          break;
+
 	case 'q':	/* Suppress messages -- Quiet mode */
 	  args_info->quiet_flag = !(args_info->quiet_flag);
 	  break;
@@ -342,6 +365,14 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
         } /* switch */
     } /* while */
 
+  if (! args_info->proxyhost_given && ! args_info->proxyport_given
+		  && ! args_info->desthost_given
+		  && ! args_info->destport_given )
+  {
+          clear_args ();
+	  cmdline_parser_print_help ();
+	  exit (0);
+  }
   if (! args_info->proxyhost_given)
     {
       fprintf (stderr, "%s: `--proxyhost' (`-g') option required!\n", PACKAGE);

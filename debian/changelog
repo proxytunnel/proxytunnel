@@ -1,8 +1,15 @@
+proxytunnel (1.5.0-1) unstable; urgency=high
+
+  * New version
+  * NTLM support
+
+ -- Mark Janssen <maniac@maniac.nl>  Mon, 15 Aug 2005 12:24:00 +0200
+
 proxytunnel (1.2.3-1) unstable; urgency=high
 
   * Added security-patch from gentoo security team, fix buffer overflow
 
- -- Mark Janssen <maniac@maniac.nl>  Tue Nov  2 17:08:35 CET 2004
+ -- Mark Janssen <maniac@maniac.nl>  Wed, 20 Nov 2002 15:12:10 +0200
 
 proxytunnel (1.2.0-1) unstable; urgency=low
 

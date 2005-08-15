@@ -12,6 +12,7 @@ people.
 	Andrew Griffiths <nullptr@tasmail.com>	- String format fixes
 	Dieter Heiliger <dieter.heiliger@gmx.de>- User-agent header idea
 	Fred Donck <fd0@donck.com>		- User/Pass Env Vars
+	Paul Solomon <psolomon@tpg.com.au>	- NTLM support
 
 
 Furthermore we would like to thank the wonderful people at SourceForge

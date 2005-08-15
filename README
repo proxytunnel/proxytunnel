@@ -3,8 +3,8 @@ proxytunnel
 -----------
 
 Author:		Jos Visser <josv@osp.nl>, Mark Janssen <maniac@maniac.nl>
-Date: 		Thu Sep 30 11:22:03 CEST 2004
-Version:	1.2.0
+Date: 		Mon Aug 15 12:15:00 CEST 2005
+Version:	1.5.0
 
 Hi all,
 
@@ -22,7 +22,7 @@ Proxytunnel is very easy to use, when running proxytunnel with the help
 option it specifies it's command-line options.
 
 $ ./proxytunnel --help
-Proxytunnel 1.2.0
+Proxytunnel 1.5.0
 Jos Visser (Muppet) <josv@osp.nl>, Mark Janssen (Maniac) <maniac@maniac.nl>
 
 Purpose:
@@ -35,6 +35,7 @@ Usage: Proxytunnel [OPTIONS]...
    -a INT     --standalone=INT    Run as standalone daemon on specified port
    -u STRING  --user=STRING       Username to send to HTTPS proxy for auth
    -s STRING  --pass=STRING       Password to send to HTTPS proxy for auth
+   -t STRING  --domain=STRING	   NTLM Domain (default: autodetect)
    -U STRING  --uservar=STRING    Env var with Username for HTTPS proxy auth
    -S STRING  --passvar=STRING    Env var with Password for HTTPS proxy auth
    -g STRING  --proxyhost=STRING  HTTPS Proxy host to connect to
@@ -42,6 +43,7 @@ Usage: Proxytunnel [OPTIONS]...
    -d STRING  --desthost=STRING   Destination host to built the tunnel to
    -D INT     --destport=INT      Destination portnumber to built the tunnel to
    -H STRING  --header=STRING     Add STRING to HTTP headers sent to proxy
+   -N         --ntlm              Use NTLM Based Authentication
    -n         --dottedquad        Convert destination hostname to dotted quad
    -v         --verbose           Turn on verbosity (default=off)
    -q         --quiet             Suppress messages  (default=off)
@@ -51,7 +53,6 @@ Proxytunnel [ -h | -V ]
 Proxytunnel -i [ -u user -s pass ] -g host -G port -d host -D port [ -n ] [ -v | -q ]
 Proxytunnel -i [ -U envvar -S envvar ] -g host -G port -d host -D port [ -n ] [ -v | -q ]
 Proxytunnel -a port [ -u user -s pass ] -g host -G port -d host -D port [ -n ] [ -v | -q ]
-
 
 To use this program with OpenSSH to connect to a host somewhere, create
 a $HOME/.ssh/config file with the following content:
@@ -87,6 +88,13 @@ Most HTTPS proxies do not allow access to ports other than 443 (HTTPS)
 and 563 (SNEWS), so some hacking is necessary to start the SSH daemon on
 the required port. (On the server side add an extra Port statement in
 the sshd_config file)
+
+When your proxy uses NTLM authentication (like Microsoft IIS proxy)
+you need to specify -N to enable NTLM, and then specify your username
+and password (and optionally domain, if autodetection fails). Usename
+and password can be specified on the commandline, or, more securely,
+using environment variables. The domain can only be specified on the
+commandline.
 
 When all this is in place, execute an "ssh foobar" and you're in business!
 

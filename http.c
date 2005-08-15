@@ -29,6 +29,7 @@
 #include "io.h"
 #include "proxytunnel.h"
 #include "basicauth.h"
+#include "ntlm.h"
 
 /*
  * Analyze the proxy's HTTP response. This must be a HTTP/1.? 200 OK type
@@ -51,6 +52,19 @@ void analyze_HTTP()
 		message( "HTTP return code: '%s'\n", p );
 		p += strlen( p ) + 1;
 		message( "%s\n", p );
+
+		if (!ntlm_challenge && strcmp( p, "407") != 0) {
+			do {
+				readline();
+				if (strncmp( buf, "Proxy-Authenticate: NTLM ", 25) == 0) {
+					if (parse_type2(&buf[25]) < 0)
+						exit(1);
+				}
+			} while ( strcmp( buf, "\r\n" ) != 0 );
+		}
+		if (ntlm_challenge == 1) {
+			return proxy_protocol();
+		}
 		exit( 1 );
 	}
 }
@@ -105,8 +119,19 @@ void proxy_protocol()
 		/*
 		 * Create connect string including the authorization part
 		 */
-		sprintf( buf, "%sProxy-authorization: Basic %s\r\n",
-				buf, basicauth );
+              if (args_info.ntlm_flag) {
+                      if (ntlm_challenge == 1) {
+                              build_type3_response();
+                              sprintf( buf, "%sProxy-Authorization: NTLM %s\r\n",
+                                              buf, ntlm_type3_buf );
+                      } else if (ntlm_challenge == 0){
+                              sprintf( buf, "%sProxy-Authorization: NTLM %s\r\n",
+                                              buf, ntlm_type1_buf );
+                      }
+              } else {
+                      sprintf( buf, "%sProxy-authorization: Basic %s\r\n",
+                                      buf, basicauth );
+              }
 	}
 	
 	if ( args_info.header_given )
@@ -130,7 +155,6 @@ void proxy_protocol()
 		my_perror( "Socket write error" );
 		exit( 1 );
 	}
-
 	/*
 	 * Read the first line of the response and analyze it
 	 */
@@ -141,7 +165,11 @@ void proxy_protocol()
 	 * Then, repeat reading lines of the responses until a blank line
 	 * (which signifies the end of the response) is encountered.
 	 */
-	do {
-		readline();
-	} while ( strcmp( buf, "\r\n" ) != 0 );
+	if (ntlm_challenge == 1) {
+		ntlm_challenge = 2;
+	} else {
+		do {
+			readline();
+		} while ( strcmp( buf, "\r\n" ) != 0 );
+	}
 }

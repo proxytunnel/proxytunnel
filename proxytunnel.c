@@ -37,6 +37,7 @@
 #include "cmdline.h"
 #include "basicauth.h"
 #include "proxytunnel.h"
+#include "ntlm.h"
 
 /* Define DARWIN if compiling on MacOS-X (Darwin), to work around some
  * inconsistencies. (Darwin doesn't know socklen_t) */
@@ -231,6 +232,10 @@ void do_daemon()
         		read_fd = write_fd = sd_client;
 			tunnel_connect();
 			proxy_protocol();
+			if (args_info.ntlm_flag) {
+				proxy_protocol();
+				proxy_protocol();
+			}
 			cpio();
 			exit( 0 );
 		}
@@ -278,7 +283,11 @@ int main( int argc, char *argv[] )
 
 	if( args_info.user_given && args_info.pass_given )
 	{
-		make_basicauth();
+		if (args_info.ntlm_flag) {
+			build_type1();
+			message("Build Type 1 NTLM Message : %s\n", ntlm_type1_buf);
+		} else
+			make_basicauth();
 	}
 
 	/* Do we need to run as a standalone daemon? */
