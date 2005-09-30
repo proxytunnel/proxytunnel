@@ -2,6 +2,7 @@ Changes to proxytunnel version 1.5.1 -- Fri Sep 30 12:17:14 CEST 2005
 
 - If you specify a username, but not a password, query the user for
   the password at runtime.
+- Removed md[45].[ch] and use functions from openssl
 
 Changes to proxytunnel version 1.5.0 -- Mon Aug 15 12:18:41 CEST 2005
 

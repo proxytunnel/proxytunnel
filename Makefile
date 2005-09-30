@@ -4,7 +4,7 @@
 
 CC = gcc
 CFLAGS = -Wall -DHAVE_GETOPT_LONG
-LDFLAGS =
+LDFLAGS = -lssl
 INSTALLPATH = $(DESTDIR)/usr/local/bin
 MANPATH = $(DESTDIR)/usr/man/man1
 
@@ -16,9 +16,7 @@ OBJ = proxytunnel.o	\
 	basicauth.o	\
 	messages.o	\
 	cmdline.o	\
-	ntlm.o		\
-	md4.o		\
-	md5.o
+	ntlm.o
 
 proxytunnel: $(OBJ)
 	$(CC) -o $(PROGNAME) $(LDFLAGS) $(OBJ)

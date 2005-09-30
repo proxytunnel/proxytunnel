@@ -4,7 +4,7 @@
 
 CC = gcc
 CFLAGS = -Wall
-LDFLAGS =
+LDFLAGS = -lssl
 INSTALLPATH = $(DESTDIR)/usr/local/bin
 MANPATH = $(DESTDIR)/usr/local/man/man1
 

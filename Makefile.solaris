@@ -4,7 +4,7 @@
 
 CC = gcc
 CFLAGS = -Wall 
-LDFLAGS = -lsocket -lnsl
+LDFLAGS = -lsocket -lnsl -lssl
 INSTALLPATH = /usr/local/bin
 
 PROGNAME = proxytunnel
