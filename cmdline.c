@@ -77,9 +77,9 @@ cmdline_parser_print_help (void)
 
   printf( "\nExamples:\n"
 "%s [ -h | -V ]\n"
-"%s -i [ -u user -s pass ] -g host -G port -d host -D port [ -n ] [ -v | -q ]\n"
-"%s -i [ -U envvar -S envvar ] -g host -G port -d host -D port [ -n ] [ -v | -q ]\n"
-"%s -a port [ -u user -s pass ] -g host -G port -d host -D port [ -n ] [ -v | -q ]\n", PACKAGE, PACKAGE, PACKAGE, PACKAGE );
+"%s -i [ -u user ] -g host -G port -d host -D port [ -n ] [ -v | -q ]\n"
+"%s -i [ -U envvar ] -g host -G port -d host -D port [ -n ] [ -v | -q ]\n"
+"%s -a port -g host -G port -d host -D port [ -n ] [ -v | -q ]\n", PACKAGE, PACKAGE, PACKAGE, PACKAGE );
 
 
 #ifndef HAVE_GETOPT_LONG
