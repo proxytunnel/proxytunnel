@@ -281,6 +281,19 @@ int main( int argc, char *argv[] )
 
 	signal( SIGHUP, signal_handler );
 
+	/* If the usename is given, but password is not, prompt for it */
+	if( args_info.user_given && !args_info.pass_given )
+	{
+		char *cp;
+		cp = getpass ("Enter proxy password:");
+		if (cp != NULL && strlen (cp) > 0)
+		{
+			args_info.pass_arg = strdup (cp);
+			args_info.pass_given = 1;
+			memset (cp, 0, strlen(cp));
+		}
+	}
+
 	if( args_info.user_given && args_info.pass_given )
 	{
 		if (args_info.ntlm_flag) {

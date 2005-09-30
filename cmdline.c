@@ -1,4 +1,4 @@
-/* Proxytunnel - (C) 2001-2004 Jos Visser / Mark Janssen    */
+/* Proxytunnel - (C) 2001-2005 Jos Visser / Mark Janssen    */
 /* Contact:                  josv@osp.nl / maniac@maniac.nl */
 
 /*
@@ -35,7 +35,7 @@
 void
 cmdline_parser_print_version (void)
 {
-  printf ("%s %s\n%s\n", PACKAGE, VERSION, AUTHORS);
+  printf ("%s %s\nCopyright 2001-2005 Proxytunnel Project\n%s\n", PACKAGE, VERSION, AUTHORS);
 }
 
 void
@@ -57,17 +57,20 @@ cmdline_parser_print_help (void)
 #if 0
 "   -f         --nobackground      Don't for to background in standalone mode (FIXME)\n"
 #endif
-"   -u STRING  --user=STRING       Username to send to HTTPS proxy for auth\n"
-"   -s STRING  --pass=STRING       Password to send to HTTPS proxy for auth\n"
-"   -t STRING  --domain=STRING	   NTLM Domain (default: autodetect)\n"
-"   -U STRING  --uservar=STRING    Env var with Username for HTTPS proxy auth\n"
-"   -S STRING  --passvar=STRING    Env var with Password for HTTPS proxy auth\n"
 "   -g STRING  --proxyhost=STRING  HTTPS Proxy host to connect to\n"
 "   -G INT     --proxyport=INT     HTTPS Proxy portnumber to connect to\n"
 "   -d STRING  --desthost=STRING   Destination host to built the tunnel to\n"
 "   -D INT     --destport=INT      Destination portnumber to built the tunnel to\n"
-"   -H STRING  --header=STRING     Add STRING to HTTP headers sent to proxy\n"
+"\nParameters for proxy-authentication (not needed for plain proxies):\n"
+"   -u STRING  --user=STRING       Username to send to HTTPS proxy for auth\n"
+"   -s STRING  --pass=STRING       Password to send to HTTPS proxy for auth\n"
+"   -U STRING  --uservar=STRING    Env var with Username for HTTPS proxy auth\n"
+"   -S STRING  --passvar=STRING    Env var with Password for HTTPS proxy auth\n"
 "   -N         --ntlm              Use NTLM Based Authentication\n"
+"   -t STRING  --domain=STRING     NTLM Domain (default: autodetect)\n"
+"   -H STRING  --header=STRING     Add STRING to HTTP headers sent to proxy\n\n"
+"  If you don't provide -s or -S you will be prompted for a password.\n"
+"\nMiscellaneous options:\n"
 "   -n         --dottedquad        Convert destination hostname to dotted quad\n"
 "   -v         --verbose           Turn on verbosity (default=off)\n"
 "   -q         --quiet             Suppress messages  (default=off)\n", PACKAGE);
