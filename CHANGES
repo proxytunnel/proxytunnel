@@ -1,3 +1,7 @@
+Changes to proxytunnel version 1.5.2 -- Fri Dec 16 09:27:11 CET 2005
+
+- Moved some declarations around in ntlm.c to make gcc/openbsd happier
+
 Changes to proxytunnel version 1.5.1 -- Fri Sep 30 12:17:14 CEST 2005
 
 - If you specify a username, but not a password, query the user for
