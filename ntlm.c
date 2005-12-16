@@ -65,18 +65,16 @@ void build_type1() {
 }
 
 
-int parse_type2(unsigned char *buf) {
-
-
+int parse_type2(unsigned char *buf)
+{
 	int len = unbase64(t2_buf, buf, TYPE2_BUF_SIZE);
+	ntlm_type2 *t2 = (ntlm_type2 *)t2_buf;
 	int i;
 
 	if (len <= 0) {
 		message("parse_type2: failed to decode the message\n");
 		return -1;
 	}
-
-	ntlm_type2 *t2 = (ntlm_type2 *)t2_buf;
 
 	if (strcmp(t2->signature, "NTLMSSP") != 0) {
 		message("parse_type2: Signature did not match\n");
