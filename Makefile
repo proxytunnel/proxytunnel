@@ -27,4 +27,4 @@ clean:
 install:
 		mkdir -p $(INSTALLPATH)
 		install -g root -m755 -o root $(PROGNAME) $(INSTALLPATH)/$(PROGNAME)
-		install -g root -m644 -o root contrib/$(PROGNAME).1 $(MANPATH)/$(PROGNAME).1
+		install -g root -m644 -o root debian/$(PROGNAME).1 $(MANPATH)/$(PROGNAME).1
