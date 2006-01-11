@@ -1,3 +1,7 @@
+Changes to proxytunnel version 1.5.x -- not yet released
+
+- Small change to make compiler on tandem/hp-nonstop happy
+
 Changes to proxytunnel version 1.5.2 -- Fri Dec 16 09:27:11 CET 2005
 
 - Moved some declarations around in ntlm.c to make gcc/openbsd happier

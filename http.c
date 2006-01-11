@@ -63,7 +63,8 @@ void analyze_HTTP()
 			} while ( strcmp( buf, "\r\n" ) != 0 );
 		}
 		if (ntlm_challenge == 1) {
-			return proxy_protocol();
+			proxy_protocol();
+			return;
 		}
 		exit( 1 );
 	}
