@@ -39,6 +39,14 @@ void analyze_HTTP()
 {
 	char *p = strtok( buf, " ");
 
+	/* 
+	 * Strip html error pages for faulty proxies
+	 * by: Stephane Engel <steph[at]macchiati.org>
+	 */
+	while (strncmp( p, "HTTP/", 5) != 0 )
+	{
+		readline();                                                     		p = strtok( buf, " ");                                          	}
+
 	if (strcmp( p, "HTTP/1.0" ) != 0 && strcmp( p, "HTTP/1.1" ) != 0)
 	{
 		message( "Unsupported HTTP version number %s\n", p );

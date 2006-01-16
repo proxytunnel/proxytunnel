@@ -1,6 +1,8 @@
 Changes to proxytunnel version 1.5.x -- not yet released
 
 - Small change to make compiler on tandem/hp-nonstop happy
+  by Roberto Veldhoven
+- Small change to work around broken proxies by Stephane Engel
 
 Changes to proxytunnel version 1.5.2 -- Fri Dec 16 09:27:11 CET 2005
 

@@ -3,7 +3,7 @@
 # Please uncomment the appropriate settings
 
 CC = gcc
-CFLAGS = -Wall -DHAVE_GETOPT_LONG
+CFLAGS = -Wall -DHAVE_GETOPT_LONG -DWITH_NTLM
 LDFLAGS = -lssl
 INSTALLPATH = $(DESTDIR)/usr/local/bin
 MANPATH = $(DESTDIR)/usr/man/man1

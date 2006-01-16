@@ -1,3 +1,10 @@
+proxytunnel (1.5.2-1) unstable; urgency=high
+
+  * New version
+  * NTLM Cleanups, removed md[45] code in favour of using libssl
+
+ -- Mark Janssen <maniac@maniac.nl>  Fri, 16 Dec 2005 10:00:00 +0200
+
 proxytunnel (1.5.0-1) unstable; urgency=high
 
   * New version
