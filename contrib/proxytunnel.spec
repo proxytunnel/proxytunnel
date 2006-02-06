@@ -1,6 +1,6 @@
 Summary: Proxy Tunnel ssh-over-https hack.
 Name: proxytunnel
-Version: 1.2.3
+Version: 1.6.0
 Release: 0.1
 Copyright: GPL
 Group: Networking/Utilities
@@ -36,6 +36,6 @@ rm -rf ${RPM_BUILD_ROOT}/usr/
 
 %changelog
 # Tue Nov  2  2004 Mark Janssen <maniac@maniac.nl>
-- Updated to v1.2.3
+- Updated to v1.6.0
 * Tue Nov 21  2001 Ralph Loader <suckfish@ihug.co.nz>
 - Created.

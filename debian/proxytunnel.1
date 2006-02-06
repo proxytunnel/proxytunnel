@@ -49,19 +49,13 @@ The username to send to HTTPS proxy for authentification.
 The password to send to HTTPS proxy for authentification.
 .TP
 .B \-g STRING, \-\-proxyhost=STRING
-The HTTPS Proxy hostname to connect to.
+The HTTPS Proxy host:port combo to connect to.
 .TP
-.B \-G INT, \-\-proxyport=INT
-The HTTPS PRoxy prot number to connect to.
+.B \-d STRING, \-\-dest=STRING
+The destination host:port to built the tunnel to.
 .TP
-.B \-d STRING, \-\-desthost=STRING
-The destination hostname to built the tunnel to.
-.TP
-.B \-D INT, \-\-destport=INT
-The destination prot number to built the tunnel to.
-.TP
-.B \-n, \-\-dottedquad
-Convert destination hostname to dotted quad.
+.B \-r STRING, \-\-remproxy=STRING
+The second-level proxy host:port to connect to.
 .TP
 .B \-v, \-\-verbose
 Turn on verbosity. Default is off.
@@ -77,18 +71,13 @@ Host foobar
 .br
 	ProtocolKeepAlives 30
 .br
-	ProxyCommand /usr/bin/proxytunnel -g proxy.customer.com -G 8080 -u user
--s password -d mybox.athome.nl -D 443
+	ProxyCommand /usr/bin/proxytunnel -p proxy.customer.com:8080 -u user
+-s password -d mybox.athome.nl:443
 
 If your proxy doesn't require the username and password for using it,
 you can skip these options.
 
 If you want to run proxytunnel from inetd add the '--inetd' option.
-
-If you have a broken proxy and use a destination host with dynamic DNS,
-add the -n or --dottedquad, the DNS name will then be resolved locally
-before sending it to the proxy. (Original patch from Ralph Loader
-<suckfish@ihug.co.nz>)
 
 Most HTTPS proxies do not allow access to ports other than 443 (HTTPS)
 and 563 (SNEWS), so some hacking is necessary to start the SSH daemon on
