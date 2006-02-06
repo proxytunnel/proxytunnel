@@ -149,7 +149,7 @@ void do_daemon()
 	int			listen_sd;
 	struct sockaddr_in	sa_serv;
 	struct sockaddr_in	sa_cli;
-	size_t			client_len;
+	socklen_t		client_len;
 	int			pid = 0;
 	int			sd_client;
 	char			buf[80];

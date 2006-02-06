@@ -16,6 +16,7 @@ people.
 	Joerg Wunsch <j@uriah.heep.sax.de>	- Password prompt suggestion
 	Roberto Veldhoven at atosorigin.com	- Tandem compile fix
 	Stephane Engel at macchiati.org		- Fix for broken proxy
+	Mike Frysinger <vapier@gentoo.org>	- Makefile fix, 64bit fix
 
 
 Furthermore we would like to thank the wonderful people at SourceForge
