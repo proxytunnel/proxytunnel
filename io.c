@@ -29,6 +29,14 @@
 #include "proxytunnel.h"
 #include "io.h"
 
+#ifdef USE_SSL	/* Override copy functions */
+#define COPY_TO(fd) copy_to_SSL(fd, ssl)
+#define COPY_FROM(fd) copy_from_SSL(ssl, fd)
+#else
+#define COPY_TO(fd)	copy(fd, sd)
+#define COPY_FROM(fd)	copy(sd, fd)
+#endif
+
 /*
  * Read one line of data from the tunnel. Line is terminated by a
  * newline character. Result is stored in buf.
@@ -100,6 +108,76 @@ int copy(int from, int to)
 	return 0;
 }
 
+int copy_to_SSL(int from, SSL* to)
+{
+        int n;
+
+        /*
+         * Read a buffer from the source socket
+         */
+        if ( ( n = read( from, buf, SIZE ) ) < 0 )
+        {
+                my_perror( "Socket read error" );
+                exit( 1 );
+        }
+
+        /*
+         * If we have read 0 bytes, there is an EOF on src
+         */
+        if( n==0 )
+                return 1;
+
+        /*
+         * Write the buffer to the destination socket
+         */
+        if ( SSL_write( to, buf, n ) != n )
+        {
+                my_perror( "Socket write error" );
+                exit( 1 );
+        }
+
+        /*
+         * We're not yet at EOF
+         */
+        return 0;
+}
+
+int copy_from_SSL(SSL* from, int to)
+{
+        int n;
+
+        /*
+         * Read a buffer from the source socket
+         */
+        if ( ( n = SSL_read( from, buf, SIZE ) ) < 0 )
+        {
+                my_perror( "Socket read error" );
+                exit( 1 );
+        }
+
+        /*
+         * If we have read 0 bytes, there is an EOF on src
+         */
+        if( n==0 )
+                return 1;
+
+        /*
+         * Write the buffer to the destination socket
+         */
+        if ( write( to, buf, n ) != n )
+        {
+                my_perror( "Socket write error" );
+                exit( 1 );
+        }
+
+        /*
+         * We're not yet at EOF
+         */
+        return 0;
+}
+
+
+
 /*
  * Move into a loop of copying data to and from the tunnel.
  * stdin (fd 0) and stdout (fd 1) are the file descriptors
@@ -112,12 +190,22 @@ void cpio()
 	fd_set	writefds;
 	fd_set	exceptfds;
 	int	max_fd;
+	int     out_fd;
+
+#ifdef USE_SSL
+	if( args_info.encrypt_flag )
+		out_fd = SSL_get_fd(ssl);
+	else
+		out_fd = sd;
+#else
+	out_fd = sd;
+#endif
 
 	/*
 	 * Find the biggest file descriptor for select()
 	 */
 	max_fd = MAX( read_fd,write_fd );
-	max_fd = MAX( max_fd,sd );
+	max_fd = MAX( max_fd, out_fd );
 
 
 	/*
@@ -144,16 +232,16 @@ void cpio()
 		/*
 		 * We want to know whether stdin or sd is ready for reading
 		 */
-		FD_SET( read_fd,&readfds );
-		FD_SET( sd,&readfds );
+		FD_SET( read_fd, &readfds );
+		FD_SET( out_fd, &readfds );
 
 		/*
 		 * And we want to know about exceptional conditions on either
 		 * stdin, stdout or the tunnel
 		 */
-		FD_SET( read_fd,&exceptfds );
-		FD_SET( write_fd,&exceptfds );
-		FD_SET( sd,&exceptfds );
+		FD_SET( read_fd, &exceptfds );
+		FD_SET( write_fd, &exceptfds );
+		FD_SET( out_fd, &exceptfds );
 
 		/*
 		 * Wait until something happens on one of the registered
@@ -175,13 +263,29 @@ void cpio()
 		 */
 		if ( FD_ISSET( read_fd, &readfds ) )
 		{
-			if ( copy( read_fd, sd ) )
-				break;
+			if( args_info.encrypt_flag )
+			{
+				if ( COPY_TO(read_fd ) )
+					break;
+			}
+			else
+			{
+				if ( copy(read_fd, sd ) )
+					break;
+			}
 		}
 		else if( FD_ISSET( sd, &readfds ) )
 		{
-			if( copy(sd,write_fd ) )
-				break;
+			if( args_info.encrypt_flag )
+			{
+				if( COPY_FROM(write_fd ) )
+					break;
+			}
+			else
+			{
+				if( copy(sd,write_fd ) )
+					break;
+			}
 		}
 		else
 		{
@@ -194,7 +298,15 @@ void cpio()
 	 * Close all files we deal with
 	 */
 	close( read_fd );
+#ifdef USE_SSL
+	if( args_info.encrypt_flag )
+	{
+		SSL_free (ssl);
+		SSL_CTX_free (ctx);
+	}
+#else
 	close( sd );
+#endif
 
 	if( read_fd != write_fd )	/* When not running from inetd */
 	{

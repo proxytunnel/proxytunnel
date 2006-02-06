@@ -34,6 +34,7 @@ Usage: Proxytunnel [OPTIONS]...
    -V         --version           Print version and exit
    -i         --inetd             Run from inetd (default=off)
    -a INT     --standalone=INT    Run as standalone daemon on specified port
+   -e         --encrypt           encrypt the communication using SSL
    -p STRING  --proxy=STRING      Proxy host:port combination to connect to
    -d STRING  --dest=STRING       Destination host:port to built the tunnel to
 
@@ -103,6 +104,12 @@ connect to this remote proxy, which will be asked to connect to the
 requested destination. Note that authentication doesn't (yet) work on
 this remote proxy. For more information regarding this feature, check
 out http://dag.wieers.com/howto/ssh-http-tunneling/
+
+If your proxy is more advanced, and does protocol inspection it will
+detect that your connection is not a real HTTPS/SSL connection. You
+can enable SSL encryption (using -e), which will work around this
+problem, however, you need to setup stunnel4 on the other side, or
+connect to a process that understands SSL itself.
 
 When all this is in place, execute an "ssh foobar" and you're in business!
 

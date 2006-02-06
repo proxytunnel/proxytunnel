@@ -19,6 +19,13 @@
 
 /* proxytunnel.h */
 
+#ifdef USE_SSL
+#include <openssl/crypto.h>
+#include <openssl/x509.h>
+#include <openssl/pem.h>
+#include <openssl/ssl.h>
+#endif
+
 #include "cmdline.h"
 
 void message( char *s, ... );
@@ -27,6 +34,7 @@ void signal_handler( int signal );
 void tunnel_connect();
 void analyze_HTTP();
 void proxy_protocol();
+void do_ssl();
 void einde();
 void do_daemon();
 int main( int argc, char *argv[] );
@@ -37,6 +45,11 @@ int read_fd;                    /* The file descriptor to read from */
 int write_fd;                   /* The file destriptor to write to */
 char *program_name;             /* Guess what? */
 int i_am_daemon;                /* Also... */
+
+#ifdef USE_SSL
+SSL_CTX* ctx;
+SSL*     ssl;
+#endif
 
 /*
  * All the command line options

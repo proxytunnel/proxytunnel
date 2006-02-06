@@ -17,6 +17,7 @@ people.
 	Roberto Veldhoven at atosorigin.com	- Tandem compile fix
 	Stephane Engel at macchiati.org		- Fix for broken proxy
 	Mike Frysinger <vapier@gentoo.org>	- Makefile fix, 64bit fix
+	Alex Peuchert proxytunnel@peuchert.de	- SSL/Encrypt support
 
 
 Furthermore we would like to thank the wonderful people at SourceForge

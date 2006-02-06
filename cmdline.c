@@ -57,6 +57,9 @@ cmdline_parser_print_help (void)
 #if 0
 "   -f         --nobackground      Don't for to background in standalone mode (FIXME)\n"
 #endif
+#ifdef USE_SSL
+"   -e         --encrypt           encrypt the communication using SSL\n"
+#endif
 "   -p STRING  --proxy=STRING      Proxy host:port combination to connect to\n"
 "   -d STRING  --dest=STRING       Destination host:port to built the tunnel to\n"
 "\nParameters for proxy-authentication (not needed for plain proxies):\n"
@@ -125,6 +128,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
   args_info->quiet_given = 0;
   args_info->header_given = 0;
   args_info->domain_given = 0;
+  args_info->encrypt_given = 0;
 
 /* No... we can't make this a function... -- Maniac */
 #define clear_args() \
@@ -142,6 +146,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	args_info->inetd_flag = 0; \
 	args_info->quiet_flag = 0; \
 	args_info->standalone_arg = 0; \
+	args_info->encrypt_flag = 0; \
 } 
 
   clear_args();
@@ -179,12 +184,13 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	{ "inetd",	0, NULL, 'i' },
 	{ "standalone", 1, NULL, 'a' },
 	{ "quiet",	0, NULL, 'q' },
+	{ "encrypt",    0, NULL, 'e' },
         { NULL,	0, NULL, 0 }
       };
 
-      c = getopt_long (argc, argv, "hVia:u:s:t:U:S:p:r:g:G:d:D:H:nvNq", long_options, &option_index);
+      c = getopt_long (argc, argv, "hVia:u:s:t:U:S:p:r:d:H:nvNeq", long_options, &option_index);
 #else
-      c = getopt( argc, argv, "hVia:u:s:t:U:S:p:r:g:G:d:D:H:nvNq" );
+      c = getopt( argc, argv, "hVia:u:s:t:U:S:p:r:d:H:nvNeq" );
 #endif
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
@@ -195,6 +201,13 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
           clear_args ();
           cmdline_parser_print_help ();
           exit (0);
+
+#ifdef USE_SSL
+	case 'e':       /* Turn on SSL encryption */
+	  args_info->encrypt_flag = !(args_info->encrypt_flag);
+	  fprintf (stderr, "SSL enabled\n");
+	  break;
+#endif
 
 	case 'i':	/* Run from inetd. */
 	  if ( args_info->standalone_arg > 0 )

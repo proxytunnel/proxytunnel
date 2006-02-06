@@ -49,6 +49,11 @@
 int read_fd=0;                  /* The file descriptor to read from */
 int write_fd=1;                 /* The file destriptor to write to */
 
+#ifdef USE_SSL 
+SSL_CTX* ctx;
+SSL*     ssl;    
+SSL_METHOD *meth;
+#endif
 
 /*
  * Kill the program (signal handler)
@@ -128,6 +133,25 @@ void tunnel_connect() {
 	/* Make sure we get warned when someone hangs up on us */
 	signal(SIGHUP,signal_handler);
 }
+
+#ifdef USE_SSL 
+/*
+ * Do the SSL handshake.
+ */
+void do_ssl()
+{
+       SSLeay_add_ssl_algorithms();
+       meth = SSLv2_client_method();
+       SSL_load_error_strings();
+
+       ctx = SSL_CTX_new (meth);
+
+       ssl = SSL_new (ctx);
+
+       SSL_set_fd (ssl, sd);
+       SSL_connect (ssl);
+}
+#endif
 
 /*
  * Leave a goodbye message
@@ -320,6 +344,10 @@ int main( int argc, char *argv[] )
 		/* Main processing */
 		tunnel_connect();
 		proxy_protocol();
+#ifdef USE_SSL
+		if( args_info.encrypt_flag )
+			do_ssl();
+#endif
 		cpio();
 	}
 
