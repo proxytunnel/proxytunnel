@@ -3,8 +3,8 @@ proxytunnel
 -----------
 
 Author:		Jos Visser <josv@osp.nl>, Mark Janssen <maniac@maniac.nl>
-Date: 		Mon Aug 15 12:15:00 CEST 2005
-Version:	1.5.0
+Date: 		Mon Feb  6 11:58:17 CET 2006
+Version:	1.6.0
 
 Hi all,
 
@@ -22,7 +22,7 @@ Proxytunnel is very easy to use, when running proxytunnel with the help
 option it specifies it's command-line options.
 
 $ ./proxytunnel --help
-Proxytunnel 1.5.1
+Proxytunnel 1.6.0
 Copyright 2001-2005 Proxytunnel Project
 Jos Visser (Muppet) <josv@osp.nl>, Mark Janssen (Maniac) <maniac@maniac.nl>
 
@@ -34,10 +34,8 @@ Usage: Proxytunnel [OPTIONS]...
    -V         --version           Print version and exit
    -i         --inetd             Run from inetd (default=off)
    -a INT     --standalone=INT    Run as standalone daemon on specified port
-   -g STRING  --proxyhost=STRING  HTTPS Proxy host to connect to
-   -G INT     --proxyport=INT     HTTPS Proxy portnumber to connect to
-   -d STRING  --desthost=STRING   Destination host to built the tunnel to
-   -D INT     --destport=INT      Destination portnumber to built the tunnel to
+   -p STRING  --proxy=STRING      Proxy host:port combination to connect to
+   -d STRING  --dest=STRING       Destination host:port to built the tunnel to
 
 Parameters for proxy-authentication (not needed for plain proxies):
    -u STRING  --user=STRING       Username to send to HTTPS proxy for auth
@@ -46,33 +44,34 @@ Parameters for proxy-authentication (not needed for plain proxies):
    -S STRING  --passvar=STRING    Env var with Password for HTTPS proxy auth
    -N         --ntlm              Use NTLM Based Authentication
    -t STRING  --domain=STRING     NTLM Domain (default: autodetect)
+   -r STRING  --remproxy=STRING   Use a remote proxy to tunnel over (2 proxies)
    -H STRING  --header=STRING     Add STRING to HTTP headers sent to proxy
 
   If you don't provide -s or -S you will be prompted for a password.
 
 Miscellaneous options:
-   -n         --dottedquad        Convert destination hostname to dotted quad
    -v         --verbose           Turn on verbosity (default=off)
    -q         --quiet             Suppress messages  (default=off)
 
 Examples:
 Proxytunnel [ -h | -V ]
-Proxytunnel -i [ -u user ] -g host -G port -d host -D port [ -n ] [ -v | -q ]
-Proxytunnel -i [ -U envvar ] -g host -G port -d host -D port [ -n ] [ -v | -q ]
-Proxytunnel -a port -g host -G port -d host -D port [ -n ] [ -v | -q ]
+Proxytunnel -i [ -u user ] -p proxy:port -d host:port [ -v | -q ]
+Proxytunnel -i [ -U envvar ] -p proxy:port -d host:port [ -v | -q ]
+Proxytunnel -a port -p proxy:port -d host:port [ -v | -q ]
+
 
 To use this program with OpenSSH to connect to a host somewhere, create
 a $HOME/.ssh/config file with the following content:
 
 Host foobar
 	ProtocolKeepAlives 30
-	ProxyCommand /path/to/proxytunnel -g proxy.customer.com -G 8080 -u user
--d mybox.athome.nl -D 443
+	ProxyCommand /path/to/proxytunnel -p proxy:8080 -u user
+-d mybox.athome.nl:443
 
 With:
 
 - foobar		The symbolic name of the host you want to connect to
-- proxy.customer.com	The host name of the proxy you want to connect through
+- proxy         	The host name of the proxy you want to connect through
 - 8080			The port number where the proxy software listens to
 - user			Your proxy userid
 - mybox.athome.nl	The hostname of the box you want to connect to (ultimately)
@@ -87,11 +86,6 @@ find it with '-S'.
 
 If you want to run proxytunnel from inetd add the '--inetd' option.
 
-If you have a broken proxy and use a destination host with dynamic DNS,
-add the -n or --dottedquad, the DNS name will then be resolved locally
-before sending it to the proxy. (Original patch from Ralph Loader
-<suckfish@ihug.co.nz>)
-
 Most HTTPS proxies do not allow access to ports other than 443 (HTTPS)
 and 563 (SNEWS), so some hacking is necessary to start the SSH daemon on
 the required port. (On the server side add an extra Port statement in
@@ -101,10 +95,13 @@ When your proxy uses NTLM authentication (like Microsoft IIS proxy)
 you need to specify -N to enable NTLM, and then specify your username
 and password (and optionally domain, if autodetection fails).
 The NT domain can be specified on the commandline if the
-auto-detection doesn't work for you (which is usually the case)
+auto-detection doesn't work for you (which is usually doesn't)
 
-Currently NTLM works quite well under Linux, however, on my test-proxy
-it failes when running under cygwin... we are still looking into this.
+If you want to have the first proxy connect to another http proxy (like
+one you can control, specify -r proxy2:port. The first proxy will then
+connect to this remote proxy, which will be asked to connect to the 
+requested destination. Note that authentication doesn't (yet) work on
+this remote proxy.
 
 When all this is in place, execute an "ssh foobar" and you're in business!
 
