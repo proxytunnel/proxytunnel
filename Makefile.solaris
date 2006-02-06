@@ -12,6 +12,7 @@ OBJ = proxytunnel.o	\
 	base64.o	\
 	io.o		\
 	http.o		\
+	ntlm.o		\
 	basicauth.o	\
 	messages.o	\
 	cmdline.o

@@ -3,8 +3,8 @@
 # Please uncomment the appropriate settings
 
 CC ?= gcc
-CFLAGS ?= -Wall -DDARWIN
-LDFLAGS ?= -lssl
+CFLAGS ?= -Wall -DDARWIN -DHAVE_GETOPT_LONG
+LDFLAGS ?= -lcrypto
 INSTALLPATH ?= $(DESTDIR)/usr/local/bin
 MANPATH ?= $(DESTDIR)/usr/local/man/man1
 
@@ -12,6 +12,7 @@ PROGNAME = proxytunnel
 OBJ = proxytunnel.o	\
 	base64.o	\
 	io.o		\
+	ntlm.o		\
 	http.o		\
 	basicauth.o	\
 	messages.o	\
