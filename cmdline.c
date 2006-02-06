@@ -1,4 +1,4 @@
-/* Proxytunnel - (C) 2001-2005 Jos Visser / Mark Janssen    */
+/* Proxytunnel - (C) 2001-2006 Jos Visser / Mark Janssen    */
 /* Contact:                  josv@osp.nl / maniac@maniac.nl */
 
 /*
@@ -35,7 +35,7 @@
 void
 cmdline_parser_print_version (void)
 {
-  printf ("%s %s\nCopyright 2001-2005 Proxytunnel Project\n%s\n", PACKAGE, VERSION, AUTHORS);
+  printf ("%s %s\nCopyright 2001-2006 Proxytunnel Project\n%s\n", PACKAGE, VERSION, AUTHORS);
 }
 
 void

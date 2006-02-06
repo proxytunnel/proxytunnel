@@ -23,7 +23,7 @@ option it specifies it's command-line options.
 
 $ ./proxytunnel --help
 Proxytunnel 1.6.0
-Copyright 2001-2005 Proxytunnel Project
+Copyright 2001-2006 Proxytunnel Project
 Jos Visser (Muppet) <josv@osp.nl>, Mark Janssen (Maniac) <maniac@maniac.nl>
 
 Purpose:
@@ -101,7 +101,8 @@ If you want to have the first proxy connect to another http proxy (like
 one you can control, specify -r proxy2:port. The first proxy will then
 connect to this remote proxy, which will be asked to connect to the 
 requested destination. Note that authentication doesn't (yet) work on
-this remote proxy.
+this remote proxy. For more information regarding this feature, check
+out http://dag.wieers.com/howto/ssh-http-tunneling/
 
 When all this is in place, execute an "ssh foobar" and you're in business!
 
