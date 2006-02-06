@@ -59,7 +59,7 @@ void readline()
 	*p = 0;
 
 	if( args_info.verbose_flag )
-		message( "%s", buf );
+		message( "DEBUG: recv: '%s'", buf );
 }
 
 /*

@@ -1,10 +1,15 @@
-Changes to proxytunnel version 1.5.x -- not yet released
+Changes to proxytunnel version 1.6.0 -- Mon Feb  6 17:00:00 CET 2006
 
+- Replaced -g/-G (proxy host and port) with -p proxy:post shorthand
+- Replaced -d/-D (dest host and port) with -d host:post shorthand
+- Dropped -n option (dottedquad)
 - Small change to make compiler on tandem/hp-nonstop happy
   by Roberto Veldhoven
 - Small change to work around broken proxies by Stephane Engel
 - Changed client_len from size_t to socklen_t (64bit required)
 - Makefile vars now no longer override environment versions
+- Added proxy-bouncing support, courtesy of Dag Wieers, authentication
+  only works on the FIRST proxy, not on a second proxy !!
 
 Changes to proxytunnel version 1.5.2 -- Fri Dec 16 09:27:11 CET 2005
 

@@ -87,41 +87,16 @@ void proxy_protocol()
 	/*
 	 * Create the proxy CONNECT command into buf
 	 */
-
-	if( args_info.dottedquad_flag )
+	if (args_info.remproxy_given )
 	{
-		static char ipbuf[16]; /* IPv4: 'xxx.xxx.xxx.xxx' + \0 = 16 */
-		struct hostent * he = gethostbyname( args_info.desthost_arg );
-		if ( he )
-		{
-			sprintf( ipbuf, "%d.%d.%d.%d", 
-				he->h_addr[0] & 255,
-				he->h_addr[1] & 255,
-				he->h_addr[2] & 255,
-				he->h_addr[3] & 255 );
-
-			if( args_info.verbose_flag )
-			{
-			   message( "DEBUG: ipbuf = '%s'\n", ipbuf );
-			   message( "DEBUG: desthost = '%s'\n",
-					   args_info.desthost_arg );
-			}
-
-			args_info.desthost_arg = ipbuf;
-
-			if( args_info.verbose_flag )
-			   message( "DEBUG: desthost = '%s'\n",
-					   args_info.desthost_arg );
-
-		}
-		else if( args_info.verbose_flag )
-			message( "Can't lookup dest host: %s.\n",
-					args_info.desthost_arg );
-
+		message( "Tunneling to %s (remote proxy)\n", args_info.remproxy_arg );
+		sprintf( buf, "CONNECT %s HTTP/1.0\r\n", args_info.remproxy_arg );
 	}
-
-	sprintf( buf, "CONNECT %s:%d HTTP/1.0\r\n",
-			args_info.desthost_arg, args_info.destport_arg );
+	else
+	{
+		message( "Tunneling to %s (destination)\n", args_info.dest_arg );
+		sprintf( buf, "CONNECT %s HTTP/1.0\r\n", args_info.dest_arg );
+	}
 	
 	if ( args_info.user_given && args_info.pass_given )
 	{
@@ -167,8 +142,41 @@ void proxy_protocol()
 	/*
 	 * Read the first line of the response and analyze it
 	 */
-	readline();
 	analyze_HTTP();
+
+	if (args_info.remproxy_given ) {
+		/*
+		 * Clean buffer for next analysis
+ 		 */
+		while ( strcmp( buf, "\r\n" ) != 0 ) readline();
+
+		message( "Tunneling to %s (destination)\n", args_info.dest_arg );
+		sprintf( buf, "CONNECT %s HTTP/1.0\r\n", args_info.dest_arg );
+
+		/*
+		 * Add extra header(s)
+		 */
+		if ( args_info.header_given )
+			sprintf( buf, "%s%s\r\n", buf, args_info.header_arg );
+		sprintf( buf, "%sProxy-Connection: Keep-Alive\r\n\r\n", buf );
+		
+		if( args_info.verbose_flag )
+			message( "DEBUG: Send: '%s'\n", buf);
+		
+		/*
+		 * Send the CONNECT instruction to the proxy
+		 */
+		if( send( sd, buf, strlen( buf ), 0 ) < 0 )
+		{
+			my_perror( "Socket write error" );
+			exit( 1 );
+		}
+	
+		/*
+		 * Read the first line of the response and analyze it
+		 */
+		analyze_HTTP();
+	}
 
 	/*
 	 * Then, repeat reading lines of the responses until a blank line

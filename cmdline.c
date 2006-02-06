@@ -57,10 +57,8 @@ cmdline_parser_print_help (void)
 #if 0
 "   -f         --nobackground      Don't for to background in standalone mode (FIXME)\n"
 #endif
-"   -g STRING  --proxyhost=STRING  HTTPS Proxy host to connect to\n"
-"   -G INT     --proxyport=INT     HTTPS Proxy portnumber to connect to\n"
-"   -d STRING  --desthost=STRING   Destination host to built the tunnel to\n"
-"   -D INT     --destport=INT      Destination portnumber to built the tunnel to\n"
+"   -p STRING  --proxy=STRING      Proxy host:port combination to connect to\n"
+"   -d STRING  --dest=STRING       Destination host:port to built the tunnel to\n"
 "\nParameters for proxy-authentication (not needed for plain proxies):\n"
 "   -u STRING  --user=STRING       Username to send to HTTPS proxy for auth\n"
 "   -s STRING  --pass=STRING       Password to send to HTTPS proxy for auth\n"
@@ -68,18 +66,18 @@ cmdline_parser_print_help (void)
 "   -S STRING  --passvar=STRING    Env var with Password for HTTPS proxy auth\n"
 "   -N         --ntlm              Use NTLM Based Authentication\n"
 "   -t STRING  --domain=STRING     NTLM Domain (default: autodetect)\n"
+"   -r STRING  --remproxy=STRING   Use a remote proxy to tunnel over (2 proxies)\n"
 "   -H STRING  --header=STRING     Add STRING to HTTP headers sent to proxy\n\n"
 "  If you don't provide -s or -S you will be prompted for a password.\n"
 "\nMiscellaneous options:\n"
-"   -n         --dottedquad        Convert destination hostname to dotted quad\n"
 "   -v         --verbose           Turn on verbosity (default=off)\n"
 "   -q         --quiet             Suppress messages  (default=off)\n", PACKAGE);
 
   printf( "\nExamples:\n"
 "%s [ -h | -V ]\n"
-"%s -i [ -u user ] -g host -G port -d host -D port [ -n ] [ -v | -q ]\n"
-"%s -i [ -U envvar ] -g host -G port -d host -D port [ -n ] [ -v | -q ]\n"
-"%s -a port -g host -G port -d host -D port [ -n ] [ -v | -q ]\n", PACKAGE, PACKAGE, PACKAGE, PACKAGE );
+"%s -i [ -u user ] -p proxy:port -d host:port [ -v | -q ]\n"
+"%s -i [ -U envvar ] -p proxy:port -d host:port [ -v | -q ]\n"
+"%s -a port -p proxy:port -d host:port [ -v | -q ]\n", PACKAGE, PACKAGE, PACKAGE, PACKAGE );
 
 
 #ifndef HAVE_GETOPT_LONG
@@ -108,6 +106,7 @@ gengetopt_strdup (char * s)
 int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *args_info )
 {
   int c;	/* Character of the parsed option.  */
+  int r;	/* Tmd retval */
   int missing_required_options = 0;	
   char * tmp_env_var;
 
@@ -115,11 +114,11 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
   args_info->version_given = 0;
   args_info->user_given = 0;
   args_info->pass_given = 0;
+  args_info->proxy_given = 0;
   args_info->proxyhost_given = 0;
   args_info->proxyport_given = 0;
-  args_info->desthost_given = 0;
-  args_info->destport_given = 0;
-  args_info->dottedquad_given = 0;
+  args_info->dest_given = 0;
+  args_info->remproxy_given = 0;
   args_info->verbose_given = 0;
   args_info->ntlm_given = 0;
   args_info->inetd_given = 0;
@@ -133,10 +132,11 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	args_info->user_arg = NULL; \
 	args_info->pass_arg = NULL; \
 	args_info->domain_arg = NULL; \
+	args_info->proxy_arg = NULL; \
 	args_info->proxyhost_arg = NULL; \
-	args_info->desthost_arg = NULL; \
+	args_info->dest_arg = NULL; \
+	args_info->remproxy_arg = NULL; \
 	args_info->header_arg = NULL; \
-	args_info->dottedquad_flag = 0; \
 	args_info->verbose_flag = 0; \
 	args_info->ntlm_flag = 0; \
 	args_info->inetd_flag = 0; \
@@ -168,12 +168,12 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
         { "domain",	1, NULL, 't' },
         { "uservar",	1, NULL, 'U' },
         { "passvar",	1, NULL, 'S' },
+	{ "proxy",      1, NULL, 'p' },
         { "proxyhost",	1, NULL, 'g' },
         { "proxyport",	1, NULL, 'G' },
-        { "desthost",	1, NULL, 'd' },
-        { "destport",	1, NULL, 'D' },
+        { "dest",	1, NULL, 'd' },
+	{ "remproxy",   1, NULL, 'r' },
 	{ "header",     1, NULL, 'H' },
-        { "dottedquad",	0, NULL, 'n' },
         { "verbose",	0, NULL, 'v' },
         { "ntlm",	0, NULL, 'N' },
 	{ "inetd",	0, NULL, 'i' },
@@ -182,9 +182,9 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
         { NULL,	0, NULL, 0 }
       };
 
-      c = getopt_long (argc, argv, "hVia:u:s:t:U:S:g:G:d:D:H:nvNq", long_options, &option_index);
+      c = getopt_long (argc, argv, "hVia:u:s:t:U:S:p:r:g:G:d:D:H:nvNq", long_options, &option_index);
 #else
-      c = getopt( argc, argv, "hVia:u:s:t:U:S:g:G:d:D:H:nvNq" );
+      c = getopt( argc, argv, "hVia:u:s:t:U:S:p:r:g:G:d:D:H:nvNq" );
 #endif
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
@@ -291,47 +291,48 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
           break;
 
         case 'g':	/* HTTPS Proxy host to connect to.  */
-          if (args_info->proxyhost_given)
-            {
-              fprintf (stderr, "%s: `--proxyhost' (`-g') option given more than once\n", PACKAGE);
-              clear_args ();
-              exit (1);
-            }
-          args_info->proxyhost_given = 1;
-          args_info->proxyhost_arg = gengetopt_strdup (optarg);
+          fprintf (stderr, "%s: `-g option is obsolete, use -p\n", PACKAGE);
+          clear_args ();
+          exit (1);
           break;
 
         case 'G':	/* HTTPS Proxy host portnumber to connect to.  */
-          if (args_info->proxyport_given)
-            {
-              fprintf (stderr, "%s: `--proxyport' (`-G') option given more than once\n", PACKAGE);
-              clear_args ();
-              exit (1);
-            }
-          args_info->proxyport_given = 1;
-          args_info->proxyport_arg = atoi (optarg);
+	  fprintf (stderr, "%s: `-g option is obsolete, use -p\n", PACKAGE);
+	  clear_args ();
+	  exit (1);
           break;
+
+	case 'p':       /* HTTPS Proxy host:port to connect to.  */
+	  if (args_info->proxy_given)
+	    {
+		fprintf (stderr, "%s: `--proxy' (`-p') option given more than once\n", PACKAGE);
+		clear_args ();
+		exit (1);
+	    }
+	  args_info->proxy_given = 1;
+	  args_info->proxy_arg = gengetopt_strdup (optarg);
+	  break;
+
+	case 'r':       /* Use a remote proxy */
+	  if (args_info->remproxy_given)
+	    {
+		fprintf (stderr, "%s: `--remproxy' (`-r') option given more than once\n", PACKAGE);
+		clear_args ();
+		exit (1);
+	    }
+	  args_info->remproxy_given = 1;
+	  args_info->remproxy_arg = gengetopt_strdup (optarg);
+	  break;
 
         case 'd':	/* Destination host to built the tunnel to.  */
-          if (args_info->desthost_given)
+          if (args_info->dest_given)
             {
-              fprintf (stderr, "%s: `--desthost' (`-d') option given more than once\n", PACKAGE);
+              fprintf (stderr, "%s: `--dest' (`-d') option given more than once\n", PACKAGE);
               clear_args ();
               exit (1);
             }
-          args_info->desthost_given = 1;
-          args_info->desthost_arg = gengetopt_strdup (optarg);
-          break;
-
-        case 'D':	/* Destination host portnumber to built the tunnel to.  */
-          if (args_info->destport_given)
-            {
-              fprintf (stderr, "%s: `--destport' (`-D') option given more than once\n", PACKAGE);
-              clear_args ();
-              exit (1);
-            }
-          args_info->destport_given = 1;
-          args_info->destport_arg = atoi (optarg);
+          args_info->dest_given = 1;
+          args_info->dest_arg = gengetopt_strdup (optarg);
           break;
 
         case 'H':	/* Extra headers to send to HTTPS proxy. */
@@ -339,10 +340,6 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	  /* FIXME in case of multiple headers, later... */
           args_info->header_arg = gengetopt_strdup (optarg);
           break;
-
-	case 'n':	/* Turn on resolve to Dotted Quad */
-	  args_info->dottedquad_flag = !(args_info->dottedquad_flag);
-	  break;
 
         case 'v':	/* Turn on verbosity.  */
           args_info->verbose_flag = !(args_info->verbose_flag);
@@ -368,37 +365,31 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
         } /* switch */
     } /* while */
 
-  if (! args_info->proxyhost_given && ! args_info->proxyport_given
-		  && ! args_info->desthost_given
-		  && ! args_info->destport_given )
+  if (! args_info->proxy_given && ! args_info->dest_given )
   {
           clear_args ();
 	  cmdline_parser_print_help ();
 	  exit (0);
   }
-  if (! args_info->proxyhost_given)
-    {
-      fprintf (stderr, "%s: `--proxyhost' (`-g') option required!\n", PACKAGE);
-      missing_required_options = 1;
-    }
 
-  if (! args_info->proxyport_given)
-    {
-      fprintf (stderr, "%s: `--proxyport' (`-G') option required!\n", PACKAGE);
-      missing_required_options = 1;
-    }
+if (args_info->proxy_given )
+  {
+        char * phost;
+        int pport;
 
-  if (! args_info->desthost_given)
-    {
-      fprintf (stderr, "%s: `--desthost' (`-d') option required!\n", PACKAGE);
-      missing_required_options = 1;
-    }
+        phost = malloc( 51 );
 
-  if (! args_info->destport_given)
-    {
-      fprintf (stderr, "%s: `--destport' (`-D') option required!\n", PACKAGE);
-      missing_required_options = 1;
-    }
+        fprintf( stderr, "%s: proxyhost (pre parse) given, it is: '%s'\n", PACKAGE, args_info->proxy_arg );
+        r = sscanf( args_info->proxy_arg, "%50[^:]:%d", phost, &pport );
+        if ( r == 2 )
+        {
+                args_info->proxyhost_arg = phost;
+                args_info->proxyport_arg = pport;
+                args_info->proxyhost_given = 1;
+                args_info->proxyport_given = 1;
+        }
+        fprintf( stderr, "%s: proxyhost (post parse) is '%s':'%d'\n", PACKAGE, args_info->proxyhost_arg, args_info->proxyport_arg );
+  }
 
   if ( missing_required_options )
     exit (1);
