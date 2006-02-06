@@ -46,7 +46,7 @@ void make_basicauth()
 	 * Base64 encode the clear text cookie to create the HTTP base64
 	 * authentication cookie
 	 */
-	base64( basicauth, p, strlen( p ) );
+	base64( (unsigned char *)basicauth, (unsigned char *)p, strlen( p ) );
 
 	if( args_info.verbose_flag )
 	{

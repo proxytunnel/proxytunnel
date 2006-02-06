@@ -80,7 +80,7 @@ void build_type1() {
 	type1->message_type = NTLM_TYPE_1;
 	type1->flags = NEG_UNICODE | NEG_OEM | REQ_TARGET | NEG_NTLM | NEG_ASIGN | NEG_NTLM2 | NEG_128 | NEG_56 | IE_SETSTHIS;
 
-	base64(ntlm_type1_buf, (unsigned char *)type1, len);
+	base64((unsigned char *)ntlm_type1_buf, (unsigned char *)type1, len);
 
 	free(type1);
 	return;
@@ -98,7 +98,7 @@ int parse_type2(unsigned char *buf)
 		return -1;
 	}
 
-	if (strcmp(t2->signature, "NTLMSSP") != 0) {
+	if (strcmp((const char *)t2->signature, "NTLMSSP") != 0) {
 		message("parse_type2: Signature did not match\n");
 		return -1;
 	}
@@ -223,7 +223,7 @@ void build_type3_response() {
 	for (i = 0; i < strlen(workstation); i++)
 		t3[type3->workstation.offset + i * sp] = workstation[i];
 
-	base64(ntlm_type3_buf, (unsigned char *)type3, len);
+	base64((unsigned char *)ntlm_type3_buf, (unsigned char *)type3, len);
 
 	free(type3);
 	return;

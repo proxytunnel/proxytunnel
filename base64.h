@@ -20,4 +20,4 @@
 /* base64.h */
 
 void base64(unsigned char *out, const unsigned char *in, int len);
-int unbase64(char *out, const char *in, int maxlen);
+int unbase64(unsigned char *out, const unsigned char *in, int maxlen);

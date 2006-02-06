@@ -45,7 +45,9 @@ void analyze_HTTP()
 	 */
 	while (strncmp( p, "HTTP/", 5) != 0 )
 	{
-		readline();                                                     		p = strtok( buf, " ");                                          	}
+		readline();
+		p = strtok( buf, " ");
+	}
 
 	if (strcmp( p, "HTTP/1.0" ) != 0 && strcmp( p, "HTTP/1.1" ) != 0)
 	{
@@ -65,7 +67,7 @@ void analyze_HTTP()
 			do {
 				readline();
 				if (strncmp( buf, "Proxy-Authenticate: NTLM ", 25) == 0) {
-					if (parse_type2(&buf[25]) < 0)
+					if (parse_type2((unsigned char *)&buf[25]) < 0)
 						exit(1);
 				}
 			} while ( strcmp( buf, "\r\n" ) != 0 );

@@ -88,7 +88,7 @@ void base64(unsigned char *out, const unsigned char *in, int len)
   *out = '\0';
 }
 
-int unbase64(char *out, const char *in, int maxlen)
+int unbase64(unsigned char *out, const unsigned char *in, int maxlen)
 /* base 64 to raw bytes in quasi-big-endian order, returning count of bytes */
 /* maxlen limits output buffer size, set to zero to ignore */
 {

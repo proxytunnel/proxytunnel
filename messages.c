@@ -33,7 +33,7 @@ void message( char *s, ... )
 	char	buf[1024];
 
 	va_start( ap, s );
-	vsnprintf( buf, sizeof( buf ), s, ap );
+	vsnprintf( (char *)buf, sizeof( buf ), s, ap );
 	va_end( ap );
 
 	if ( i_am_daemon )
