@@ -2,11 +2,11 @@
 #
 # Please uncomment the appropriate settings
 
-CC = gcc
-CFLAGS = -Wall -DHAVE_GETOPT_LONG -DCYGWIN
-LDFLAGS = -lssl
-INSTALLPATH = $(DESTDIR)/usr/local/bin
-MANPATH = $(DESTDIR)/usr/local/man/man1
+CC ?= gcc
+CFLAGS ?= -Wall -DHAVE_GETOPT_LONG -DCYGWIN
+LDFLAGS ?= -lssl
+INSTALLPATH ?= $(DESTDIR)/usr/local/bin
+MANPATH ?= $(DESTDIR)/usr/local/man/man1
 
 PROGNAME = proxytunnel
 OBJ = proxytunnel.o	\

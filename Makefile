@@ -3,7 +3,7 @@
 # Please uncomment the appropriate settings
 
 CC ?= gcc
-CFLAGS += -Wall -DHAVE_GETOPT_LONG -DWITH_NTLM
+CFLAGS += -Wall -DHAVE_GETOPT_LONG
 LDFLAGS += -lssl
 BINDIR = /usr/local/bin
 INSTALLPATH = $(DESTDIR)/$(BINDIR)

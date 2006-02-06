@@ -3,7 +3,7 @@
 # Please uncomment the appropriate settings
 
 CC = gcc
-CFLAGS = -Wall 
+CFLAGS = -Wall
 LDFLAGS = -lsocket -lnsl -lssl
 INSTALLPATH = /usr/local/bin
 

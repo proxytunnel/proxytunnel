@@ -66,10 +66,8 @@ cmdline_parser_print_help (void)
 "   -s STRING  --pass=STRING       Password to send to HTTPS proxy for auth\n"
 "   -U STRING  --uservar=STRING    Env var with Username for HTTPS proxy auth\n"
 "   -S STRING  --passvar=STRING    Env var with Password for HTTPS proxy auth\n"
-#ifdef WITH_NTLM 
 "   -N         --ntlm              Use NTLM Based Authentication\n"
 "   -t STRING  --domain=STRING     NTLM Domain (default: autodetect)\n"
-#endif
 "   -H STRING  --header=STRING     Add STRING to HTTP headers sent to proxy\n\n"
 "  If you don't provide -s or -S you will be prompted for a password.\n"
 "\nMiscellaneous options:\n"

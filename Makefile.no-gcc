@@ -2,10 +2,10 @@
 #
 # Please uncomment the appropriate settings
 
-CC = cc
-CFLAGS =
-LDFLAGS = -lssl
-INSTALLPATH = $(DESTDIR)/usr/bin
+CC ?= cc
+CFLAGS ?= 
+LDFLAGS ?= -lssl
+INSTALLPATH ?= $(DESTDIR)/usr/bin
 
 PROGNAME = proxytunnel
 OBJ = proxytunnel.o	\
