@@ -164,7 +164,7 @@ initsetproctitle(argc, argv, envp)
 		if (p == NULL)
 			return -1;
 		environ[i] = strncpy(p, envp[i], len);
-		p[len - 1] = NULL;
+		p[len - 1] = (int)NULL;
 	}
 	environ[i] = NULL;
 
