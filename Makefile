@@ -3,14 +3,17 @@
 # Please uncomment the appropriate settings
 
 CC ?= gcc
-CFLAGS += -Wall -DHAVE_GETOPT_LONG -DUSE_SSL
+CFLAGS ?= -Wall -O2
+CFLAGS += -DHAVE_GETOPT_LONG -DUSE_SSL
 #CFLAGS += -DSETPROCTITLE
 LDFLAGS += -lssl
-BINDIR = /usr/local/bin
-INSTALLPATH = $(DESTDIR)/$(BINDIR)
-MANPATH = /usr/share/man/man1
-INSTALLMANPATH = $(DESTDIR)/$(MANPATH)
 
+PREFIX =/usr/local
+BINDIR = $(PREFIX)/bin
+DATADIR = $(PREFIX)/share
+MANDIR = $(DATADIR)/man
+
+DESTDIR = 
 
 PROGNAME = proxytunnel
 OBJ = proxytunnel.o	\
@@ -24,12 +27,12 @@ OBJ = proxytunnel.o	\
 	ntlm.o
 
 proxytunnel: $(OBJ)
-	$(CC) -o $(PROGNAME) $(LDFLAGS) $(OBJ)
+	$(CC) -o $(PROGNAME) $(CFLAGS) $(LDFLAGS) $(OBJ)
 
 clean:		
 	@rm -f $(PROGNAME) $(OBJ)
 
 install:
 		mkdir -p $(INSTALLPATH) $(INSTALLMANPATH)
-		install -m755 $(PROGNAME) $(INSTALLPATH)/$(PROGNAME)
-		install -m644 debian/$(PROGNAME).1 $(INSTALLMANPATH)/$(PROGNAME).1
+		install -D -m755 $(PROGNAME) $(DESTDIR)$(BINDIR)/$(PROGNAME)
+		install -D -m644 debian/$(PROGNAME).1 $(DESTDIR)$(MANDIR))/$(PROGNAME).1
