@@ -4,6 +4,7 @@
 
 CC ?= gcc
 CFLAGS += -Wall -DHAVE_GETOPT_LONG -DUSE_SSL
+#CFLAGS += -DSETPROCTITLE
 LDFLAGS += -lssl
 BINDIR = /usr/local/bin
 INSTALLPATH = $(DESTDIR)/$(BINDIR)
@@ -14,6 +15,7 @@ INSTALLMANPATH = $(DESTDIR)/$(MANPATH)
 PROGNAME = proxytunnel
 OBJ = proxytunnel.o	\
 	base64.o	\
+	setproctitle.o	\
 	io.o		\
 	http.o		\
 	basicauth.o	\

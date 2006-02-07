@@ -22,6 +22,7 @@
 #include <string.h>
 #include <unistd.h>
 #include "config.h"
+#include "proxytunnel.h"
 
 #ifndef HAVE_GETOPT_LONG
 	extern char * optarg;
@@ -59,6 +60,9 @@ cmdline_parser_print_help (void)
 #endif
 #ifdef USE_SSL
 "   -e         --encrypt           encrypt the communication using SSL\n"
+#endif
+#ifdef SETPROCTITLE
+"   -x STRING  --proctitle=STRING  Set the process-title to STRING\n"
 #endif
 "   -p STRING  --proxy=STRING      Proxy host:port combination to connect to\n"
 "   -d STRING  --dest=STRING       Destination host:port to built the tunnel to\n"
@@ -129,6 +133,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
   args_info->header_given = 0;
   args_info->domain_given = 0;
   args_info->encrypt_given = 0;
+  args_info->proctitle_given = 0;
 
 /* No... we can't make this a function... -- Maniac */
 #define clear_args() \
@@ -147,6 +152,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	args_info->quiet_flag = 0; \
 	args_info->standalone_arg = 0; \
 	args_info->encrypt_flag = 0; \
+	args_info->proctitle_arg = NULL; \
 } 
 
   clear_args();
@@ -178,6 +184,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
         { "proxyport",	1, NULL, 'G' },
         { "dest",	1, NULL, 'd' },
 	{ "remproxy",   1, NULL, 'r' },
+	{ "proctitle",  1, NULL, 'x' },
 	{ "header",     1, NULL, 'H' },
         { "verbose",	0, NULL, 'v' },
         { "ntlm",	0, NULL, 'N' },
@@ -188,9 +195,9 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
         { NULL,	0, NULL, 0 }
       };
 
-      c = getopt_long (argc, argv, "hVia:u:s:t:U:S:p:r:d:H:nvNeq", long_options, &option_index);
+      c = getopt_long (argc, argv, "hVia:u:s:t:U:S:p:r:d:H:x:nvNeq", long_options, &option_index);
 #else
-      c = getopt( argc, argv, "hVia:u:s:t:U:S:p:r:d:H:nvNeq" );
+      c = getopt( argc, argv, "hVia:u:s:t:U:S:p:r:d:H:x:nvNeq" );
 #endif
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
@@ -235,6 +242,12 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
           clear_args ();
           cmdline_parser_print_version ();
           exit (0);
+
+	case 'x':
+	  	args_info->proctitle_given = 1;
+		message( "Proctitle override enabled\n" );
+		args_info->proctitle_arg = gengetopt_strdup (optarg);
+		break;
 
         case 'u':	/* Username to send to HTTPS proxy for authentication.  */
           if (args_info->user_given)

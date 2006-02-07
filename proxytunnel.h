@@ -37,7 +37,9 @@ void proxy_protocol();
 void do_ssl();
 void einde();
 void do_daemon();
-int main( int argc, char *argv[] );
+int initsetproctitle(int argc, char *argv[], char* envp[]);
+void setproctitle(const char *fmt, ...);
+int main( int argc, char *argv[], char *envp[] );
 
 /* Globals */
 int sd;                         /* The tunnel's socket descriptor */

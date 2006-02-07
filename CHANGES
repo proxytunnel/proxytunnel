@@ -12,6 +12,10 @@ Changes to proxytunnel version 1.6.0 -- Mon Feb  6 17:00:00 CET 2006
   only works on the FIRST proxy, not on a second proxy !!
 - Added SSL encryption to the data-layer to fool proxies that do deep-
   packet inspection, by: Alex Peuchert proxytunnel@peuchert.de
+- Added -x/--proctitle option, to hide/obfuscate the proxytunnel
+  command-line in process-listings. This code is disabled by default
+  But can be enabled by uncommenting the define in the Makefile.
+  Please test this code on systems available to you :)
 
 Changes to proxytunnel version 1.5.2 -- Fri Dec 16 09:27:11 CET 2005
 

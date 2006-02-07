@@ -39,6 +39,7 @@ struct gengetopt_args_info {
   int quiet_flag;	/* Turn on quiet mode (default=off). */
   int standalone_arg;	/* Turn on stdalone (-a) on port */
   int encrypt_flag;     /* Turn on SSL encryption (default=off). */
+  char * proctitle_arg; /* Override process title (default=off). */
 
   int help_given;	/* Whether help was given. */
   int version_given;	/* Whether version was given. */
@@ -56,6 +57,7 @@ struct gengetopt_args_info {
   int quiet_given;	/* Whether quiet mode was given. */
   int header_given;	/* Whenther extra headers are given */
   int encrypt_given;    /* Whether encrypt was given */
+  int proctitle_given;  /* Whether to override process title */
 } ;
 
 int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *args_info );

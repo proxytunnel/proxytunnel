@@ -31,6 +31,7 @@
 #include <signal.h>
 #include <syslog.h>
 #include <stdarg.h>
+#include <stdlib.h>
 
 #include "io.h"
 #include "config.h"
@@ -282,7 +283,7 @@ void do_daemon()
 /*
  * We begin at the beginning
  */
-int main( int argc, char *argv[] )
+int main( int argc, char *argv[], char *envp[] )
 {
 	program_name = argv[0];
 
@@ -291,6 +292,9 @@ int main( int argc, char *argv[] )
 	 */
 
 	cmdline_parser( argc, argv, &args_info );
+#ifdef SETPROCTITLE
+	initsetproctitle( argc, argv, envp );
+#endif
 
 	/*
 	 * This is what we do:
@@ -348,6 +352,14 @@ int main( int argc, char *argv[] )
 		if( args_info.encrypt_flag )
 			do_ssl();
 #endif
+#ifdef SETPROCTITLE
+		if( args_info.proctitle_given )
+			setproctitle( args_info.proctitle_arg );
+#else
+		if( args_info.proctitle_given )
+			message( "Setting process-title is not supported in this build\n");
+#endif
+
 		cpio();
 	}
 
