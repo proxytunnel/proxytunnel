@@ -1,0 +1,16 @@
+Short guide to installing proxytunnel
+
+On most modern unix systems, use the normal Makefile
+On MAC OS X, use Makefile.darwin
+If you don't have gnu-getopts, use Makefile.no-gnu-getopts
+On windows/Cygwin, use Makefile.cygwin
+etc etc...
+
+If you want to enable setproctitle functionality, add a CFLAGS define
+-DSETPROCTITLE (uncomment sample in Makefile)
+
+Run make and optionally 'make install'.
+If you manually want to install, copy proxytunnel to /usr/local/bin
+and optionally the manual-page from the debian-subdirectory to your manpath
+
+
