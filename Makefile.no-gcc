@@ -4,13 +4,16 @@
 
 CC ?= cc
 CFLAGS ?= 
-LDFLAGS ?= -lssl
+CFLAGS += -DUSE_SSL
+CFLAGS += -DPROCTITLE
+LDFLAGS += -lssl -lcrypto
 INSTALLPATH ?= $(DESTDIR)/usr/bin
 
 PROGNAME = proxytunnel
 OBJ = proxytunnel.o	\
 	base64.o	\
 	io.o		\
+	setproctitle.o	\
 	http.o		\
 	ntlm.o		\
 	basicauth.o	\

@@ -212,7 +212,8 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 #ifdef USE_SSL
 	case 'e':       /* Turn on SSL encryption */
 	  args_info->encrypt_flag = !(args_info->encrypt_flag);
-	  fprintf (stderr, "SSL enabled\n");
+	  if( args_info.verbose_flag )
+	  	message("SSL enabled\n");
 	  break;
 #endif
 
@@ -405,7 +406,7 @@ if (args_info->proxy_given )
 
         phost = malloc( 51 );
 
-        fprintf( stderr, "%s: proxyhost (pre parse) given, it is: '%s'\n", PACKAGE, args_info->proxy_arg );
+/*        fprintf( stderr, "%s: proxyhost (pre parse) given, it is: '%s'\n", PACKAGE, args_info->proxy_arg ); */
         r = sscanf( args_info->proxy_arg, "%50[^:]:%d", phost, &pport );
         if ( r == 2 )
         {
@@ -414,7 +415,7 @@ if (args_info->proxy_given )
                 args_info->proxyhost_given = 1;
                 args_info->proxyport_given = 1;
         }
-        fprintf( stderr, "%s: proxyhost (post parse) is '%s':'%d'\n", PACKAGE, args_info->proxyhost_arg, args_info->proxyport_arg );
+/*        fprintf( stderr, "%s: proxyhost (post parse) is '%s':'%d'\n", PACKAGE, args_info->proxyhost_arg, args_info->proxyport_arg ); */
   }
 
   if ( missing_required_options )
