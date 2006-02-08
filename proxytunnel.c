@@ -266,7 +266,7 @@ void do_daemon()
 		}
 
 		memcpy( &addr, &sa_cli.sin_addr.s_addr, 4 );
-		sprintf( (char *) buf, "%u.%u.%u.%u", addr[0], addr[1], addr[2], addr[3] );
+		snprintf( (char *) buf, 16, "%u.%u.%u.%u", addr[0], addr[1], addr[2], addr[3] );
 #ifdef CYGWIN
 		message( "Started tunnel pid=%d for connection from %s",
 		      pid, buf );

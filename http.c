@@ -93,13 +93,13 @@ void proxy_protocol()
 	{
 		if( args_info.verbose_flag )
 			message( "Tunneling to %s (remote proxy)\n", args_info.remproxy_arg );
-		sprintf( buf, "CONNECT %s HTTP/1.0\r\n", args_info.remproxy_arg );
+		snprintf( buf, 21+sizeof(args_info.remproxy_arg), "CONNECT %s HTTP/1.0\r\n", args_info.remproxy_arg );
 	}
 	else
 	{
 		if( args_info.verbose_flag )
 			message( "Tunneling to %s (destination)\n", args_info.dest_arg );
-		sprintf( buf, "CONNECT %s HTTP/1.0\r\n", args_info.dest_arg );
+		snprintf( buf, 21+sizeof(args_info.dest_arg), "CONNECT %s HTTP/1.0\r\n", args_info.dest_arg );
 	}
 	
 	if ( args_info.user_given && args_info.pass_given )
