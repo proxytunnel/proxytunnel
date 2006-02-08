@@ -2,9 +2,11 @@
 #
 # Please uncomment the appropriate settings
 
-CC = gcc
-CFLAGS = -Wall
-LDFLAGS = -lsocket -lnsl -lssl
+CC ?= gcc
+CFLAGS ?= -Wall -I/usr/local/ssl/include
+CFLAGS += -DUSE_SSL
+#CFLAGS += -DSETPROCTITLE
+LDFLAGS = -lsocket -lnsl -L/usr/local/ssl/lib -lssl -lcrypto
 INSTALLPATH = /usr/local/bin
 
 PROGNAME = proxytunnel

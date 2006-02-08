@@ -4,6 +4,8 @@
 
 CC ?= gcc
 CFLAGS ?= -Wall -DDARWIN -DHAVE_GETOPT_LONG
+CFLAGS += -DUSE_SSL
+#CFLAGS += -DSETPROCTITLE
 LDFLAGS ?= -lcrypto -lssl
 INSTALLPATH ?= $(DESTDIR)/usr/local/bin
 MANPATH ?= $(DESTDIR)/usr/local/man/man1
