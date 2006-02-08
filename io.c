@@ -108,6 +108,7 @@ int copy(int from, int to)
 	return 0;
 }
 
+#ifdef USE_SSL
 int copy_to_SSL(int from, SSL* to)
 {
         int n;
@@ -175,7 +176,7 @@ int copy_from_SSL(SSL* from, int to)
          */
         return 0;
 }
-
+#endif /* USE_SSL */
 
 
 /*
