@@ -14,6 +14,7 @@ OBJ = proxytunnel.o	\
 	http.o		\
 	ntlm.o		\
 	basicauth.o	\
+	setproctitle.o	\
 	messages.o	\
 	cmdline.o
 

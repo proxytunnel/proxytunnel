@@ -212,7 +212,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 #ifdef USE_SSL
 	case 'e':       /* Turn on SSL encryption */
 	  args_info->encrypt_flag = !(args_info->encrypt_flag);
-	  if( args_info.verbose_flag )
+	  if( args_info->verbose_flag )
 	  	message("SSL enabled\n");
 	  break;
 #endif
