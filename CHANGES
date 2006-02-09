@@ -8,6 +8,8 @@ Changes to proxytunnel version 1.6.0 -- Mon Feb  6 17:00:00 CET 2006
 - Small change to work around broken proxies by Stephane Engel
 - Changed client_len from size_t to socklen_t (64bit required)
 - Makefile vars now no longer override environment versions
+- Cleaned up the output, in quiet mode there are now no messages, in
+  normal mode a lot less (unless verbose is on)
 - Added proxy-bouncing support, courtesy of Dag Wieers, authentication
   only works on the FIRST proxy, not on a second proxy !!
 - Added SSL encryption to the data-layer to fool proxies that do deep-
