@@ -103,7 +103,8 @@ int parse_type2(unsigned char *buf)
 		return -1;
 	}
 
-	message("parse_type2: Signature matched\n");
+	if( args_info.verbose_flag )
+		message("parse_type2: Signature matched\n");
 
 	if (t2->message_type != NTLM_TYPE_2) {
 		message("parse_type2: Incorrect message type sent\n");
@@ -123,25 +124,32 @@ int parse_type2(unsigned char *buf)
 	for (i = 0; i < 8; i++)
 		challenge[i] = t2->challenge[i];
 
-	message("NTLM Got Domain: %s\n", domain);
+	if( args_info.verbose_flag )
+		message("NTLM Got Domain: %s\n", domain);
 
 	if( args_info.domain_given )
 	{
-		message( "NTLM Overriding domain: %s\n", args_info.domain_arg );
+		if( ! args_info.quiet_flag )
+			message( "NTLM Overriding domain: %s\n", args_info.domain_arg );
 		for( i = 0; i < strlen(args_info.domain_arg); i++ )
 		{
 			domain[i] = args_info.domain_arg[i];
 		}
 		domain[i] = 0;
 	}
-	message("NTLM Domain: %s\n", domain);
-	message("NTLM Got Challenge: ");
-	for (i = 0; i < 8; i++)
-		message("%02X", challenge[i]);
-	message("\n");
+
+	if( args_info.verbose_flag )
+	{
+		message("NTLM Domain: %s\n", domain);
+		message("NTLM Got Challenge: ");
+
+		for (i = 0; i < 8; i++)
+			message("%02X", challenge[i]);
+		message("\n");
+	}
 
 	if (!(t2->flags & NEG_NTLM && t2->flags & NEG_NTLM2)) {
-		message("parse_type2: Sorry, NTLMv2 is only supported at this time, I will do NTLMv1 should I ever get stuck behind a NTLMv1 FW\n");
+		message("parse_type2: Sorry, only NTLMv2 is supported at this time\n");
 		return -1;
 	}
 
@@ -339,13 +347,15 @@ void build_ntlm2_response() {
 	MD4_Update (&passcontext, unipasswd, passlen);
 	MD4_Final (passdigest, &passcontext);
 
-	message("MD4 of password is: ");
-	for( i = 0; i < 16; i++)
-		message("%02X", passdigest[i]);
-	message("\n");
+	if( args_info.verbose_flag )
+	{
+		message("NTLM: MD4 of password is: ");
+		for( i = 0; i < 16; i++)
+			message("%02X", passdigest[i]);
+		message("\n");
 
-	message("DOMAIN: %s\nUSER: %s\n", domain, args_info.user_arg);
-
+		message("DOMAIN: %s\nUSER: %s\n", domain, args_info.user_arg);
+	}
 
 	userdomlen = sizeof(unsigned char) * (strlen(args_info.user_arg) + strlen(domain)) * 2;
 	userdom = (unsigned char *)malloc(userdomlen);
@@ -377,29 +387,32 @@ void build_ntlm2_response() {
 		}
 	}
 
-	message("userdom is: ");
-	for( i = 0; i < userdomlen; i++)
-		message("%02X", userdom[i]);
-	message("\n");
-
+	if( args_info.verbose_flag )
+	{
+		message("userdom is: ");
+		for( i = 0; i < userdomlen; i++)
+			message("%02X", userdom[i]);
+		message("\n");
+	}
 
 	hmac_md5(userdom, userdomlen, passdigest, 16, userdomdigest);
 
 	free(userdom);
 
-	message("HMAC_MD5 of userdom keyed with MD4 pass is: ");
-	for( i = 0; i < 16; i++)
-		message("%02X", userdomdigest[i]);
-	message("\n");
+	if( args_info.verbose_flag )
+	{
+		message("HMAC_MD5 of userdom keyed with MD4 pass is: ");
+		for( i = 0; i < 16; i++)
+			message("%02X", userdomdigest[i]);
+		message("\n");
+	}
 
 	if ((sizeof(long long) != 8)) {
 		message("We are in trouble here.. long long support is not here!!\n");
 		exit(-1);
 	}
 
-
 	bloblen = sizeof(blob) + sizeof(unsigned char) * t_info_len;
-
 
 	pblob = (unsigned char *)malloc(bloblen);
 	if (!pblob) {
@@ -416,7 +429,6 @@ void build_ntlm2_response() {
 
 	b->signature = 0x00000101;
 
-
 	// This is nasty, also not sure all this 64bit arithmetic will work all the time.. basically the spec says you
 	// need the number of 10ths of microseconds since jan 1, 1601.
 
@@ -431,12 +443,13 @@ void build_ntlm2_response() {
 	for (i = 0; i < 8; i++)
 		b->client_challenge[i] = (unsigned char) ((256.0 * rand()) / (RAND_MAX + 1.0)) ;
 
-	message("client_challenge is: ");
-	for( i = 0; i < 8; i++)
-		message("%02X", b->client_challenge[i]);
-	message("\n");
-
-
+	if( args_info.verbose_flag )
+	{
+		message("client_challenge is: ");
+		for( i = 0; i < 8; i++)
+			message("%02X", b->client_challenge[i]);
+		message("\n");
+	}
 
 	memcpy(&b->data_start, t_info, t_info_len);
 
@@ -445,11 +458,13 @@ void build_ntlm2_response() {
 	for(i = 0; i < 16; i++)
 		b->digest[i] = responsedigest[i];
 
-	message("HMAC is: ");
-	for( i = 0; i < 16; i++)
-		message("%02X", responsedigest[i]);
-	message("\n");
-
+	if( args_info.verbose_flag )
+	{
+		message("HMAC is: ");
+		for( i = 0; i < 16; i++)
+			message("%02X", responsedigest[i]);
+		message("\n");
+	}
 
 	// LM2 response generation
 

@@ -326,7 +326,8 @@ int main( int argc, char *argv[], char *envp[] )
 	{
 		if (args_info.ntlm_flag) {
 			build_type1();
-			message("Build Type 1 NTLM Message : %s\n", ntlm_type1_buf);
+			if ( args_info.verbose_flag )
+				message("Build Type 1 NTLM Message : %s\n", ntlm_type1_buf);
 		} else
 			make_basicauth();
 	}

@@ -59,20 +59,28 @@ void analyze_HTTP()
 
 	if( strcmp( p, "200" ) != 0 )
 	{
-		message( "HTTP return code: '%s'\n", p );
-		p += strlen( p ) + 1;
-		message( "%s\n", p );
+		if( ! args_info.quiet_flag )
+			message( "HTTP return code: '%s'\n", p );
 
-		if (!ntlm_challenge && strcmp( p, "407") != 0) {
-			do {
+		p += strlen( p ) + 1;
+
+		if( ! args_info.quiet_flag )
+			message( "%s\n", p );
+
+		if (!ntlm_challenge && strcmp( p, "407") != 0)
+		{
+			do
+			{
 				readline();
-				if (strncmp( buf, "Proxy-Authenticate: NTLM ", 25) == 0) {
+				if (strncmp( buf, "Proxy-Authenticate: NTLM ", 25) == 0)
+				{
 					if (parse_type2((unsigned char *)&buf[25]) < 0)
 						exit(1);
 				}
 			} while ( strcmp( buf, "\r\n" ) != 0 );
 		}
-		if (ntlm_challenge == 1) {
+		if (ntlm_challenge == 1)
+		{
 			proxy_protocol();
 			return;
 		}
@@ -93,13 +101,13 @@ void proxy_protocol()
 	{
 		if( args_info.verbose_flag )
 			message( "Tunneling to %s (remote proxy)\n", args_info.remproxy_arg );
-		snprintf( buf, 21+sizeof(args_info.remproxy_arg), "CONNECT %s HTTP/1.0\r\n", args_info.remproxy_arg );
+		sprintf( buf, "CONNECT %s HTTP/1.0\r\n", args_info.remproxy_arg );
 	}
 	else
 	{
 		if( args_info.verbose_flag )
 			message( "Tunneling to %s (destination)\n", args_info.dest_arg );
-		snprintf( buf, 21+sizeof(args_info.dest_arg), "CONNECT %s HTTP/1.0\r\n", args_info.dest_arg );
+		sprintf( buf, "CONNECT %s HTTP/1.0\r\n", args_info.dest_arg );
 	}
 	
 	if ( args_info.user_given && args_info.pass_given )
