@@ -45,8 +45,13 @@ void analyze_HTTP()
 	 */
 	while (strncmp( p, "HTTP/", 5) != 0 )
 	{
-		readline();
-		p = strtok( buf, " ");
+		if ( readline() )
+			p = strtok( buf, " ");
+		else
+		{
+			message( "analyze_HTTP: borken\n" );
+			break;
+		}
 	}
 
 	if (strcmp( p, "HTTP/1.0" ) != 0 && strcmp( p, "HTTP/1.1" ) != 0)

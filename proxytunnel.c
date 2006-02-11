@@ -355,7 +355,7 @@ int main( int argc, char *argv[], char *envp[] )
 #endif
 #ifdef SETPROCTITLE
 		if( args_info.proctitle_given )
-			setproctitle( args_info.proctitle_arg );
+			setproctitle( "%s\0", args_info.proctitle_arg );
 #else
 		if( args_info.proctitle_given )
 			message( "Setting process-title is not supported in this build\n");

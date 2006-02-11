@@ -74,10 +74,10 @@
 #define SPT_SCO		6	/* write kernel u. area */
 #define SPT_CHANGEARGV	7	/* write our own strings into argv[] */
 
-# define MAXLINE	2048		/* max line length */
+#define MAXLINE	2048		/* max line length */
 
 #ifndef SPT_TYPE
-# define SPT_TYPE	SPT_REUSEARGV
+# define SPT_TYPE	SPT_NONE
 #endif
 
 #if SPT_TYPE != SPT_NONE && SPT_TYPE != SPT_BUILTIN
@@ -121,7 +121,7 @@ typedef unsigned int	*pt_entry_t;
 # endif
 
 # ifndef SPT_PADCHAR
-#  define SPT_PADCHAR	' '
+#  define SPT_PADCHAR	'\0'
 # endif
 
 # ifndef SPT_BUFSIZE

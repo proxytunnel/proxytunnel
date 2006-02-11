@@ -3,9 +3,9 @@
 # Please uncomment the appropriate settings
 
 CC ?= gcc
-CFLAGS ?= -Wall -O2
+CFLAGS ?= -Wall -O2 -g
 CFLAGS += -DHAVE_GETOPT_LONG -DUSE_SSL
-#CFLAGS += -DSETPROCTITLE
+CFLAGS += -DSETPROCTITLE -DSPT_TYPE=1
 LDFLAGS += -lssl
 
 PREFIX =/usr/local

@@ -41,7 +41,7 @@
  * Read one line of data from the tunnel. Line is terminated by a
  * newline character. Result is stored in buf.
  */
-void readline()
+int readline()
 {
 	char	*p = buf;
 	char	c = 0;
@@ -68,6 +68,7 @@ void readline()
 
 	if( args_info.verbose_flag )
 		message( "DEBUG: recv: '%s'", buf );
+	return strlen( buf );
 }
 
 /*

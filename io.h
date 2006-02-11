@@ -18,7 +18,7 @@
  */
 
 /* io.h */
-void readline();
+int readline();
 int copy(int from, int to);
 void cpio();
 
