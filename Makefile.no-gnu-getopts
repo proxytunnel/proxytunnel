@@ -5,8 +5,8 @@
 CC ?= gcc
 CFLAGS ?= -Wall -O2
 CFLAGS += -DUSE_SSL
-#CFLAGS += -DSETPROCTITLE
-LDFLAGS += -lssl
+CFLAGS += -DSETPROCTITLE
+LDFLAGS += -lssl -lcrypto
 
 PREFIX =/usr/local
 BINDIR = $(PREFIX)/bin
