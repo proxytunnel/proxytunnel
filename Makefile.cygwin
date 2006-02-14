@@ -6,7 +6,7 @@ CC ?= gcc
 CFLAGS ?= -Wall -DHAVE_GETOPT_LONG -DCYGWIN
 CFLAGS += -DUSE_SSL
 CFLAGS += -DSETPROCTITLE
-LDFLAGS ?= -lssl.dll.a -lcrypto.dll.a
+LDFLAGS ?= -lssl -lcrypto
 INSTALLPATH ?= $(DESTDIR)/usr/local/bin
 MANPATH ?= $(DESTDIR)/usr/local/man/man1
 
@@ -22,7 +22,7 @@ OBJ = proxytunnel.o	\
 	cmdline.o
 
 proxytunnel: $(OBJ)
-	$(CC) -o $(PROGNAME) -static $(LDFLAGS) $(OBJ) /lib/libssl.dll.a /lib/libcrypto.dll.a
+	$(CC) -o $(PROGNAME) -static $(OBJ) $(LDFLAGS)
 
 clean:		
 	@rm -f $(PROGNAME) $(OBJ)

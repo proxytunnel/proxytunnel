@@ -22,14 +22,14 @@
 
 #include "ntlm.h"
 #include "global.h"
-#include <openssl/md4.h>
-#include <openssl/md5.h>
 #include "base64.h"
 #include <stdlib.h>
 #include <string.h>
 #include "proxytunnel.h"
 #include <ctype.h>
 #include <sys/time.h>
+#include <openssl/md4.h>
+#include <openssl/md5.h>
 
 #define TYPE1_DATA_SEG 9
 #define TYPE2_BUF_SIZE 2048
