@@ -5,3 +5,5 @@ Version 1.6
 	the proxy password doesn't work. Entering the password on the command-
 	line works, as does putting it in a environment variable and telling		proxytunnel about it with -S VARNAME
 
+	- The setproctitle code doesn't work (correctly) on all platforms.
+	This needs looking at.

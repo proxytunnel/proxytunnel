@@ -1,4 +1,4 @@
-Changes to proxytunnel version 1.6.0 -- Mon Feb  6 17:00:00 CET 2006
+Changes to proxytunnel version 1.6.0 -- Tue Feb 21 22:17:16 CET 2006
 
 - Replaced -g/-G (proxy host and port) with -p proxy:post shorthand
 - Replaced -d/-D (dest host and port) with -d host:post shorthand
