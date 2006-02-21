@@ -33,6 +33,5 @@ clean:
 	@rm -f $(PROGNAME) $(OBJ)
 
 install:
-		mkdir -p $(INSTALLPATH) $(INSTALLMANPATH)
 		install -D -m755 $(PROGNAME) $(DESTDIR)$(BINDIR)/$(PROGNAME)
 		install -D -m644 debian/$(PROGNAME).1 $(DESTDIR)$(MANDIR))/$(PROGNAME).1
