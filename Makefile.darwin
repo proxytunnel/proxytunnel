@@ -21,7 +21,7 @@ OBJ = proxytunnel.o	\
 	cmdline.o
 
 proxytunnel: $(OBJ)
-	$(CC) -o $(PROGNAME) $(LDFLAGS) $(OBJ)
+	$(CC) -o $(PROGNAME) $(OBJ) $(LDFLAGS)
 
 clean:		
 	@rm -f $(PROGNAME) $(OBJ)
