@@ -6,14 +6,19 @@ CC ?= gcc
 CFLAGS ?= -Wall -O2 -g
 CFLAGS += -DHAVE_GETOPT_LONG -DUSE_SSL
 CFLAGS += -DSETPROCTITLE -DSPT_TYPE=1
-LDFLAGS += -lssl -lcrypto
 
-PREFIX =/usr/local
+SSL_LIBS := $(shell pkg-config --libs libssl 2>/dev/null)
+ifeq ($(SSL_LIBS),)
+SSL_LIBS := $(shell pkg-config --libs openssl 2>/dev/null)
+endif
+ifeq ($(SSL_LIBS),)
+SSL_LIBS := -lssl -lcrypto
+endif
+LDFLAGS += $(SSL_LIBS)
+
+PREFIX = $(DESTDIR)/usr/local
 BINDIR = $(PREFIX)/bin
-DATADIR = $(PREFIX)/share
-MANDIR = $(DATADIR)/man
-
-DESTDIR = 
+MANDIR = $(PREFIX)/man/man1
 
 PROGNAME = proxytunnel
 OBJ = proxytunnel.o	\
@@ -33,5 +38,5 @@ clean:
 	@rm -f $(PROGNAME) $(OBJ)
 
 install:
-		install -D -m755 $(PROGNAME) $(DESTDIR)$(BINDIR)/$(PROGNAME)
-		install -D -m644 debian/$(PROGNAME).1 $(DESTDIR)$(MANDIR))/$(PROGNAME).1
+		install -D -m755 $(PROGNAME) $(BINDIR)/$(PROGNAME)
+		install -D -m644 debian/$(PROGNAME).1 $(MANDIR))/$(PROGNAME).1
