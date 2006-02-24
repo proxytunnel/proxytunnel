@@ -39,4 +39,4 @@ clean:
 
 install:
 		install -D -m755 $(PROGNAME) $(BINDIR)/$(PROGNAME)
-		install -D -m644 debian/$(PROGNAME).1 $(MANDIR))/$(PROGNAME).1
+		install -D -m644 debian/$(PROGNAME).1 $(MANDIR)/$(PROGNAME).1
