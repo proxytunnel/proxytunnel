@@ -161,7 +161,8 @@ void proxy_protocol()
 	 */
 	analyze_HTTP();
 
-	if (args_info.remproxy_given ) {
+	if (args_info.remproxy_given )
+	{
 		/*
 		 * Clean buffer for next analysis
  		 */

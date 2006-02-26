@@ -295,28 +295,5 @@ void cpio()
 			break;
 		}
 	}
-
-	/*
-	 * Close all files we deal with
-	 */
-	close( read_fd );
-#ifdef USE_SSL
-	if( args_info.encrypt_flag )
-	{
-		SSL_free (ssl);
-		SSL_CTX_free (ctx);
-	}
-#else
-	close( sd );
-#endif
-
-	if( read_fd != write_fd )	/* When not running from inetd */
-	{
-		close( write_fd );
-	}
-
-	if( args_info.verbose_flag )
-	{
-		message( "Tunnel closed\n" );
-	}
+	closeall();
 }

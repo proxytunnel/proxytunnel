@@ -32,7 +32,6 @@
 
 #include "cmdline.h"
 
-
 void
 cmdline_parser_print_version (void)
 {
@@ -404,10 +403,11 @@ if (args_info->proxy_given )
         char * phost;
         int pport;
 
-        phost = malloc( 51 );
+        phost = malloc( 50+1 );
 
-/*        fprintf( stderr, "%s: proxyhost (pre parse) given, it is: '%s'\n", PACKAGE, args_info->proxy_arg ); */
-        r = sscanf( args_info->proxy_arg, "%50[^:]:%d", phost, &pport );
+	//fprintf( stderr, "%s: proxyhost (pre parse) given, it is: '%s'\n", PACKAGE, args_info->proxy_arg );
+
+        r = sscanf( args_info->proxy_arg, "%50[^:]:%5u", phost, &pport );
         if ( r == 2 )
         {
                 args_info->proxyhost_arg = phost;
@@ -415,7 +415,12 @@ if (args_info->proxy_given )
                 args_info->proxyhost_given = 1;
                 args_info->proxyport_given = 1;
         }
-/*        fprintf( stderr, "%s: proxyhost (post parse) is '%s':'%d'\n", PACKAGE, args_info->proxyhost_arg, args_info->proxyport_arg ); */
+	else
+	{
+		message( "parse_cmdline: couln't find your proxy hostname/ip\n" );
+		missing_required_options++;
+	}
+        //message( "%s: proxyhost (post parse) is '%s':'%d'\n", PACKAGE, args_info->proxyhost_arg, args_info->proxyport_arg );
   }
 
   if ( missing_required_options )

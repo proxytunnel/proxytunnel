@@ -61,14 +61,8 @@ SSL_METHOD *meth;
  */
 void signal_handler( int signal )
 {
-	close(0);
-	close(1);
-
-	if ( sd != 0 )
-		close( sd );
-
 	message( "Tunnel closed on signal %d\n", signal );
-	exit(1);
+	closeall();
 }
 
 /*
@@ -157,13 +151,46 @@ void do_ssl()
 /*
  * Leave a goodbye message
  */
-void einde() {
+void closeall() {
+	message( "In closeall\n");
+
+	if( args_info.verbose_flag )
+	{
+		message( "Tunnel closed\n" );
+	}
+
 #ifdef CYGWIN
    	message( "Goodbye" );
 #else
         syslog(LOG_NOTICE,"Goodbye...");
         closelog();
 #endif
+
+	/*
+	 * Close all files we deal with
+	 */
+	close(0);
+	close(1);
+
+	if ( sd != 0 )
+		close( sd );
+
+
+#ifdef USE_SSL
+	if( args_info.encrypt_flag )
+	{
+		SSL_free (ssl);
+		SSL_CTX_free (ctx);
+	}
+#else
+	close( sd );
+#endif
+
+	if( read_fd != write_fd )	/* When not running from inetd */
+	{
+		close( write_fd );
+	}
+	close( read_fd );
 }
 
 /*
@@ -200,6 +227,14 @@ void do_daemon()
 	signal(SIGHUP,SIG_IGN);
 	signal(SIGCHLD,SIG_IGN);
 
+#ifdef SETPROCTITLE
+	if( args_info.proctitle_given )
+		setproctitle( "%s [daemon]\0", args_info.proctitle_arg );
+#else
+	if( args_info.proctitle_given )
+		message( "Setting process-title is not supported in this build\n");
+#endif
+
 /* For the moment, turn of forking into background on the cygwin platform
  * so users can run it in a command window and ctrl-c it to cancel.
  * Also so we can put logging there, since there's nog syslog on cygwin (AFAIK)
@@ -220,7 +255,7 @@ void do_daemon()
 	openlog( program_name, LOG_CONS|LOG_PID,LOG_DAEMON );
 	i_am_daemon = 1;
 #endif /* CYGWIN */
-	atexit( einde );
+	atexit( closeall );
 	listen( listen_sd, 5 );
 
 	while (1==1)
@@ -261,6 +296,18 @@ void do_daemon()
 				proxy_protocol();
 				proxy_protocol();
 			}
+
+#ifdef USE_SSL
+			if( args_info.encrypt_flag )
+				do_ssl();
+#endif
+#ifdef SETPROCTITLE
+			if( args_info.proctitle_given )
+				setproctitle( "%s [child]\0", args_info.proctitle_arg );
+#else
+			if( args_info.proctitle_given )
+				message( "Setting process-title is not supported in this build\n");
+#endif
 			cpio();
 			exit( 0 );
 		}
@@ -283,7 +330,7 @@ void do_daemon()
 /*
  * We begin at the beginning
  */
-int main( int argc, char *argv[], char *envp[] )
+int main( int argc, char *argv[] )
 {
 	program_name = argv[0];
 
@@ -293,7 +340,7 @@ int main( int argc, char *argv[], char *envp[] )
 
 	cmdline_parser( argc, argv, &args_info );
 #ifdef SETPROCTITLE
-	initsetproctitle( argc, argv, envp );
+	initsetproctitle( argc, argv );
 #endif
 
 	/*
@@ -355,7 +402,7 @@ int main( int argc, char *argv[], char *envp[] )
 #endif
 #ifdef SETPROCTITLE
 		if( args_info.proctitle_given )
-			setproctitle( "%s\0", args_info.proctitle_arg );
+			setproctitle( "%s [cpio]\0", args_info.proctitle_arg );
 #else
 		if( args_info.proctitle_given )
 			message( "Setting process-title is not supported in this build\n");

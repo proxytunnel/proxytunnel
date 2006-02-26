@@ -35,11 +35,13 @@ void tunnel_connect();
 void analyze_HTTP();
 void proxy_protocol();
 void do_ssl();
-void einde();
+void closeall();
 void do_daemon();
-int initsetproctitle(int argc, char *argv[], char* envp[]);
+void initsetproctitle(int argc, char *argv[]);
 void setproctitle(const char *fmt, ...);
-int main( int argc, char *argv[], char *envp[] );
+size_t strlcat(char *dst, const char *src, size_t siz);
+size_t strlcpy(char *dst, const char *src, size_t siz);
+int main( int argc, char *argv[] );
 
 /* Globals */
 int sd;                         /* The tunnel's socket descriptor */
