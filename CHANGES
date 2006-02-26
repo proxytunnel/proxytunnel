@@ -1,4 +1,14 @@
-Changes to proxytunnel version 1.6.0 -- Tue Feb 21 22:17:16 CET 2006
+Changes to proxytunnel version 1.6.1 -- Sat Feb 25 14:45:25 CET 2006
+
+- Not release yet, not in cvs, FOSDEM build ;)
+- Do setproctitle and ssl stuff on 'standalone' mode too
+- Changed scanning/malloc's for proxy-hostname, we could overflow there
+- Ripped out setproctitle and replaced it with openssh's code from
+  openbsd-compat/setproctitle.c, also took in strlcat/strlcpy
+- Removed all non-default Makefiles (darwin/solaris/cygwin etc)
+  uncomment the -D's in the regular Makefile for your system/config
+
+Changes to proxytunnel version 1.6.0 -- Mon Feb  6 17:00:00 CET 2006
 
 - Replaced -g/-G (proxy host and port) with -p proxy:post shorthand
 - Replaced -d/-D (dest host and port) with -d host:post shorthand
