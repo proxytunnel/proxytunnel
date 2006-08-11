@@ -60,5 +60,5 @@ clean:
 
 install:
 		install -D -m755 $(PROGNAME) $(DESTDIR)$(BINDIR)/$(PROGNAME)
-		install -D -m644 debian/$(PROGNAME).1 $(DESTDIR)$(MANDIR))/$(PROGNAME).1
+		install -D -m644 debian/$(PROGNAME).1 $(DESTDIR)$(MANDIR)/$(PROGNAME).1
 
