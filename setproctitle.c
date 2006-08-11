@@ -137,11 +137,19 @@ setproctitle(const char *fmt, ...)
 		return;
 #endif
 
-	strlcpy(buf, __progname, sizeof(buf));
+	if( args_info.proctitle_given )
+		strlcpy(buf, args_info.proctitle_arg, sizeof(buf));
+	else
+	{
+		strlcpy(buf, __progname, sizeof(buf));
+		strlcat(buf, ": ", sizeof(buf));
+
+	}
+
 
 	va_start(ap, fmt);
 	if (fmt != NULL) {
-		len = strlcat(buf, ": ", sizeof(buf));
+		len = strlen(buf);
 		if (len < sizeof(buf))
 			vsnprintf(buf + len, sizeof(buf) - len , fmt, ap);
 	}

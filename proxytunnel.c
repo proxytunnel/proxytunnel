@@ -228,8 +228,10 @@ void do_daemon()
 	signal(SIGCHLD,SIG_IGN);
 
 #ifdef SETPROCTITLE
-	if( args_info.proctitle_given )
-		setproctitle( "%s [daemon]\0", args_info.proctitle_arg );
+	if( ! args_info.proctitle_given )
+		setproctitle( "[daemon]\0" );
+	else
+		setproctitle( "\0" );
 #else
 	if( args_info.proctitle_given )
 		message( "Setting process-title is not supported in this build\n");
@@ -299,8 +301,10 @@ void do_daemon()
 				do_ssl();
 #endif
 #ifdef SETPROCTITLE
-			if( args_info.proctitle_given )
-				setproctitle( "%s [cpio]\0", args_info.proctitle_arg );
+			if( ! args_info.proctitle_given )
+				setproctitle( "[cpio]\0" );
+			else
+				setproctitle( "\0" );
 #else
 			if( args_info.proctitle_given )
 				message( "Setting process-title is not supported in this build\n");
@@ -400,8 +404,10 @@ int main( int argc, char *argv[] )
 			do_ssl();
 #endif
 #ifdef SETPROCTITLE
-		if( args_info.proctitle_given )
-			setproctitle( "%s [cpio]\0", args_info.proctitle_arg );
+		if( ! args_info.proctitle_given )
+			setproctitle( "[cpio]\0" );
+		else
+			setproctitle( "\0" );
 #else
 		if( args_info.proctitle_given )
 			message( "Setting process-title is not supported in this build\n");
