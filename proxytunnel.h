@@ -42,6 +42,8 @@ void setproctitle(const char *fmt, ...);
 size_t strlcat(char *dst, const char *src, size_t siz);
 size_t strlcpy(char *dst, const char *src, size_t siz);
 int main( int argc, char *argv[] );
+char * readpassphrase(const char *, char *, size_t, int);
+char * getpass_x(const char *prompt);
 
 /* Globals */
 int sd;                         /* The tunnel's socket descriptor */

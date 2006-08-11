@@ -46,6 +46,7 @@ OBJ = proxytunnel.o	\
 	io.o		\
 	http.o		\
 	basicauth.o	\
+	readpassphrase.o \
 	messages.o	\
 	cmdline.o	\
 	ntlm.o

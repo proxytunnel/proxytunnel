@@ -290,25 +290,24 @@ void do_daemon()
 		else if ( pid == 0 )
 		{
         		read_fd = write_fd = sd_client;
+
+			/* Main processing */
 			tunnel_connect();
 			proxy_protocol();
-			if (args_info.ntlm_flag) {
-				proxy_protocol();
-				proxy_protocol();
-			}
-
 #ifdef USE_SSL
 			if( args_info.encrypt_flag )
 				do_ssl();
 #endif
 #ifdef SETPROCTITLE
 			if( args_info.proctitle_given )
-				setproctitle( "%s [child]\0", args_info.proctitle_arg );
+				setproctitle( "%s [cpio]\0", args_info.proctitle_arg );
 #else
 			if( args_info.proctitle_given )
 				message( "Setting process-title is not supported in this build\n");
 #endif
+
 			cpio();
+/////
 			exit( 0 );
 		}
 
@@ -360,7 +359,7 @@ int main( int argc, char *argv[] )
 	if( args_info.user_given && !args_info.pass_given )
 	{
 		char *cp;
-		cp = getpass ("Enter proxy password:");
+		cp = getpass_x ("Enter proxy password:");
 		if (cp != NULL && strlen (cp) > 0)
 		{
 			args_info.pass_arg = strdup (cp);

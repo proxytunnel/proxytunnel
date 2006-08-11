@@ -3,8 +3,8 @@ proxytunnel
 -----------
 
 Author:		Jos Visser <josv@osp.nl>, Mark Janssen <maniac@maniac.nl>
-Date: 		Tue Feb 21 22:18:38 CET 2006
-Version:	1.6.0
+Date: 		Wed Jun 14 10:45:47 CEST 2006
+Version:	1.6.3
 
 Hi all,
 
@@ -22,7 +22,7 @@ Proxytunnel is very easy to use, when running proxytunnel with the help
 option it specifies it's command-line options.
 
 $ ./proxytunnel --help
-Proxytunnel 1.6.0
+Proxytunnel 1.6.3
 Copyright 2001-2006 Proxytunnel Project
 Jos Visser (Muppet) <josv@osp.nl>, Mark Janssen (Maniac) <maniac@maniac.nl>
 

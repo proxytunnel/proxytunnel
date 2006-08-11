@@ -1,10 +1,4 @@
 Known Issues with proxytunnel
 
-Version 1.6
-	- Cygwin version doesn't correctly work with getpass(). So asking for
-	the proxy password doesn't work. Entering the password on the command-
-	line works, as does putting it in a environment variable and telling
-	proxytunnel about it with -S VARNAME
-	- Setproctitle stuff added whitespace at the end of the process-title,
-	this is fixed in the current CVS
-
+Apache might need: http://issues.apache.org/bugzilla/attachment.cgi?id=16105
+for SSL proxying ;) (see http://issues.apache.org/bugzilla/show_bug.cgi?id=29744)

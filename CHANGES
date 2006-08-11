@@ -1,12 +1,22 @@
+Changes to proxytunnel version 1.6.3 -- Mon Apr 10 12:48:02 CEST 2006
+
+- Replaced call to getpass to getpass_x, which comes from openssh's
+  readpassphrase.c. This should handle longer passwords on systems
+  with broken (crappy) getpass calls (solaris/hpux)
+
+Changes to proxytunnel version 1.6.2 -- Wed Mar  8 10:08:53 CET 2006
+
+- Fix NTLM in stand-alone mode
+
 Changes to proxytunnel version 1.6.1 -- Sat Feb 25 14:45:25 CET 2006
 
+- FOSDEM build (www.fosdem.org)
 - Do setproctitle and ssl stuff on 'standalone' mode too
 - Changed scanning/malloc's for proxy-hostname, we could overflow there
 - Ripped out setproctitle and replaced it with openssh's code from
   openbsd-compat/setproctitle.c, also took in strlcat/strlcpy
 - Removed all non-default Makefiles (darwin/solaris/cygwin etc)
   uncomment the -D's in the regular Makefile for your system/config
-- Not release yet, not in cvs, FOSDEM build ;) (below here not in cvs)
 - Removed extra message in closeall() function
 - Removed Proctitle override message
 

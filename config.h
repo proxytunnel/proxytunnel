@@ -17,7 +17,14 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#define VERSION	"1.6.0"
+#define VERSION	"1.6.3"
 #define PACKAGE	"Proxytunnel"
 #define PURPOSE "Build generic tunnels through HTTPS proxies"
 #define AUTHORS "Jos Visser (Muppet) <josv@osp.nl>, Mark Janssen (Maniac) <maniac@maniac.nl>"
+
+#ifndef _PATH_TTY
+# define _PATH_TTY "/dev/tty"
+#endif
+#ifndef _PASSWORD_LEN
+# define _PASSWORD_LEN 80
+#endif
