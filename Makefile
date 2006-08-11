@@ -33,9 +33,10 @@ SSL_LIBS := -lssl -lcrypto
 endif
 LDFLAGS += $(SSL_LIBS)
 
-PREFIX = $(DESTDIR)/usr/local
+PREFIX =/usr/local
 BINDIR = $(PREFIX)/bin
-MANDIR = $(PREFIX)/man/man1
+DATADIR = $(PREFIX)/share
+MANDIR = $(DATADIR)/man
 
 PROGNAME = proxytunnel
 OBJ = proxytunnel.o	\
@@ -58,5 +59,6 @@ clean:
 	@rm -f $(PROGNAME) $(OBJ)
 
 install:
-		install -D -m755 $(PROGNAME) $(BINDIR)/$(PROGNAME)
-		install -D -m644 debian/$(PROGNAME).1 $(MANDIR)/$(PROGNAME).1
+		install -D -m755 $(PROGNAME) $(DESTDIR)$(BINDIR)/$(PROGNAME)
+		install -D -m644 debian/$(PROGNAME).1 $(DESTDIR)$(MANDIR))/$(PROGNAME).1
+
