@@ -59,6 +59,6 @@ clean:
 	@rm -f $(PROGNAME) $(OBJ)
 
 install:
-		install -D -m755 $(PROGNAME) $(DESTDIR)$(BINDIR)/$(PROGNAME)
-		install -D -m644 debian/$(PROGNAME).1 $(DESTDIR)$(MANDIR)/$(PROGNAME).1
+		install -Dp -m0755 $(PROGNAME) $(DESTDIR)$(BINDIR)/$(PROGNAME)
+		install -Dp -m0644 debian/$(PROGNAME).1 $(DESTDIR)$(MANDIR)/man1/$(PROGNAME).1
 
