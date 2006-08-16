@@ -3,6 +3,7 @@ Changes to proxytunnel version 1.6.4 -- xxx
 - Reworked setproctitle calls, giving an argument to -x should now
   really hide all traces of the original name, not only the arguments
   Also remove argument-info on normal (without -x) runs.
+- Suggested changes (From Dag Wieers) to install-target applied 
 
 Changes to proxytunnel version 1.6.3 -- Mon Apr 10 12:48:02 CEST 2006
 
