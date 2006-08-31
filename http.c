@@ -49,8 +49,8 @@ void analyze_HTTP()
 			p = strtok( buf, " ");
 		else
 		{
-			message( "analyze_HTTP: borken\n" );
-			break;
+			message( "analyze_HTTP: readline failed: Connection closed by foreign host\n" );
+			exit(2);
 		}
 	}
 
