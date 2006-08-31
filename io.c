@@ -51,7 +51,7 @@ int readline()
 	 * Read one character at a time into buf, until a newline is
 	 * encountered.
 	 */
-	while ( c != 10 && i < SIZE - 1 )
+	while ( c != 10 && ( i < SIZE - 1 ) )
 	{
 		if( recv( sd, &c ,1 ,0 ) < 0)
 		{
@@ -67,7 +67,11 @@ int readline()
 	*p = 0;
 
 	if( args_info.verbose_flag )
-		message( "DEBUG: recv: '%s'", buf );
+	{
+		char * dstr = malloc(sizeof(buf-1) );
+		strlcpy( dstr, buf, strlen(buf) -1 );
+		message( "DEBUG: recv: '%s'\n", dstr );
+	}
 	return strlen( buf );
 }
 
