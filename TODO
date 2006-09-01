@@ -1,0 +1,31 @@
+### Proxy bouncing support
+- Add multi-level proxy bouncing support (with syntax for it)
+  eg. proxytunnel -p local-proxy:port -r remote-proxy1:port -r remote-proxy2:port -d %h:%p
+
+- Add proxy bouncing authentication support (with syntax for it)
+  eg. proxytunnel -p user@local-proxy:port -r user@remote-proxy:port -d %h:%p
+  or: proxytunnel -p username:password@local-proxy:port -r username:password@remote-proxy:port -d %h:%p
+
+
+### SSL proxy support
+- Lobby for the Apache project to allow CONNECT over SSL (much like GET,
+  PUT and HEAD is supported over SSL)
+  see: http://issues.apache.org/bugzilla/show_bug.cgi?id=29744
+
+
+### Putty support
+- Lobby for the putty project to include ProxyCommand functionality
+
+- Make proxytunnel build on Windows
+
+
+### Code cleanup
+- Fix permissions in subversion tree (some files are wrongly executable)
+
+- Adopt a style guide for C (different styles are now being used)
+
+- Find some hardcore C experts to help us improve the code quality
+
+
+### Documentation
+- Add all documentation in asciidoc standard
