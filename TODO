@@ -15,6 +15,7 @@
 
 ### Putty support
 - Lobby for the putty project to include ProxyCommand functionality
+  see: http://www.chiark.greenend.org.uk/~sgtatham/putty/wishlist/proxy-command.html
 
 - Make proxytunnel build on Windows
 
