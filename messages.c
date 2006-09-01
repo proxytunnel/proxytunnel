@@ -47,7 +47,10 @@ void message( char *s, ... )
  */
 void my_perror( char *msg )
 {
-	char *err = strerror( errno );
-
-	message( "Error! %s: %s\n", msg, err );
+	if (errno == 0) {
+		message( "error: %s.\n", msg );
+	} else {
+		char *errstr = strerror( errno );
+		message( "error: %s: [%d] %s\n", msg, errno, errstr );
+	}
 }

@@ -49,7 +49,7 @@ void analyze_HTTP()
 			p = strtok( buf, " ");
 		else
 		{
-			message( "analyze_HTTP: readline failed: Connection closed by foreign host\n" );
+			message( "analyze_HTTP: readline failed: Connection closed by remote host\n" );
 			exit(2);
 		}
 	}
@@ -60,17 +60,17 @@ void analyze_HTTP()
 		exit( 1 );
 	}
 
-	p = strtok( 0, " ");
+	p = strtok( NULL, " ");
 
 	if( strcmp( p, "200" ) != 0 )
 	{
 		if( ! args_info.quiet_flag )
-			message( "HTTP return code: '%s'\n", p );
+			message( "HTTP return code: %s ", p );
 
 		p += strlen( p ) + 1;
 
 		if( ! args_info.quiet_flag )
-			message( "%s\n", p );
+			message( "%s", p );
 
 		if (!ntlm_challenge && strcmp( p, "407") != 0)
 		{
@@ -93,14 +93,18 @@ void analyze_HTTP()
 	}
 }
 
-void print_line(char *buf)
+/*
+ * Prints lines from a buffer prepended with a prefix
+ */
+void print_line_prefix(char *buf, char *prefix)
 {
-	char *buf2 = strdup(buf);
-	char *p = strtok(buf2, "\r\n");
- 	while ( p != NULL) {
-		message( "-> %s\n", p );
-		p = strtok(NULL, "\r\n");
+	buf = strdup(buf);
+	char *cur = strtok(buf, "\r\n");
+ 	while ( cur != NULL) {
+		message( "%s %s\n", prefix, cur );
+		cur = strtok(NULL, "\r\n");
 	}
+//	free(buf);
 }
 
 /*
@@ -160,7 +164,7 @@ void proxy_protocol()
 	 */
 	if( args_info.verbose_flag ) {
 		message( "Connect string sent to local proxy:\n");
-		print_line(buf);
+		print_line_prefix(buf, "->");
 	}
 	
 	/*
@@ -175,7 +179,7 @@ void proxy_protocol()
 	 * Read the first line of the response and analyze it
 	 */
 	if( args_info.verbose_flag )
-		message( "Received from local proxy:\n");
+		message( "Data received from local proxy:\n");
 
 	analyze_HTTP();
 
@@ -202,7 +206,7 @@ void proxy_protocol()
 		 */
 		if( args_info.verbose_flag ) {
 			message( "Connect string sent to remote proxy:\n");
-			print_line(buf);
+			print_line_prefix(buf, "->");
 		}
 	
 		/*

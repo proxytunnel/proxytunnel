@@ -88,7 +88,8 @@ void tunnel_connect() {
 	 */
 	if( ! ( he = gethostbyname( args_info.proxyhost_arg ) ) )
 	{
-		my_perror("Proxy host not found");
+// FIXME:	my_perror("Local proxy %s could not be resolved", args_info.proxyhost_arg);
+		my_perror("Local proxy could not be resolved" );
 		exit(1);
 	}
  
@@ -96,7 +97,7 @@ void tunnel_connect() {
 	snprintf(ip, 16, "%d.%d.%d.%d", he->h_addr[0] & 255, he->h_addr[1] & 255, he->h_addr[2] & 255, he->h_addr[3] & 255);
  	if( args_info.verbose_flag && strcmp(args_info.proxyhost_arg, ip))
 	{
- 		message( "%s is %d.%d.%d.%d\n",
+ 		message( "Local proxy %s resolves to %d.%d.%d.%d\n",
 				args_info.proxyhost_arg,
 				he->h_addr[0] & 255,
 				he->h_addr[1] & 255,
@@ -354,7 +355,7 @@ int main( int argc, char *argv[] )
 	 * - Check if we need to run as a daemon. If so, a completely
 	 *   different mainline is needed...
 	 * - Set a signal for the hangup (HUP) signal
-	 * - Optionally create the proxy basic authenticcation cookie
+	 * - Optionally create the proxy basic authentication cookie
 	 * - Connect the sd socket to the proxy
 	 * - Execute the proxy protocol to connect it to the origin server
 	 * - Enter copy in-out mode to channel data hence and forth
