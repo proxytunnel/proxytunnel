@@ -61,8 +61,9 @@ SSL_METHOD *meth;
  */
 void signal_handler( int signal )
 {
-	message( "Tunnel closed on signal %d\n", signal );
-	closeall();
+	if( args_info.verbose_flag )
+		message( "Tunnel received signal %d. Ignoring signal.\n", signal );
+//	closeall();
 }
 
 /*
@@ -91,7 +92,9 @@ void tunnel_connect() {
 		exit(1);
 	}
  
- 	if( args_info.verbose_flag )
+	char ip[16];
+	snprintf(ip, 16, "%d.%d.%d.%d", he->h_addr[0] & 255, he->h_addr[1] & 255, he->h_addr[2] & 255, he->h_addr[3] & 255);
+ 	if( args_info.verbose_flag && strcmp(args_info.proxyhost_arg, ip))
 	{
  		message( "%s is %d.%d.%d.%d\n",
 				args_info.proxyhost_arg,
@@ -120,7 +123,7 @@ void tunnel_connect() {
 
 	if( ! args_info.quiet_flag )
 	{
-		message( "Connected to %s:%d\n",
+		message( "Connected to %s:%d (local proxy)\n",
 			args_info.proxyhost_arg,
 			args_info.proxyport_arg );
 	}
@@ -152,7 +155,7 @@ void do_ssl()
  * Leave a goodbye message
  */
 void closeall() {
-	message( "In closeall\n");
+//	message( "In closeall\n");
 
 	if( args_info.verbose_flag )
 	{

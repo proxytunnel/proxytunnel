@@ -70,7 +70,8 @@ int readline()
 	{
 		char * dstr = malloc(sizeof(buf-1) );
 		strlcpy( dstr, buf, strlen(buf) -1 );
-		message( "DEBUG: recv: '%s'\n", dstr );
+		if (strcmp(dstr, ""))
+			message( "<- %s\n", dstr );
 	}
 	return strlen( buf );
 }
@@ -219,10 +220,8 @@ void cpio()
 	 */
 	FD_ZERO( &writefds );
 
-	if( ! args_info.quiet_flag )
-	{
-		message( "Starting tunnel\n" );
-	}
+	if( args_info.verbose_flag )
+		message( "Tunnel established\n" );
 
 	/*
 	 * Only diamonds are forever :-)

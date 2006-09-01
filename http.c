@@ -93,6 +93,16 @@ void analyze_HTTP()
 	}
 }
 
+void print_line(char *buf)
+{
+	char *buf2 = strdup(buf);
+	char *p = strtok(buf2, "\r\n");
+ 	while ( p != NULL) {
+		message( "-> %s\n", p );
+		p = strtok(NULL, "\r\n");
+	}
+}
+
 /*
  * Execute the basic proxy protocol of CONNECT and response, until the
  * last line of the response has been read. The tunnel is then open.
@@ -145,8 +155,13 @@ void proxy_protocol()
 
 	sprintf( buf, "%sProxy-Connection: Keep-Alive\r\n\r\n", buf );
 	
-	if( args_info.verbose_flag )
-		message( "Connect string sent to Proxy: '%s'\n", buf);
+	/*
+	 * Print the CONNECT instruction before sending to proxy
+	 */
+	if( args_info.verbose_flag ) {
+		message( "Connect string sent to local proxy:\n");
+		print_line(buf);
+	}
 	
 	/*
 	 * Send the CONNECT instruction to the proxy
@@ -159,6 +174,9 @@ void proxy_protocol()
 	/*
 	 * Read the first line of the response and analyze it
 	 */
+	if( args_info.verbose_flag )
+		message( "Received from local proxy:\n");
+
 	analyze_HTTP();
 
 	if (args_info.remproxy_given )
@@ -168,7 +186,8 @@ void proxy_protocol()
  		 */
 		while ( strcmp( buf, "\r\n" ) != 0 ) readline();
 
-		message( "Tunneling to %s (destination)\n", args_info.dest_arg );
+		if( args_info.verbose_flag )
+			message( "Tunneling to %s (destination)\n", args_info.dest_arg );
 		sprintf( buf, "CONNECT %s HTTP/1.0\r\n", args_info.dest_arg );
 
 		/*
@@ -178,9 +197,14 @@ void proxy_protocol()
 			sprintf( buf, "%s%s\r\n", buf, args_info.header_arg );
 		sprintf( buf, "%sProxy-Connection: Keep-Alive\r\n\r\n", buf );
 		
-		if( args_info.verbose_flag )
-			message( "DEBUG: Send: '%s'\n", buf);
-		
+		/*
+		 * Print the CONNECT instruction before sending to proxy
+		 */
+		if( args_info.verbose_flag ) {
+			message( "Connect string sent to remote proxy:\n");
+			print_line(buf);
+		}
+	
 		/*
 		 * Send the CONNECT instruction to the proxy
 		 */
@@ -193,6 +217,9 @@ void proxy_protocol()
 		/*
 		 * Read the first line of the response and analyze it
 		 */
+		if( args_info.verbose_flag )
+			message( "Received from remote proxy:\n");
+
 		analyze_HTTP();
 	}
 

@@ -6,6 +6,8 @@ Changes to proxytunnel version 1.6.4 -- xxx
 - Suggested changes (From Dag Wieers) to install-target applied 
 - Change debug-output line-endings
 - Change error message on 'connection closed' in analyze_HTTP
+- Reworked debug-output (dag-)
+- Signal handling (dag-)
 
 Changes to proxytunnel version 1.6.3 -- Mon Apr 10 12:48:02 CEST 2006
 
