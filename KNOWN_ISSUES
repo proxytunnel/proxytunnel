@@ -2,3 +2,8 @@ Known Issues with proxytunnel
 
 Apache might need: http://issues.apache.org/bugzilla/attachment.cgi?id=16105
 for SSL proxying ;) (see http://issues.apache.org/bugzilla/show_bug.cgi?id=29744)
+
+Setproctitle mode 1 only works on openbsd
+Setproctitle mode 2 should work on linux and some other platforms
+Platforms confirmed without setproctitle: CYGWIN
+
