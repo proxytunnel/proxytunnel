@@ -144,7 +144,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	args_info->proxyhost_arg = NULL; \
 	args_info->dest_arg = NULL; \
 	args_info->remproxy_arg = NULL; \
-	args_info->header_arg = NULL; \
+	args_info->header_arg[0] = '\0'; \
 	args_info->verbose_flag = 0; \
 	args_info->ntlm_flag = 0; \
 	args_info->inetd_flag = 0; \
@@ -363,8 +363,8 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 
         case 'H':	/* Extra headers to send to HTTPS proxy. */
           args_info->header_given++;
-	  /* FIXME in case of multiple headers, later... */
-          args_info->header_arg = gengetopt_strdup (optarg);
+	  strlcat( args_info->header_arg, optarg, MAX_HEADER_SIZE );
+	  strlcat( args_info->header_arg, "\r\n", MAX_HEADER_SIZE );
           break;
 
         case 'v':	/* Turn on verbosity.  */

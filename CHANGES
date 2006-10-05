@@ -1,5 +1,7 @@
 Changes to proxytunnel version 1.6.4 -- xxx
 
+- Allow multiple '-H' options (headers), total size of the headers
+  should not exceed 1k.
 - Reworked setproctitle calls, giving an argument to -x should now
   really hide all traces of the original name, not only the arguments
   Also remove argument-info on normal (without -x) runs.

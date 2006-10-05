@@ -154,7 +154,7 @@ void proxy_protocol()
 		/*
 		 * Add extra header(s)
 		 */
-		sprintf( buf, "%s%s\r\n", buf, args_info.header_arg );
+		sprintf( buf, "%s%s", buf, args_info.header_arg );
 	}
 
 	sprintf( buf, "%sProxy-Connection: Keep-Alive\r\n\r\n", buf );
@@ -198,7 +198,7 @@ void proxy_protocol()
 		 * Add extra header(s)
 		 */
 		if ( args_info.header_given )
-			sprintf( buf, "%s%s\r\n", buf, args_info.header_arg );
+			sprintf( buf, "%s%s", buf, args_info.header_arg );
 		sprintf( buf, "%sProxy-Connection: Keep-Alive\r\n\r\n", buf );
 		
 		/*
