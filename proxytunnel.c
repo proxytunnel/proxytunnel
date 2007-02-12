@@ -33,11 +33,11 @@
 #include <stdarg.h>
 #include <stdlib.h>
 
+#include "proxytunnel.h"
 #include "io.h"
 #include "config.h"
 #include "cmdline.h"
 #include "basicauth.h"
-#include "proxytunnel.h"
 #include "ntlm.h"
 
 /* Define DARWIN if compiling on MacOS-X (Darwin), to work around some
@@ -50,12 +50,6 @@
 int read_fd=0;                  /* The file descriptor to read from */
 int write_fd=1;                 /* The file destriptor to write to */
 
-#ifdef USE_SSL 
-SSL_CTX* ctx;
-SSL*     ssl;    
-SSL_METHOD *meth;
-#endif
-
 /*
  * Kill the program (signal handler)
  */
@@ -67,12 +61,13 @@ void signal_handler( int signal )
 }
 
 /*
- * Create and connect the socket that connects to the proxy. After
- * this routine the sd socket is connected to the proxy.
+ * Create and connect the socket that connects to the proxy. Returns
+ * the socket that is connected to the proxy
  */
-void tunnel_connect() {
+int tunnel_connect() {
 	struct sockaddr_in 	sa;
 	struct hostent		*he;
+	int sd;
 
 	/*
 	 * Create the socket
@@ -131,26 +126,11 @@ void tunnel_connect() {
 
 	/* Make sure we get warned when someone hangs up on us */
 	signal(SIGHUP,signal_handler);
+
+	/* Return the socket */
+	return sd;
 }
 
-#ifdef USE_SSL 
-/*
- * Do the SSL handshake.
- */
-void do_ssl()
-{
-       SSLeay_add_ssl_algorithms();
-       meth = SSLv2_client_method();
-       SSL_load_error_strings();
-
-       ctx = SSL_CTX_new (meth);
-
-       ssl = SSL_new (ctx);
-
-       SSL_set_fd (ssl, sd);
-       SSL_connect (ssl);
-}
-#endif
 
 /*
  * Leave a goodbye message
@@ -171,30 +151,12 @@ void closeall() {
 #endif
 
 	/*
-	 * Close all files we deal with
+	 * Close all streams
 	 */
-	close(0);
-	close(1);
-
-	if ( sd != 0 )
-		close( sd );
-
-
-#ifdef USE_SSL
-	if( args_info.encrypt_flag )
-	{
-		SSL_free (ssl);
-		SSL_CTX_free (ctx);
-	}
-#else
-	close( sd );
-#endif
-
-	if( read_fd != write_fd )	/* When not running from inetd */
-	{
-		close( write_fd );
-	}
-	close( read_fd );
+	if (stunnel)
+		stream_close(stunnel);
+	if (std)
+		stream_close(std);
 }
 
 /*
@@ -210,6 +172,10 @@ void do_daemon()
 	int			sd_client;
 	char 			buf[80];
 	unsigned char		addr[4];
+
+	/* Socket descriptor */
+	int sd;
+
 
 	if ( ( listen_sd = socket( AF_INET, SOCK_STREAM, 0 ) ) < 0 )
 	{
@@ -297,12 +263,26 @@ void do_daemon()
 		{
         		read_fd = write_fd = sd_client;
 
-			/* Main processing */
-			tunnel_connect();
-			proxy_protocol();
+			/* Create a stdin/out stream */
+			std = stream_open(read_fd, write_fd);
+
+			/* Create a tunnel stream */
+			sd = tunnel_connect();
+			stunnel = stream_open(sd, sd);
+
+			/* If --encrypt-proxy is specified, connect to the proxy using SSL */
+#ifdef USE_SSL
+			if ( args_info.encryptproxy_flag )
+				stream_enable_ssl(stunnel);
+#endif
+
+			/* Open the tunnel */
+			proxy_protocol(stunnel);
+
+			/* If --encrypt is specified, wrap all traffic after the proxy handoff in SSL */
 #ifdef USE_SSL
 			if( args_info.encrypt_flag )
-				do_ssl();
+				stream_enable_ssl(stunnel);
 #endif
 #ifdef SETPROCTITLE
 			if( ! args_info.proctitle_given )
@@ -313,8 +293,9 @@ void do_daemon()
 			if( args_info.proctitle_given )
 				message( "Setting process-title is not supported in this build\n");
 #endif
-
-			cpio();
+	
+			/* Run the tunnel - we should stay here indefinitely */
+			cpio(std, stunnel);
 /////
 			exit( 0 );
 		}
@@ -339,6 +320,13 @@ void do_daemon()
  */
 int main( int argc, char *argv[] )
 {
+	/* Socket descriptor */
+	int sd;
+
+	/* Clear all stream variables (so we know whether we need to clear up) */
+	stunnel = NULL;
+	std = NULL;
+
 	program_name = argv[0];
 
 	/*
@@ -356,7 +344,7 @@ int main( int argc, char *argv[] )
 	 *   different mainline is needed...
 	 * - Set a signal for the hangup (HUP) signal
 	 * - Optionally create the proxy basic authentication cookie
-	 * - Connect the sd socket to the proxy
+	 * - Connect to the proxy
 	 * - Execute the proxy protocol to connect it to the origin server
 	 * - Enter copy in-out mode to channel data hence and forth
 	 */
@@ -386,6 +374,16 @@ int main( int argc, char *argv[] )
 			make_basicauth();
 	}
 
+	/* 
+	 * Only one of -E (SSL encrypt client to proxy connection) or -e (SSL encrypt tunnel data)
+         * can be specified.
+	 */
+	if (args_info.encryptproxy_flag && args_info.encrypt_flag)
+	{
+		message("Error: only one of --encrypt-proxy and --encrypt can be specified for a tunnel\n");
+		exit( 1 );
+	}
+
 	/* Do we need to run as a standalone daemon? */
 	if ( args_info.standalone_arg > 0 )
 	{
@@ -400,12 +398,26 @@ int main( int argc, char *argv[] )
 			write_fd=0;
 		}
 
-		/* Main processing */
-		tunnel_connect();
-		proxy_protocol();
+		/* Create a stdin/out stream */
+		std = stream_open(read_fd, write_fd);
+
+		/* Create a tunnel stream */
+		sd = tunnel_connect();
+		stunnel = stream_open(sd, sd);
+
+		/* If --encrypt-proxy is specified, connect to the proxy using SSL */
+#ifdef USE_SSL
+		if ( args_info.encryptproxy_flag )
+			stream_enable_ssl(stunnel);
+#endif
+
+		/* Open the tunnel */
+		proxy_protocol(stunnel);
+
+		/* If --encrypt is specified, wrap all traffic after the proxy handoff in SSL */
 #ifdef USE_SSL
 		if( args_info.encrypt_flag )
-			do_ssl();
+			stream_enable_ssl(stunnel);
 #endif
 #ifdef SETPROCTITLE
 		if( ! args_info.proctitle_given )
@@ -417,8 +429,12 @@ int main( int argc, char *argv[] )
 			message( "Setting process-title is not supported in this build\n");
 #endif
 
-		cpio();
+		/* Run the tunnel - we should stay here indefinitely */
+		cpio(std, stunnel);
 	}
+
+	/* If we do happen to get here, clean up */
+	closeall();
 
 	exit( 0 );
 }

@@ -29,19 +29,12 @@
 #include "proxytunnel.h"
 #include "io.h"
 
-#ifdef USE_SSL	/* Override copy functions */
-#define COPY_TO(fd) copy_to_SSL(fd, ssl)
-#define COPY_FROM(fd) copy_from_SSL(ssl, fd)
-#else
-#define COPY_TO(fd)	copy(fd, sd)
-#define COPY_FROM(fd)	copy(sd, fd)
-#endif
 
 /*
  * Read one line of data from the tunnel. Line is terminated by a
  * newline character. Result is stored in buf.
  */
-int readline()
+int readline(PTSTREAM *pts)
 {
 	char	*p = buf;
 	char	c = 0;
@@ -53,7 +46,7 @@ int readline()
 	 */
 	while ( c != 10 && ( i < SIZE - 1 ) )
 	{
-		if( recv( sd, &c ,1 ,0 ) < 0)
+		if( stream_read( pts, &c ,1) < 0)
 		{
 			my_perror( "Socket read error" );
 			exit( 1 );
@@ -76,144 +69,26 @@ int readline()
 	return strlen( buf );
 }
 
-/*
- * Copy a block of data from one socket descriptor to another. A true
- * return code signifies EOF on the from socket descriptor.
- */
-int copy(int from, int to)
-{
-	int n;
-
-	/* 
-	 * Read a buffer from the source socket
-	 */
-	if ( ( n = read( from, buf, SIZE ) ) < 0 )
-	{
-		my_perror( "Socket read error" );
-		exit( 1 );
-	}
-
-	/*
-	 * If we have read 0 bytes, there is an EOF on src
-	 */
-	if( n==0 )
-		return 1;
-
-	/*
-	 * Write the buffer to the destination socket
-	 */
-	if ( write( to, buf, n ) != n )
-	{
-		my_perror( "Socket write error" );
-		exit( 1 );
-	}
-
-	/*
-	 * We're not yet at EOF
-	 */
-	return 0;
-}
-
-#ifdef USE_SSL
-int copy_to_SSL(int from, SSL* to)
-{
-        int n;
-
-        /*
-         * Read a buffer from the source socket
-         */
-        if ( ( n = read( from, buf, SIZE ) ) < 0 )
-        {
-                my_perror( "Socket read error" );
-                exit( 1 );
-        }
-
-        /*
-         * If we have read 0 bytes, there is an EOF on src
-         */
-        if( n==0 )
-                return 1;
-
-        /*
-         * Write the buffer to the destination socket
-         */
-        if ( SSL_write( to, buf, n ) != n )
-        {
-                my_perror( "Socket write error" );
-                exit( 1 );
-        }
-
-        /*
-         * We're not yet at EOF
-         */
-        return 0;
-}
-
-int copy_from_SSL(SSL* from, int to)
-{
-        int n;
-
-        /*
-         * Read a buffer from the source socket
-         */
-        if ( ( n = SSL_read( from, buf, SIZE ) ) < 0 )
-        {
-                my_perror( "Socket read error" );
-                exit( 1 );
-        }
-
-        /*
-         * If we have read 0 bytes, there is an EOF on src
-         */
-        if( n==0 )
-                return 1;
-
-        /*
-         * Write the buffer to the destination socket
-         */
-        if ( write( to, buf, n ) != n )
-        {
-                my_perror( "Socket write error" );
-                exit( 1 );
-        }
-
-        /*
-         * We're not yet at EOF
-         */
-        return 0;
-}
-#endif /* USE_SSL */
-
 
 /*
- * Move into a loop of copying data to and from the tunnel.
- * stdin (fd 0) and stdout (fd 1) are the file descriptors
- * for the connected application, sd is the file descriptor
- * of the tunnel.
+ * Bond stream1 and stream2 together; any data received in stream1 is relayed
+ * to stream2, and vice-versa.
  */
-void cpio()
+void cpio(PTSTREAM *stream1, PTSTREAM *stream2)
 {
 	fd_set	readfds;
 	fd_set	writefds;
 	fd_set	exceptfds;
-	int	max_fd;
-	int     out_fd;
+	int	in_max_fd, out_max_fd, max_fd;
 
-#ifdef USE_SSL
-	if( args_info.encrypt_flag )
-		out_fd = SSL_get_fd(ssl);
-	else
-		out_fd = sd;
-#else
-	out_fd = sd;
-#endif
 
 	/*
 	 * Find the biggest file descriptor for select()
 	 */
-	max_fd = MAX( read_fd,write_fd );
-	max_fd = MAX( max_fd, out_fd );
 
+	in_max_fd = MAX(stream_get_incoming_fd(stream1), stream_get_incoming_fd(stream2));
+	out_max_fd = MAX(stream_get_outgoing_fd(stream1), stream_get_outgoing_fd(stream2));
+	max_fd = MAX(in_max_fd, out_max_fd);
 
 	/*
 	 * We're never interested in sockets being available for write.
@@ -235,18 +110,18 @@ void cpio()
 		FD_ZERO( &exceptfds );
 
 		/*
-		 * We want to know whether stdin or sd is ready for reading
+		 * We want to know whether stream1 or stream2 is ready for reading
 		 */
-		FD_SET( read_fd, &readfds );
-		FD_SET( out_fd, &readfds );
+		FD_SET( stream_get_incoming_fd(stream1), &readfds );
+		FD_SET( stream_get_incoming_fd(stream2), &readfds );
 
 		/*
-		 * And we want to know about exceptional conditions on either
-		 * stdin, stdout or the tunnel
+		 * And we want to know about exceptional conditions on either stream
 		 */
-		FD_SET( read_fd, &exceptfds );
-		FD_SET( write_fd, &exceptfds );
-		FD_SET( out_fd, &exceptfds );
+		FD_SET( stream_get_incoming_fd(stream1), &exceptfds );
+		FD_SET( stream_get_outgoing_fd(stream1), &exceptfds );
+		FD_SET( stream_get_incoming_fd(stream2), &exceptfds );
+		FD_SET( stream_get_outgoing_fd(stream2), &exceptfds );
 
 		/*
 		 * Wait until something happens on one of the registered
@@ -260,37 +135,21 @@ void cpio()
 		}
 
 		/*
-		 * Is stdin ready for read? If so, copy a block of data
-		 * from stdin to the tunnel. Or else if the tunnel socket
+		 * Is stream1 ready for read? If so, copy a block of data
+		 * from stream1 to stream2. Or else if stream2
 		 * is ready for read, copy a block of data from the
-		 * tunnel to stdout. Otherwise an exceptional condition
+		 * stream2 to stream1. Otherwise an exceptional condition
 		 * is flagged and the program is terminated.
 		 */
-		if ( FD_ISSET( read_fd, &readfds ) )
+		if ( FD_ISSET( stream_get_incoming_fd(stream1), &readfds ) )
 		{
-			if( args_info.encrypt_flag )
-			{
-				if ( COPY_TO(read_fd ) )
-					break;
-			}
-			else
-			{
-				if ( copy(read_fd, sd ) )
-					break;
-			}
+			if ( stream_copy(stream1, stream2 ) )
+				break;
 		}
-		else if( FD_ISSET( sd, &readfds ) )
+		else if( FD_ISSET( stream_get_incoming_fd(stream2), &readfds ) )
 		{
-			if( args_info.encrypt_flag )
-			{
-				if( COPY_FROM(write_fd ) )
-					break;
-			}
-			else
-			{
-				if( copy(sd,write_fd ) )
-					break;
-			}
+			if( stream_copy(stream2, stream1 ) )
+				break;
 		}
 		else
 		{

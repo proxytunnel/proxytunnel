@@ -19,22 +19,15 @@
 
 /* proxytunnel.h */
 
-#ifdef USE_SSL
-#include <openssl/crypto.h>
-#include <openssl/x509.h>
-#include <openssl/pem.h>
-#include <openssl/ssl.h>
-#endif
-
 #include "cmdline.h"
+#include "ptstream.h"
 
 void message( char *s, ... );
 void my_perror( char *msg );
 void signal_handler( int signal );
-void tunnel_connect();
+int tunnel_connect();
 void analyze_HTTP();
 void proxy_protocol();
-void do_ssl();
 void closeall();
 void do_daemon();
 void initsetproctitle(int argc, char *argv[]);
@@ -46,16 +39,13 @@ char * readpassphrase(const char *, char *, size_t, int);
 char * getpass_x(const char *prompt);
 
 /* Globals */
-int sd;                         /* The tunnel's socket descriptor */
 int read_fd;                    /* The file descriptor to read from */
 int write_fd;                   /* The file destriptor to write to */
 char *program_name;             /* Guess what? */
 int i_am_daemon;                /* Also... */
 
-#ifdef USE_SSL
-SSL_CTX* ctx;
-SSL*     ssl;
-#endif
+PTSTREAM *stunnel;		/* The stream representing the socket from us to the proxy */
+PTSTREAM *std;			/* The stream representing stdin/stdout */
 
 /*
  * All the command line options

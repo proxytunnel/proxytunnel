@@ -41,25 +41,28 @@ struct gengetopt_args_info {
   int quiet_flag;	/* Turn on quiet mode (default=off). */
   int standalone_arg;	/* Turn on stdalone (-a) on port */
   int encrypt_flag;     /* Turn on SSL encryption (default=off). */
+  int encryptproxy_flag;/* Turn on client to proxy SSL encryption (def=off).*/
+
   char * proctitle_arg; /* Override process title (default=off). */
 
-  int help_given;	/* Whether help was given. */
-  int version_given;	/* Whether version was given. */
-  int user_given;	/* Whether user was given. */
-  int pass_given;	/* Whether pass was given. */
-  int domain_given;	/* Whether domain was given. */
-  int proxy_given;      /* Whether proxyhost was given. */
-  int proxyhost_given;	/* Whether proxyhost was given. */
-  int proxyport_given;	/* Whether proxyport was given. */
-  int dest_given;	/* Whether dest was given. */
-  int remproxy_given;   /* Whether remproxy was given. */
-  int verbose_given;	/* Whether verbose was given. */
-  int ntlm_given;	/* Whether ntlm was given. */
-  int inetd_given;	/* Whether inetd was given. */
-  int quiet_given;	/* Whether quiet mode was given. */
-  int header_given;	/* Whenther extra headers are given */
-  int encrypt_given;    /* Whether encrypt was given */
-  int proctitle_given;  /* Whether to override process title */
+  int help_given;		/* Whether help was given. */
+  int version_given;		/* Whether version was given. */
+  int user_given;		/* Whether user was given. */
+  int pass_given;		/* Whether pass was given. */
+  int domain_given;		/* Whether domain was given. */
+  int proxy_given;      	/* Whether proxyhost was given. */
+  int proxyhost_given;		/* Whether proxyhost was given. */
+  int proxyport_given;		/* Whether proxyport was given. */
+  int dest_given;		/* Whether dest was given. */
+  int remproxy_given;   	/* Whether remproxy was given. */
+  int verbose_given;		/* Whether verbose was given. */
+  int ntlm_given;		/* Whether ntlm was given. */
+  int inetd_given;		/* Whether inetd was given. */
+  int quiet_given;		/* Whether quiet mode was given. */
+  int header_given;		/* Whether extra headers are given */
+  int encrypt_given;    	/* Whether encrypt was given */
+  int encryptproxy_given; 	/* Whether encrypt was given */
+  int proctitle_given;		/* Whether to override process title */
 } ;
 
 int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *args_info );

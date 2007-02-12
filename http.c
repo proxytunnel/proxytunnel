@@ -26,8 +26,8 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
-#include "io.h"
 #include "proxytunnel.h"
+#include "io.h"
 #include "basicauth.h"
 #include "ntlm.h"
 
@@ -35,7 +35,7 @@
  * Analyze the proxy's HTTP response. This must be a HTTP/1.? 200 OK type
  * header
  */
-void analyze_HTTP()
+void analyze_HTTP(PTSTREAM *pts)
 {
 	char *p = strtok( buf, " ");
 
@@ -45,7 +45,7 @@ void analyze_HTTP()
 	 */
 	while (strncmp( p, "HTTP/", 5) != 0 )
 	{
-		if ( readline() )
+		if ( readline(pts) )
 			p = strtok( buf, " ");
 		else
 		{
@@ -76,7 +76,7 @@ void analyze_HTTP()
 		{
 			do
 			{
-				readline();
+				readline(pts);
 				if (strncmp( buf, "Proxy-Authenticate: NTLM ", 25) == 0)
 				{
 					if (parse_type2((unsigned char *)&buf[25]) < 0)
@@ -86,7 +86,7 @@ void analyze_HTTP()
 		}
 		if (ntlm_challenge == 1)
 		{
-			proxy_protocol();
+			proxy_protocol(pts);
 			return;
 		}
 		exit( 1 );
@@ -111,7 +111,7 @@ void print_line_prefix(char *buf, char *prefix)
  * Execute the basic proxy protocol of CONNECT and response, until the
  * last line of the response has been read. The tunnel is then open.
  */
-void proxy_protocol()
+void proxy_protocol(PTSTREAM *pts)
 {
 	/*
 	 * Create the proxy CONNECT command into buf
@@ -170,7 +170,7 @@ void proxy_protocol()
 	/*
 	 * Send the CONNECT instruction to the proxy
 	 */
-	if( send( sd, buf, strlen( buf ), 0 ) < 0 )
+	if( stream_write( pts, buf, strlen( buf )) < 0 )
 	{
 		my_perror( "Socket write error" );
 		exit( 1 );
@@ -181,14 +181,14 @@ void proxy_protocol()
 	if( args_info.verbose_flag )
 		message( "Data received from local proxy:\n");
 
-	analyze_HTTP();
+	analyze_HTTP(pts);
 
 	if (args_info.remproxy_given )
 	{
 		/*
 		 * Clean buffer for next analysis
  		 */
-		while ( strcmp( buf, "\r\n" ) != 0 ) readline();
+		while ( strcmp( buf, "\r\n" ) != 0 ) readline(pts);
 
 		if( args_info.verbose_flag )
 			message( "Tunneling to %s (destination)\n", args_info.dest_arg );
@@ -212,7 +212,7 @@ void proxy_protocol()
 		/*
 		 * Send the CONNECT instruction to the proxy
 		 */
-		if( send( sd, buf, strlen( buf ), 0 ) < 0 )
+		if( stream_write( pts, buf, strlen( buf )) < 0 )
 		{
 			my_perror( "Socket write error" );
 			exit( 1 );
@@ -224,7 +224,7 @@ void proxy_protocol()
 		if( args_info.verbose_flag )
 			message( "Received from remote proxy:\n");
 
-		analyze_HTTP();
+		analyze_HTTP(pts);
 	}
 
 	/*
@@ -235,7 +235,7 @@ void proxy_protocol()
 		ntlm_challenge = 2;
 	} else {
 		do {
-			readline();
+			readline(pts);
 		} while ( strcmp( buf, "\r\n" ) != 0 );
 	}
 }

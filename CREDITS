@@ -18,7 +18,7 @@ people.
 	Stephane Engel at macchiati.org		- Fix for broken proxy
 	Mike Frysinger <vapier@gentoo.org>	- Makefile fix, 64bit fix
 	Alex Peuchert proxytunnel@peuchert.de	- SSL/Encrypt support
-
+	Mark.Cave-Ayland @ ilande.co.uk		- SSL to Proxy, Streams
 
 Furthermore we would like to thank the wonderful people at SourceForge
 for hosting our development.

@@ -59,6 +59,7 @@ cmdline_parser_print_help (void)
 #endif
 #ifdef USE_SSL
 "   -e         --encrypt           encrypt the communication using SSL\n"
+"   -E         --encrypt-proxy     encrypt the communitation between the client and the proxy using SSL\n"
 #endif
 #ifdef SETPROCTITLE
 "   -x STRING  --proctitle=STRING  Set the process-title to STRING\n"
@@ -132,6 +133,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
   args_info->header_given = 0;
   args_info->domain_given = 0;
   args_info->encrypt_given = 0;
+  args_info->encryptproxy_given = 0;
   args_info->proctitle_given = 0;
 
 /* No... we can't make this a function... -- Maniac */
@@ -151,6 +153,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	args_info->quiet_flag = 0; \
 	args_info->standalone_arg = 0; \
 	args_info->encrypt_flag = 0; \
+	args_info->encryptproxy_flag = 0; \
 	args_info->proctitle_arg = NULL; \
 } 
 
@@ -171,32 +174,33 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 
       /* Struct option: Name, Has_arg, Flag, Value */
       static struct option long_options[] = {
-        { "help",	0, NULL, 'h' },
-        { "version",	0, NULL, 'V' },
-        { "user",	1, NULL, 'u' },
-        { "pass",	1, NULL, 's' },
-        { "domain",	1, NULL, 't' },
-        { "uservar",	1, NULL, 'U' },
-        { "passvar",	1, NULL, 'S' },
-	{ "proxy",      1, NULL, 'p' },
-        { "proxyhost",	1, NULL, 'g' },
-        { "proxyport",	1, NULL, 'G' },
-        { "dest",	1, NULL, 'd' },
-	{ "remproxy",   1, NULL, 'r' },
-	{ "proctitle",  1, NULL, 'x' },
-	{ "header",     1, NULL, 'H' },
-        { "verbose",	0, NULL, 'v' },
-        { "ntlm",	0, NULL, 'N' },
-	{ "inetd",	0, NULL, 'i' },
-	{ "standalone", 1, NULL, 'a' },
-	{ "quiet",	0, NULL, 'q' },
-	{ "encrypt",    0, NULL, 'e' },
+        { "help",		0, NULL, 'h' },
+        { "version",		0, NULL, 'V' },
+        { "user",		1, NULL, 'u' },
+        { "pass",		1, NULL, 's' },
+        { "domain",		1, NULL, 't' },
+        { "uservar",		1, NULL, 'U' },
+        { "passvar",		1, NULL, 'S' },
+	{ "proxy",      	1, NULL, 'p' },
+        { "proxyhost",		1, NULL, 'g' },
+        { "proxyport",		1, NULL, 'G' },
+        { "dest",		1, NULL, 'd' },
+	{ "remproxy",   	1, NULL, 'r' },
+	{ "proctitle",  	1, NULL, 'x' },
+	{ "header",     	1, NULL, 'H' },
+        { "verbose",		0, NULL, 'v' },
+        { "ntlm",		0, NULL, 'N' },
+	{ "inetd",		0, NULL, 'i' },
+	{ "standalone", 	1, NULL, 'a' },
+	{ "quiet",		0, NULL, 'q' },
+	{ "encrypt",    	0, NULL, 'e' },
+	{ "encrypt-proxy",	0, NULL, 'E' },
         { NULL,	0, NULL, 0 }
       };
 
-      c = getopt_long (argc, argv, "hVia:u:s:t:U:S:p:r:d:H:x:nvNeq", long_options, &option_index);
+      c = getopt_long (argc, argv, "hVia:u:s:t:U:S:p:r:d:H:x:nvNeEq", long_options, &option_index);
 #else
-      c = getopt( argc, argv, "hVia:u:s:t:U:S:p:r:d:H:x:nvNeq" );
+      c = getopt( argc, argv, "hVia:u:s:t:U:S:p:r:d:H:x:nvNeEq" );
 #endif
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
@@ -213,6 +217,12 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	  args_info->encrypt_flag = !(args_info->encrypt_flag);
 	  if( args_info->verbose_flag )
 	  	message("SSL enabled\n");
+	  break;
+
+	case 'E':	/* Turn on client to proxy SSL encryption */
+	  args_info->encryptproxy_flag = !(args_info->encryptproxy_flag);
+	  if( args_info->verbose_flag )
+	  	message("SSL client to proxy enabled\n");
 	  break;
 #endif
 

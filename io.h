@@ -18,7 +18,5 @@
  */
 
 /* io.h */
-int readline();
-int copy(int from, int to);
-void cpio();
-
+int readline(PTSTREAM *pts);
+void cpio(PTSTREAM *stream1, PTSTREAM *stream2);

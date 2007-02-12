@@ -17,14 +17,34 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#define VERSION	"1.6.4"
-#define PACKAGE	"Proxytunnel"
-#define PURPOSE "Build generic tunnels through HTTPS proxies"
-#define AUTHORS "Jos Visser (Muppet) <josv@osp.nl>, Mark Janssen (Maniac) <maniac@maniac.nl>"
+/* ptstream.h */
 
-#ifndef _PATH_TTY
-# define _PATH_TTY "/dev/tty"
+#ifdef USE_SSL
+#include <openssl/crypto.h>
+#include <openssl/x509.h>
+#include <openssl/pem.h>
+#include <openssl/ssl.h>
 #endif
-#ifndef _PASSWORD_LEN
-# define _PASSWORD_LEN 80
+
+typedef struct ptstream
+{
+	int incoming_fd;
+	int outgoing_fd;
+#ifdef USE_SSL
+	SSL *ssl;
+	SSL_CTX *ctx;
+#else
+	void *ssl;
+	void *ctx;
 #endif
+} PTSTREAM;
+
+
+PTSTREAM *stream_open(int incoming_fd, int outgoing_fd);
+int stream_close(PTSTREAM *pts);
+int stream_read(PTSTREAM *pts, void *buf, size_t len);
+int stream_write(PTSTREAM *pts, void *buf, size_t len);
+int stream_copy(PTSTREAM *pts_from, PTSTREAM *pts_to);
+int stream_enable_ssl(PTSTREAM *pts);
+int stream_get_incoming_fd(PTSTREAM *pts);
+int stream_get_outgoing_fd(PTSTREAM *pts);

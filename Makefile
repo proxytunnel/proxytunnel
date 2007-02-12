@@ -50,7 +50,8 @@ OBJ = proxytunnel.o	\
 	readpassphrase.o \
 	messages.o	\
 	cmdline.o	\
-	ntlm.o
+	ntlm.o		\
+	ptstream.o
 
 proxytunnel: $(OBJ)
 	$(CC) -o $(PROGNAME) $(CFLAGS) $(OBJ) $(LDFLAGS)
