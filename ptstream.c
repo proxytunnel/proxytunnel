@@ -222,7 +222,7 @@ int stream_get_incoming_fd(PTSTREAM *pts)
 		return pts->incoming_fd;
 	else
 #ifdef USE_SSL
-		return SSL_get_fd(pts->ssl);
+		return SSL_get_rfd(pts->ssl);
 #else
 		return pts->incoming_fd;
 #endif
@@ -240,7 +240,7 @@ int stream_get_outgoing_fd(PTSTREAM *pts)
 		return pts->outgoing_fd;
 	else
 #ifdef USE_SSL
-		return SSL_get_fd(pts->ssl);
+		return SSL_get_wfd(pts->ssl);
 #else
 		return pts->outgoing_fd;
 #endif
