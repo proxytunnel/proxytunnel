@@ -1,6 +1,6 @@
 Summary: Proxy Tunnel ssh-over-https hack.
 Name: proxytunnel
-Version: 1.6.0
+Version: 1.7.0
 Release: 0.1
 Copyright: GPL
 Group: Networking/Utilities

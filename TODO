@@ -13,13 +13,6 @@
   see: http://issues.apache.org/bugzilla/show_bug.cgi?id=29744
 
 
-### Putty support
-- Lobby for the putty project to include ProxyCommand functionality
-  see: http://www.chiark.greenend.org.uk/~sgtatham/putty/wishlist/proxy-command.html
-
-- Make proxytunnel build on Windows
----> Should already work, just-recompile and upload new binary to sf.net
-
 ### Generic improvements
 - Allow to add more than one HTTP header
   eg. -H "User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Win32)" -H "Keep-Alive: 300" -H "Connection: keep-alive"

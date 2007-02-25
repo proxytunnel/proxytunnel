@@ -3,8 +3,8 @@ proxytunnel
 -----------
 
 Author:		Jos Visser <josv@osp.nl>, Mark Janssen <maniac@maniac.nl>
-Date: 		Wed Jun 14 10:45:47 CEST 2006
-Version:	1.6.3
+Date: 		Sun Feb 25 17:47:55 CET 2007
+Version:	1.7.0
 
 Hi all,
 
@@ -22,7 +22,7 @@ Proxytunnel is very easy to use, when running proxytunnel with the help
 option it specifies it's command-line options.
 
 $ ./proxytunnel --help
-Proxytunnel 1.6.3
+Proxytunnel 1.7.0
 Copyright 2001-2006 Proxytunnel Project
 Jos Visser (Muppet) <josv@osp.nl>, Mark Janssen (Maniac) <maniac@maniac.nl>
 
@@ -34,7 +34,9 @@ Usage: Proxytunnel [OPTIONS]...
    -V         --version           Print version and exit
    -i         --inetd             Run from inetd (default=off)
    -a INT     --standalone=INT    Run as standalone daemon on specified port
-   -e         --encrypt           encrypt the communication using SSL
+   -e         --encrypt           encrypt the communication using SSL (between host and destination)
+   -E         --encrypt-proxy     encrypt the communitation between the client and the proxy using SSL
+   -x STRING  --proctitle=STRING  Set the process-title to STRING
    -p STRING  --proxy=STRING      Proxy host:port combination to connect to
    -d STRING  --dest=STRING       Destination host:port to built the tunnel to
 
@@ -59,7 +61,6 @@ Proxytunnel [ -h | -V ]
 Proxytunnel -i [ -u user ] -p proxy:port -d host:port [ -v | -q ]
 Proxytunnel -i [ -U envvar ] -p proxy:port -d host:port [ -v | -q ]
 Proxytunnel -a port -p proxy:port -d host:port [ -v | -q ]
-
 
 To use this program with OpenSSH to connect to a host somewhere, create
 a $HOME/.ssh/config file with the following content:
