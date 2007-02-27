@@ -39,6 +39,8 @@ DATADIR = $(PREFIX)/share
 MANDIR = $(DATADIR)/man
 
 PROGNAME = proxytunnel
+
+# Remove strlcpy/strlcat on (open)bsd/darwin systems
 OBJ = proxytunnel.o	\
 	base64.o	\
 	strlcpy.o	\

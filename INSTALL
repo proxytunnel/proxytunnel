@@ -1,10 +1,7 @@
 Short guide to installing proxytunnel
 
-On most modern unix systems, use the normal Makefile
-On MAC OS X, use Makefile.darwin
-If you don't have gnu-getopts, use Makefile.no-gnu-getopts
-On windows/Cygwin, use Makefile.cygwin
-etc etc...
+On most modern unix systems, use the normal Makefile, possibly uncommenting
+the section related to your system (darwin/cygwin/solaris/openbsd)
 
 If you want to enable setproctitle functionality, add a CFLAGS define
 -DSETPROCTITLE (uncomment sample in Makefile)
