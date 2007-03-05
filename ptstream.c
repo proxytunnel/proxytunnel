@@ -55,23 +55,22 @@ PTSTREAM *stream_open(int incoming_fd, int outgoing_fd)
 
 int stream_close(PTSTREAM *pts)
 {
-	/* Close the incoming fd */
-	if (pts->incoming_fd != 0)
-		close(pts->incoming_fd);
-
-	/* Close the outgoing fd */
-	if (pts->outgoing_fd != 0)
-		close(pts->outgoing_fd);
-
 	/* Destroy the SSL context */
 	if (pts->ssl)
 	{
 #ifdef USE_SSL
-		SSL_free (pts->ssl);
+        SSL_shutdown (pts->ssl);
+        SSL_free (pts->ssl);
 		SSL_CTX_free (pts->ctx);
 #endif
 	}
 
+	/* Close the incoming fd */
+	close(pts->incoming_fd);
+
+	/* Close the outgoing fd */
+	close(pts->outgoing_fd);
+		
 	/* Free the structure */
 	free(pts);
 
@@ -191,7 +190,7 @@ int stream_enable_ssl(PTSTREAM *pts)
 	
 	/* Initialise the connection */
 	SSLeay_add_ssl_algorithms();
-	meth = SSLv2_client_method();
+	meth = SSLv23_client_method();
 	SSL_load_error_strings();
 
 	ctx = SSL_CTX_new (meth);

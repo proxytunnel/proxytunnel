@@ -433,8 +433,5 @@ int main( int argc, char *argv[] )
 		cpio(std, stunnel);
 	}
 
-	/* If we do happen to get here, clean up */
-	closeall();
-
 	exit( 0 );
 }
