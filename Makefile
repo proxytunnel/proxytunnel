@@ -4,10 +4,13 @@
 
 CC ?= cc
 CFLAGS ?= -Wall -O2 -ggdb
-CFLAGS += -DHAVE_GETOPT_LONG # Comment on non-gnu systems
-CFLAGS += -DUSE_SSL # Comment if you don't have/want ssl
+CFLAGS += -DHAVE_GETOPT_LONG 	# Comment on non-gnu systems
+CFLAGS += -DUSE_SSL 		# Comment if you don't have/want ssl
 # Most systems
 CFLAGS += -DSETPROCTITLE -DSPT_TYPE=2
+
+# Testing new flags
+CFLAGS += -DSO_REUSEPORT	# Comment if you don't have this flag
 
 # System dependant blocks... if your system is listed below, uncomment
 # the relevant lines

@@ -165,6 +165,7 @@ void closeall() {
 void do_daemon()
 {
 	int			listen_sd;
+	int			one = 1;
 	struct sockaddr_in	sa_serv;
 	struct sockaddr_in	sa_cli;
 	socklen_t		client_len;
@@ -176,19 +177,24 @@ void do_daemon()
 	/* Socket descriptor */
 	int sd;
 
-
-	if ( ( listen_sd = socket( AF_INET, SOCK_STREAM, 0 ) ) < 0 )
+	if ( ( listen_sd = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP ) ) < 0 )
 	{
 		my_perror( "Server socket creation failed" );
 		exit(1);
 	}
 
+#ifdef SO_REUSEPORT     /* doesnt exist everywhere... */
+	setsockopt(listen_sd, SOL_SOCKET, SO_REUSEPORT, &one, sizeof (one));
+#endif
+	setsockopt(listen_sd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
+
+
 	memset( &sa_serv, '\0', sizeof( sa_serv ) );
 	sa_serv.sin_family = AF_INET;
-	sa_serv.sin_addr.s_addr = INADDR_ANY;
+	sa_serv.sin_addr.s_addr = htonl(INADDR_ANY);
 	sa_serv.sin_port = htons( args_info.standalone_arg );
 
-	if ( bind( listen_sd, (struct sockaddr * )&sa_serv, sizeof( sa_serv ) ) < 0)
+	if ( bind( listen_sd, (struct sockaddr * )&sa_serv, sizeof( struct sockaddr ) ) < 0)
 	{
 		my_perror("Server socket bind failed");
 		exit(1);
@@ -228,7 +234,7 @@ void do_daemon()
 	i_am_daemon = 1;
 #endif /* CYGWIN */
 	atexit( closeall );
-	listen( listen_sd, 5 );
+	listen( listen_sd, 8 );
 
 	while (1==1)
 	{
