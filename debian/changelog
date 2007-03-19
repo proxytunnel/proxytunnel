@@ -1,3 +1,9 @@
+proxytunnel (1.7.0-1) unstable; urgency=high
+
+  * New upstream version
+
+ -- Mark Janssen <maniac@maniac.nl>  Mon, 19 Mar 2007 13:50:32 +0100
+
 proxytunnel (1.5.2-1) unstable; urgency=high
 
   * New version

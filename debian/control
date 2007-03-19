@@ -2,7 +2,7 @@ Source: proxytunnel
 Section: net
 Priority: optional
 Maintainer: Mark Janssen <maniac@maniac.nl>
-Build-Depends: debhelper (>> 3.0.0)
+Build-Depends: debhelper (>> 3.0.0), libssl-dev
 Standards-Version: 3.5.2
 
 Package: proxytunnel
