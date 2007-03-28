@@ -154,9 +154,15 @@ void closeall() {
 	 * Close all streams
 	 */
 	if (stunnel)
+	{
 		stream_close(stunnel);
+		stunnel = NULL;
+	}
 	if (std)
+	{
 		stream_close(std);
+		std = NULL;
+	}
 }
 
 /*
