@@ -1,3 +1,9 @@
+Changes to proxytunnel version 1.7.1 -- Thu Apr 12 13:40:27 CEST 2007
+
+- Fix some string-handling related core-dumps
+- NTLM/SSL fixes by Taco IJsselmuiden <taco@varda.nl>
+- NTLM fixes by Taco IJsselmuiden <taco@varda.nl>
+
 Changes to proxytunnel version 1.7.0 -- Sun Feb 25 17:45:38 CET 2007
 
 - Allow multiple '-H' options (headers), total size of the headers
