@@ -31,9 +31,10 @@
 #include <openssl/md4.h>
 #include <openssl/md5.h>
 
-#define TYPE1_DATA_SEG 9
+#define TYPE1_DATA_SEG 8
 #define TYPE2_BUF_SIZE 2048
 #define DOMAIN_BUFLEN 256
+#define LM2_DIGEST_LEN 24
 
 int ntlm_challenge = 0;
 void message( char *s, ... );
@@ -55,7 +56,7 @@ int t_info_len;
 
 unsigned long flags;
 
-unsigned char lm2digest[16];
+unsigned char lm2digest[LM2_DIGEST_LEN];
 
 void build_type1() {
 	ntlm_type1 *type1;
@@ -181,7 +182,7 @@ void build_type3_response() {
 	if (unicode)
 		sp = 2;
 
-	len = sizeof(ntlm_type3) + sizeof(unsigned char) * (16 + bloblen + (strlen(domain) + strlen(args_info.user_arg) + strlen(workstation)) * sp);
+	len = sizeof(ntlm_type3) + sizeof(unsigned char) * (LM2_DIGEST_LEN + bloblen + (strlen(domain) + strlen(args_info.user_arg) + strlen(workstation)) * sp);
 
 	type3 = (ntlm_type3 *)malloc(len);
 	if (!type3) {
@@ -201,12 +202,12 @@ void build_type3_response() {
 	type3->signature[7] = '\0';
 
 	type3->message_type = NTLM_TYPE_3;
-	type3->flags = flags & ~TAR_DOMAIN;
+	type3->flags = flags & ~TAR_DOMAIN & ~NEG_TARINFO;
 
-	type3->LM_response.length = 16;
-	type3->LM_response.space = 16;
+	type3->LM_response.length = LM2_DIGEST_LEN;
+	type3->LM_response.space = LM2_DIGEST_LEN;
 	type3->LM_response.offset = sizeof(ntlm_type3);
-	memcpy(&t3[type3->LM_response.offset], lm2digest, 16);
+	memcpy(&t3[type3->LM_response.offset], lm2digest, LM2_DIGEST_LEN);
 
 	type3->NTLM_response.length = bloblen;
 	type3->NTLM_response.space = bloblen;
@@ -359,6 +360,7 @@ void build_ntlm2_response() {
 
 	userdomlen = sizeof(unsigned char) * (strlen(args_info.user_arg) + strlen(domain)) * 2;
 	userdom = (unsigned char *)malloc(userdomlen);
+	memset(userdom, 0, userdomlen);
 	if (!userdom) {
 		message("Fatal Error in build_ntlm2_response, Malloc failed\n");
 		exit(-1);
@@ -453,7 +455,7 @@ void build_ntlm2_response() {
 
 	memcpy(&b->data_start, t_info, t_info_len);
 
-	hmac_md5(&pblob[8], bloblen - 8, userdomdigest, 16, responsedigest);
+	hmac_md5(&pblob[16], bloblen - 16, userdomdigest, 16, responsedigest);
 
 	for(i = 0; i < 16; i++)
 		b->digest[i] = responsedigest[i];
@@ -476,6 +478,8 @@ void build_ntlm2_response() {
 
 	hmac_md5(lm2data, 16, userdomdigest, 16, lm2digest);
 
+	for (i = 0; i < 8; i++)
+		lm2digest[16 + i] = b->client_challenge[i];
 }
 
 
