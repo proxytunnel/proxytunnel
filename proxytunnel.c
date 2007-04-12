@@ -289,6 +289,7 @@ void do_daemon()
 #endif
 
 			/* Open the tunnel */
+			connected_with_remote_proxy = 0;
 			proxy_protocol(stunnel);
 
 			/* If --encrypt is specified, wrap all traffic after the proxy handoff in SSL */

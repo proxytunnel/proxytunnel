@@ -43,6 +43,7 @@ int read_fd;                    /* The file descriptor to read from */
 int write_fd;                   /* The file destriptor to write to */
 char *program_name;             /* Guess what? */
 int i_am_daemon;                /* Also... */
+int connected_with_remote_proxy;
 
 PTSTREAM *stunnel;		/* The stream representing the socket from us to the proxy */
 PTSTREAM *std;			/* The stream representing stdin/stdout */
