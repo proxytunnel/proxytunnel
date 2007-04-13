@@ -187,10 +187,7 @@ int stream_enable_ssl(PTSTREAM *pts)
 	SSL_METHOD *meth;
 	SSL *ssl;
 	SSL_CTX *ctx;
-
-	if ( pts->ssl != NULL ){
-		return 1;
-	}
+	
 	/* Initialise the connection */
 	SSLeay_add_ssl_algorithms();
 	meth = SSLv23_client_method();

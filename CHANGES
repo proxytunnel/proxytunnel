@@ -1,5 +1,6 @@
 Changes to proxytunnel version 1.7.1 -- Thu Apr 12 13:40:27 CEST 2007
 
+- Cygwin SO_REUSEPORT stuff by Marc Heuse
 - Fix some string-handling related core-dumps
 - NTLM/SSL fixes by Taco IJsselmuiden <taco@varda.nl>
 - NTLM fixes by Taco IJsselmuiden <taco@varda.nl>

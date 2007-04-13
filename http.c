@@ -116,7 +116,7 @@ void proxy_protocol(PTSTREAM *pts)
 	/*
 	 * Create the proxy CONNECT command into buf
 	 */
-	if (args_info.remproxy_given && !connected_with_remote_proxy)
+	if (args_info.remproxy_given )
 	{
 		if( args_info.verbose_flag )
 			message( "Tunneling to %s (remote proxy)\n", args_info.remproxy_arg );
@@ -183,18 +183,12 @@ void proxy_protocol(PTSTREAM *pts)
 
 	analyze_HTTP(pts);
 
-	if (args_info.remproxy_given && !connected_with_remote_proxy)
+	if (args_info.remproxy_given )
 	{
-		connected_with_remote_proxy = 1;
 		/*
 		 * Clean buffer for next analysis
  		 */
 		while ( strcmp( buf, "\r\n" ) != 0 ) readline(pts);
-
-#ifdef USE_SSL
-		if (args_info.encrypt_flag )
-			stream_enable_ssl(pts);
-#endif
 
 		if( args_info.verbose_flag )
 			message( "Tunneling to %s (destination)\n", args_info.dest_arg );
