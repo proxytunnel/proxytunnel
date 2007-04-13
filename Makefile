@@ -8,6 +8,8 @@ CFLAGS += -DHAVE_GETOPT_LONG 	# Comment on non-gnu systems
 CFLAGS += -DUSE_SSL 		# Comment if you don't have/want ssl
 # Most systems
 CFLAGS += -DSETPROCTITLE -DSPT_TYPE=2
+REV = $(shell ./getrev.sh)
+CFLAGS += -DREV=$(REV)
 
 # Testing new flags
 CFLAGS += -DSO_REUSEPORT	# Comment if you don't have this flag

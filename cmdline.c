@@ -35,7 +35,7 @@
 void
 cmdline_parser_print_version (void)
 {
-  printf ("%s %s\nCopyright 2001-2006 Proxytunnel Project\n%s\n", PACKAGE, VERSION, AUTHORS);
+  printf ("%s %s (rev %d)\nCopyright 2001-2006 Proxytunnel Project\n%s\n", PACKAGE, VERSION, REV, AUTHORS);
 }
 
 void
