@@ -143,10 +143,9 @@ void closeall() {
 		message( "Tunnel closed\n" );
 	}
 
-#ifdef CYGWIN
    	message( "Goodbye" );
-#else
-        syslog(LOG_NOTICE,"Goodbye...");
+
+#ifndef CYGWIN
         closelog();
 #endif
 
@@ -221,7 +220,7 @@ void do_daemon()
 
 /* For the moment, turn of forking into background on the cygwin platform
  * so users can run it in a command window and ctrl-c it to cancel.
- * Also so we can put logging there, since there's nog syslog on cygwin (AFAIK)
+ * Also so we can put logging there, since there's no syslog on cygwin (AFAIK)
  * 	-- Maniac
  */
 #ifndef CYGWIN
@@ -308,20 +307,13 @@ void do_daemon()
 	
 			/* Run the tunnel - we should stay here indefinitely */
 			cpio(std, stunnel);
-/////
 			exit( 0 );
 		}
 
 		memcpy( &addr, &sa_cli.sin_addr.s_addr, 4 );
 		snprintf( (char *) buf, 16, "%u.%u.%u.%u", addr[0], addr[1], addr[2], addr[3] );
-#ifdef CYGWIN
 		message( "Started tunnel pid=%d for connection from %s",
 		      pid, buf );
-#else
-		syslog( LOG_NOTICE,
-		"Started tunnel pid=%d for connection from %s", pid, buf );
-
-#endif
 		close( sd_client );
 	}
 }
