@@ -58,8 +58,8 @@ cmdline_parser_print_help (void)
 "   -f         --nobackground      Don't for to background in standalone mode (FIXME)\n"
 #endif
 #ifdef USE_SSL
-"   -e         --encrypt           encrypt the communication using SSL\n"
-"   -E         --encrypt-proxy     encrypt the communitation between the client and the proxy using SSL\n"
+"   -e         --encrypt           Encrypt proxy<->destination using SSL\n"
+"   -E         --encrypt-proxy     Encrypt client<->proxy (proxy talks SSL)\n"
 #endif
 #ifdef SETPROCTITLE
 "   -x STRING  --proctitle=STRING  Set the process-title to STRING\n"
