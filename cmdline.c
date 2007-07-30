@@ -20,6 +20,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
+#include <errno.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <unistd.h>
 #include "config.h"
 #include "proxytunnel.h"
@@ -31,6 +35,7 @@
 #endif
 
 #include "cmdline.h"
+static char *getCredentialsFromFile( const char* filename, char **user, char **pwd);
 
 void
 cmdline_parser_print_version (void)
@@ -71,6 +76,7 @@ cmdline_parser_print_help (void)
 "   -s STRING  --pass=STRING       Password to send to HTTPS proxy for auth\n"
 "   -U STRING  --uservar=STRING    Env var with Username for HTTPS proxy auth\n"
 "   -S STRING  --passvar=STRING    Env var with Password for HTTPS proxy auth\n"
+"   -F STRING  --passfile=STRING   File with credentials for proxy auth\n"
 "   -N         --ntlm              Use NTLM Based Authentication\n"
 "   -t STRING  --domain=STRING     NTLM Domain (default: autodetect)\n"
 "   -r STRING  --remproxy=STRING   Use a remote proxy to tunnel over (2 proxies)\n"
@@ -174,33 +180,34 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 
       /* Struct option: Name, Has_arg, Flag, Value */
       static struct option long_options[] = {
-        { "help",		0, NULL, 'h' },
-        { "version",		0, NULL, 'V' },
-        { "user",		1, NULL, 'u' },
-        { "pass",		1, NULL, 's' },
-        { "domain",		1, NULL, 't' },
-        { "uservar",		1, NULL, 'U' },
-        { "passvar",		1, NULL, 'S' },
-	{ "proxy",      	1, NULL, 'p' },
-        { "proxyhost",		1, NULL, 'g' },
-        { "proxyport",		1, NULL, 'G' },
-        { "dest",		1, NULL, 'd' },
-	{ "remproxy",   	1, NULL, 'r' },
-	{ "proctitle",  	1, NULL, 'x' },
-	{ "header",     	1, NULL, 'H' },
-        { "verbose",		0, NULL, 'v' },
-        { "ntlm",		0, NULL, 'N' },
+	{ "help",		0, NULL, 'h' },
+	{ "version",		0, NULL, 'V' },
+	{ "user",		1, NULL, 'u' },
+	{ "pass",		1, NULL, 's' },
+	{ "domain",		1, NULL, 't' },
+	{ "uservar",		1, NULL, 'U' },
+	{ "passvar",		1, NULL, 'S' },
+	{ "passfile",		1, NULL, 'F' },
+	{ "proxy",		1, NULL, 'p' },
+	{ "proxyhost",		1, NULL, 'g' },
+	{ "proxyport",		1, NULL, 'G' },
+	{ "dest",		1, NULL, 'd' },
+	{ "remproxy",		1, NULL, 'r' },
+	{ "proctitle",		1, NULL, 'x' },
+	{ "header",		1, NULL, 'H' },
+	{ "verbose",		0, NULL, 'v' },
+	{ "ntlm",		0, NULL, 'N' },
 	{ "inetd",		0, NULL, 'i' },
 	{ "standalone", 	1, NULL, 'a' },
 	{ "quiet",		0, NULL, 'q' },
-	{ "encrypt",    	0, NULL, 'e' },
+	{ "encrypt",		0, NULL, 'e' },
 	{ "encrypt-proxy",	0, NULL, 'E' },
-        { NULL,	0, NULL, 0 }
+	{ NULL,	0, NULL, 0 }
       };
 
-      c = getopt_long (argc, argv, "hVia:u:s:t:U:S:p:r:d:H:x:nvNeEq", long_options, &option_index);
+      c = getopt_long (argc, argv, "hVia:u:s:t:U:S:F:p:r:d:H:x:nvNeEq", long_options, &option_index);
 #else
-      c = getopt( argc, argv, "hVia:u:s:t:U:S:p:r:d:H:x:nvNeEq" );
+      c = getopt( argc, argv, "hVia:u:s:t:U:S:F:p:r:d:H:x:nvNeEq" );
 #endif
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
@@ -262,7 +269,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
         case 'u':	/* Username to send to HTTPS proxy for authentication.  */
           if (args_info->user_given)
             {
-              fprintf (stderr, "%s: `--user' (`-u') or `--uservar' (`-U') option given more than once\n", PACKAGE);
+              fprintf (stderr, "%s: `--user' (`-u'), `--uservar' (`-U') or `--passfile' (`-F') option given more than once\n", PACKAGE);
               clear_args ();
               exit (1);
             }
@@ -273,7 +280,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
         case 'U':	/* Env Var with Username to send to HTTPS proxy for authentication.  */
           if (args_info->user_given)
             {
-              fprintf (stderr, "%s: `--user' (`-u') or `--uservar' (`-U') option given more than once\n", PACKAGE);
+              fprintf (stderr, "%s: `--user' (`-u'), `--uservar' (`-U') or `--passfile' (`-F') option given more than once\n", PACKAGE);
               clear_args ();
               exit (1);
             }
@@ -290,7 +297,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
         case 's':	/* Password to send to HTTPS proxy for authentication.  */
           if (args_info->pass_given)
             {
-              fprintf (stderr, "%s: `--pass' (`-s') or `--passvar' (`-S') option given more than once\n", PACKAGE);
+              fprintf (stderr, "%s: `--pass' (`-s'), `--passvar' (`-S') or `--passfile' (`-F') option given more than once\n", PACKAGE);
               clear_args ();
               exit (1);
             }
@@ -325,6 +332,33 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
           args_info->pass_given = 1;
           args_info->pass_arg = gengetopt_strdup (tmp_env_var);
           break;
+
+	case 'F':  /* File containing Username & Password to send to
+			   HTTPS proxy for authentication.  */
+          if (args_info->user_given)
+            {
+              fprintf (stderr, "%s: `--user' (`-u'), `--uservar' (`-U') or  `--passfile' (`-F') option given more than once\n", PACKAGE);
+              clear_args ();
+              exit (1);
+            }
+          if (args_info->pass_given)
+            {
+              fprintf (stderr, "%s: `--pass' (`-s'), `--passvar' (`-S') or `--passfile' (`-F') option given more than once\n", PACKAGE);
+              clear_args ();
+              exit (1);
+            }
+          args_info->user_given = 1;
+          args_info->pass_given = 1;
+          char *result = getCredentialsFromFile(optarg, &(args_info->user_arg),
+						&(args_info->pass_arg) );
+
+          if( result != NULL ) {
+	      fprintf( stderr, "%s: Bad password file for `--passfile' (`-F')\n%s\n",
+		       PACKAGE, result);
+	      exit (1);
+          }
+          break;
+
 
         case 'g':	/* HTTPS Proxy host to connect to.  */
           fprintf (stderr, "%s: `-g option is obsolete, use -p\n", PACKAGE);
@@ -438,4 +472,43 @@ if (args_info->proxy_given )
 
 
   return 0;
+}
+
+static char *getCredentialsFromFile( const char* filename, char **user, char **pwd )
+{
+    /* Check file permissions, must have '0' for group and other */
+    struct stat statbuf;
+    if ( stat( filename, &statbuf ) == 0 ) {
+	if ( statbuf.st_mode & (S_IRWXG|S_IRWXO) ) {
+	    return strdup( "Stricter permissions required for password file" );
+	}
+    } else {
+	return strdup( strerror(errno) );
+    }
+
+    FILE* pwfile = fopen( filename, "r" );
+    char line[80], buf[80];
+
+    *user = NULL;
+    *pwd = NULL;
+
+    if( pwfile )
+    {
+	// Read a line
+	while (fgets( line, 80, pwfile ) != NULL ) {
+	    if ( sscanf( line, "proxy_user = %s", buf ) == 1 ) {
+		*user = strdup( buf );
+	    } else if ( sscanf( line, "proxy_passwd = %s", buf ) == 1 ) {
+		*pwd = strdup( buf );
+	    }
+	    if ( *user != NULL && *pwd != NULL ) {
+		fclose( pwfile );
+		return NULL;
+	    }
+	}
+        fclose( pwfile );
+	return strdup( "proxy_user & proxy_passwd not found in password file" );
+    }
+
+    return strdup( "Error opening password file" );
 }

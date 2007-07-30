@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH PROXYTUNNEL 1 "november 20, 2002"
+.TH PROXYTUNNEL 1 "august  1, 2007"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -47,6 +47,21 @@ The username to send to HTTPS proxy for authentification.
 .TP
 .B \-s STRING, \-\-pass=STRING
 The password to send to HTTPS proxy for authentification.
+.TP
+.B \-U STRING, \-\-uservar=STRING
+Environment variable containing the username to send to HTTPS proxy
+for authentification.
+.TP
+.B \-S STRING, \-\-passvar=STRING
+Environment variable containing the password to send to HTTPS proxy
+for authentification.
+.TP
+.B \-F STRING, \-\-passfile=STRING
+The file containing Username & Password to send to HTTPS proxy for
+authentification.  This file uses the same format as .wgetrc, and so
+can use the credentials in common with wget.  This option can be used
+to at least hide the password from anyone clever enough to use the
+`ps' command.
 .TP
 .B \-g STRING, \-\-proxyhost=STRING
 The HTTPS Proxy host:port combo to connect to.

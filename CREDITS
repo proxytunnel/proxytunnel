@@ -12,6 +12,7 @@ people.
 	Andrew Griffiths <nullptr@tasmail.com>	- String format fixes
 	Dieter Heiliger <dieter.heiliger@gmx.de>- User-agent header idea
 	Fred Donck <fd0@donck.com>		- User/Pass Env Vars
+	Leigh.Wedding @ telstra.com		- User/Pass from file
 	Paul Solomon <psolomon@tpg.com.au>	- NTLM support
 	Joerg Wunsch <j@uriah.heep.sax.de>	- Password prompt suggestion
 	Roberto Veldhoven at atosorigin.com	- Tandem compile fix
