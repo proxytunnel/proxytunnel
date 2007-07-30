@@ -1,3 +1,9 @@
+Changes to proxytunnel version 1.7.2 -- Mon Jul 30 10:18:26 CEST 2007
+
+- Fixed buffer/malloc issue
+- Clean-up usage info/help text
+- Remove spurious syslog
+
 Changes to proxytunnel version 1.7.1 -- Thu Apr 12 13:40:27 CEST 2007
 
 - Cygwin SO_REUSEPORT stuff by Marc Heuse

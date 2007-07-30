@@ -224,6 +224,7 @@ void do_daemon()
  * 	-- Maniac
  */
 #ifndef CYGWIN
+/*
 	if ( ( pid = fork( ) ) < 0 )
 	{
 		my_perror( "Cannot fork into the background" );
@@ -234,6 +235,7 @@ void do_daemon()
        		message( "Forked into the background with pid %d\n", pid );
        		exit(0);
 	}
+*/
 
 	openlog( program_name, LOG_CONS|LOG_PID,LOG_DAEMON );
 	i_am_daemon = 1;
