@@ -68,5 +68,5 @@ clean:
 
 install:
 		install -Dp -m0755 $(PROGNAME) $(DESTDIR)$(BINDIR)/$(PROGNAME)
-		install -Dp -m0644 debian/$(PROGNAME).1 $(DESTDIR)$(MANDIR)/man1/$(PROGNAME).1
+		install -Dp -m0644 $(PROGNAME).1 $(DESTDIR)$(MANDIR)/man1/$(PROGNAME).1
 
