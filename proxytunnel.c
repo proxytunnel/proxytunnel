@@ -143,7 +143,10 @@ void closeall() {
 		message( "Tunnel closed\n" );
 	}
 
-   	message( "Goodbye" );
+	if( !args_info.quiet_flag )
+	{
+		message( "Goodbye" );
+	}
 
 #ifndef CYGWIN
         closelog();

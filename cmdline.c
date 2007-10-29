@@ -40,7 +40,7 @@ static char *getCredentialsFromFile( const char* filename, char **user, char **p
 void
 cmdline_parser_print_version (void)
 {
-  printf ("%s %s (rev %d)\nCopyright 2001-2006 Proxytunnel Project\n%s\n", PACKAGE, VERSION, REV, AUTHORS);
+  printf ("%s %s (rev %d)\nCopyright 2001-2007 Proxytunnel Project\n%s\n", PACKAGE, VERSION, REV, AUTHORS);
 }
 
 void
@@ -412,6 +412,11 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
           break;
 
         case 'v':	/* Turn on verbosity.  */
+          if (args_info->quiet_flag)        /* -q also on cmd line */
+          {
+              fprintf (stderr, "-v and -q are mutually exclusive\n");
+              exit(1);
+          }
           args_info->verbose_flag = !(args_info->verbose_flag);
           break;
 
