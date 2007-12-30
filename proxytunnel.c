@@ -24,6 +24,8 @@
 #include <unistd.h>
 #include <string.h>
 #include <sys/types.h>
+#include <netinet/tcp.h>
+#include <netinet/in.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -122,6 +124,12 @@ int tunnel_connect() {
 		message( "Connected to %s:%d (local proxy)\n",
 			args_info.proxyhost_arg,
 			args_info.proxyport_arg );
+	}
+
+	{	/* Increase interactivity of tunnel, patch by Ingo Molnar */
+		int flag = 1;
+		setsockopt( sd, IPPROTO_TCP, TCP_NODELAY,
+			(char *)&flag, sizeof(int));
 	}
 
 	/* Make sure we get warned when someone hangs up on us */
