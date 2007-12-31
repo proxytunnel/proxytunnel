@@ -4,6 +4,10 @@ Changes to proxytunnel version 1.8.0 -- Mon Dec 31 16:46:52 CET 2007
 - Moved manual-page from debian/ to / in source-tree
 - Cleanup quiet mode, quiet/verbose mutually exclusive (fd0)
 - Performance patch from Ingo Molnar
+- This release was prepared at 24C3, Berlin
+  (http://events.ccc.de/congress/2007/)
+- Have a nice year, or as they say here:
+  "Einen guten Rutsch ins 1984"
 
 Changes to proxytunnel version 1.7.2 -- Mon Jul 30 10:18:26 CEST 2007
 
