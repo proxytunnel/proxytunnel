@@ -3,6 +3,7 @@ Changes to proxytunnel version 1.8.0 -- TBD
 - Added passfile options to read username/password from a file
 - Moved manual-page from debian/ to / in source-tree
 - Cleanup quiet mode, quiet/verbose mutually exclusive (fd0)
+- Performance patch from Ingo Molnar
 
 Changes to proxytunnel version 1.7.2 -- Mon Jul 30 10:18:26 CEST 2007
 
