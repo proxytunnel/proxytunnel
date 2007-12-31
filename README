@@ -3,8 +3,8 @@ proxytunnel
 -----------
 
 Author:		Jos Visser <josv@osp.nl>, Mark Janssen <maniac@maniac.nl>
-Date: 		Sun Feb 25 17:47:55 CET 2007
-Version:	1.7.0
+Date: 		Mon Dec 31 16:50:33 CET 2007
+Version:	1.8.0
 
 Hi all,
 
@@ -22,8 +22,8 @@ Proxytunnel is very easy to use, when running proxytunnel with the help
 option it specifies it's command-line options.
 
 $ ./proxytunnel --help
-Proxytunnel 1.7.0
-Copyright 2001-2006 Proxytunnel Project
+Proxytunnel 1.8.0 (rev 165)
+Copyright 2001-2007 Proxytunnel Project
 Jos Visser (Muppet) <josv@osp.nl>, Mark Janssen (Maniac) <maniac@maniac.nl>
 
 Purpose:
@@ -34,8 +34,8 @@ Usage: Proxytunnel [OPTIONS]...
    -V         --version           Print version and exit
    -i         --inetd             Run from inetd (default=off)
    -a INT     --standalone=INT    Run as standalone daemon on specified port
-   -e         --encrypt           encrypt the communication using SSL (between host and destination)
-   -E         --encrypt-proxy     encrypt the communitation between the client and the proxy using SSL
+   -e         --encrypt           Encrypt proxy<->destination using SSL
+   -E         --encrypt-proxy     Encrypt client<->proxy (proxy talks SSL)
    -x STRING  --proctitle=STRING  Set the process-title to STRING
    -p STRING  --proxy=STRING      Proxy host:port combination to connect to
    -d STRING  --dest=STRING       Destination host:port to built the tunnel to
@@ -45,6 +45,7 @@ Parameters for proxy-authentication (not needed for plain proxies):
    -s STRING  --pass=STRING       Password to send to HTTPS proxy for auth
    -U STRING  --uservar=STRING    Env var with Username for HTTPS proxy auth
    -S STRING  --passvar=STRING    Env var with Password for HTTPS proxy auth
+   -F STRING  --passfile=STRING   File with credentials for proxy auth
    -N         --ntlm              Use NTLM Based Authentication
    -t STRING  --domain=STRING     NTLM Domain (default: autodetect)
    -r STRING  --remproxy=STRING   Use a remote proxy to tunnel over (2 proxies)

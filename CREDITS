@@ -20,6 +20,7 @@ people.
 	Mike Frysinger <vapier@gentoo.org>	- Makefile fix, 64bit fix
 	Alex Peuchert proxytunnel@peuchert.de	- SSL/Encrypt support
 	Mark.Cave-Ayland @ ilande.co.uk		- SSL to Proxy, Streams
+	Ingo Molnar <mingo@elte.hu>		- Interactivity improvement
 
 Furthermore we would like to thank the wonderful people at SourceForge
 for hosting our development.

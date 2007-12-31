@@ -1,4 +1,4 @@
-Changes to proxytunnel version 1.8.0 -- TBD
+Changes to proxytunnel version 1.8.0 -- Mon Dec 31 16:46:52 CET 2007
 
 - Added passfile options to read username/password from a file
 - Moved manual-page from debian/ to / in source-tree
