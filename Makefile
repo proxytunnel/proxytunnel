@@ -4,25 +4,33 @@
 
 CC ?= cc
 CFLAGS ?= -Wall -O2 -ggdb
-CFLAGS += -DHAVE_GETOPT_LONG 	# Comment on non-gnu systems
-CFLAGS += -DUSE_SSL 		# Comment if you don't have/want ssl
-# Most systems
-CFLAGS += -DSETPROCTITLE -DSPT_TYPE=2
-REV = $(shell ./getrev.sh)
-CFLAGS += -DREV=$(REV)
 
-# Testing new flags
-CFLAGS += -DSO_REUSEPORT	# Comment if you don't have this flag
+OPTFLAGS = -DREV=$(shell ./getrev.sh)
+
+# Comment on non-gnu systems
+OPTFLAGS += -DHAVE_GETOPT_LONG
+
+# Comment if you don't have/want ssl
+OPTFLAGS += -DUSE_SSL
+
+# Most systems
+OPTFLAGS += -DSETPROCTITLE -DSPT_TYPE=2
+
+# Comment if you don't have this flag
+OPTFLAGS += -DSO_REUSEPORT
 
 # System dependant blocks... if your system is listed below, uncomment
 # the relevant lines
 
 # OpenBSD
-#CFLAGS += -DHAVE_SYS_PSTAT_H
+#OPTFLAGS += -DHAVE_SYS_PSTAT_H
+
 # DARWIN
-#CFLAGS += -DDARWIN
+#OPTFLAGS += -DDARWIN
+
 # CYGWIN
-#CFLAGS += -DCYGWIN
+#OPTFLAGS += -DCYGWIN
+
 # SOLARIS
 #LDFLAGS += -lsocket -lnsl
 #LDFLAGS += -L/usr/local/ssl/lib	# Path to your SSL lib dir
@@ -61,12 +69,14 @@ OBJ = proxytunnel.o	\
 	ptstream.o
 
 proxytunnel: $(OBJ)
-	$(CC) -o $(PROGNAME) $(CFLAGS) $(OBJ) $(LDFLAGS)
+	$(CC) -o $(PROGNAME) $(CFLAGS) $(OPTFLAGS) $(OBJ) $(LDFLAGS)
 
-clean:		
+clean:
 	@rm -f $(PROGNAME) $(OBJ)
 
 install:
-		install -Dp -m0755 $(PROGNAME) $(DESTDIR)$(BINDIR)/$(PROGNAME)
-		install -Dp -m0644 $(PROGNAME).1 $(DESTDIR)$(MANDIR)/man1/$(PROGNAME).1
+	install -Dp -m0755 $(PROGNAME) $(DESTDIR)$(BINDIR)/$(PROGNAME)
+	install -Dp -m0644 $(PROGNAME).1 $(DESTDIR)$(MANDIR)/man1/$(PROGNAME).1
 
+.c.o:
+	$(CC) $(CFLAGS) $(OPTFLAGS) -c -o $@ $<
