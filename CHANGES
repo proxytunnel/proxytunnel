@@ -5,6 +5,7 @@ Changes to proxytunnel version 1.8.0svn -- Sat Jan 19 04:42:11 CET 2008
 - Disable output by default on Windows build (Dag Wieers)
 - Headers now have a trailing \r\n (Dag Wieers)
 - Updated SPEC file to RPMforge standards (Dag Wieers)
+- Improved verbose output, easier for the eyes (Dag Wieers)
 
 Changes to proxytunnel version 1.8.0 -- Mon Dec 31 16:46:52 CET 2007
 

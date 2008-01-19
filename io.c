@@ -65,7 +65,7 @@ int readline(PTSTREAM *pts)
 		char * dstr = malloc(sizeof(buf) + 1);
 		strlcpy( dstr, buf, strlen(buf) - 1);
 		if (strcmp(dstr, ""))
-			message( "<- %s\n", dstr );
+			message( "  «  %s\n", dstr );
 	}
 	return strlen( buf );
 }
@@ -97,7 +97,7 @@ void cpio(PTSTREAM *stream1, PTSTREAM *stream2)
 	FD_ZERO( &writefds );
 
 	if( args_info.verbose_flag )
-		message( "Tunnel established\n" );
+		message( "\nTunnel established.\n" );
 
 	/*
 	 * Only diamonds are forever :-)

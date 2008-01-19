@@ -102,7 +102,7 @@ void print_line_prefix(char *buf, char *prefix)
     buf = strdup(buf);
     char *cur = strtok(buf, "\r\n");
     while ( cur != NULL) {
-        message( "%s %s\n", prefix, cur );
+        message( "%s%s\n", prefix, cur );
         cur = strtok(NULL, "\r\n");
     }
 }
@@ -136,13 +136,13 @@ void proxy_protocol(PTSTREAM *pts)
 	if (args_info.remproxy_given )
 	{
 		if( args_info.verbose_flag )
-			message( "Tunneling to %s (remote proxy)\n", args_info.remproxy_arg );
+			message( "\nTunneling to %s (remote proxy)\n", args_info.remproxy_arg );
         sprintf( buf, "CONNECT %s  HTTP/1.0\r\n", args_info.remproxy_arg );
 	}
 	else
 	{
 		if( args_info.verbose_flag )
-			message( "Tunneling to %s (destination)\n", args_info.dest_arg );
+			message( "\nTunneling to %s (destination)\n", args_info.dest_arg );
         sprintf( buf, "CONNECT %s HTTP/1.0\r\n", args_info.dest_arg );
 	}
 	
@@ -178,7 +178,7 @@ void proxy_protocol(PTSTREAM *pts)
 	 */
 	if( args_info.verbose_flag ) {
 		message( "Connect string sent to local proxy:\n");
-		print_line_prefix(buf, "->");
+		print_line_prefix(buf, " đ»  ");
 	}
 	
 	/*
@@ -205,7 +205,7 @@ void proxy_protocol(PTSTREAM *pts)
 		while ( strcmp( buf, "\r\n" ) != 0 ) readline(pts);
 
 		if( args_info.verbose_flag )
-			message( "Tunneling to %s (destination)\n", args_info.dest_arg );
+			message( "\nTunneling to %s (destination)\n", args_info.dest_arg );
         sprintf( buf, "CONNECT %s HTTP/1.0\r\n", args_info.dest_arg);
 
 		/*
@@ -220,7 +220,7 @@ void proxy_protocol(PTSTREAM *pts)
 		 */
 		if( args_info.verbose_flag ) {
 			message( "Connect string sent to remote proxy:\n");
-			print_line_prefix(buf, "->");
+			print_line_prefix(buf, "  »  ");
 		}
 	
 		/*
