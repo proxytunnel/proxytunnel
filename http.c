@@ -110,19 +110,18 @@ void print_line_prefix(char *buf, char *prefix)
 /*
  * Append an undefined number of strings together
  */
-int strzcat(char *strz, ...)
+void strzcat(char *strz, ...)
 {
     va_list ap;
     va_start(ap, strz);
     char *z;
     int i;
-    for(i=0; i<=sizeof(*ap)-1; i++) {
+    for(i=0; i<sizeof(*ap); i++) {
         z = va_arg(ap, char *);
         strlcat(strz, z, SIZE);
-//	fprintf ( stderr, "strzcat: len-strz(%d)(%s), len-z(%d)(%s), size(%d)\n", strlen(strz), strz, strlen(z), z, SIZE );
+//      fprintf ( stderr, "strzcat: len-strz(%d)(%s), len-z(%d)(%s), size(%d)\n", strlen(strz), strz, strlen(z), z, SIZE );
     }
     va_end(ap);
-    return 0;
 }
 
 /*
@@ -192,8 +191,9 @@ void proxy_protocol(PTSTREAM *pts)
 	 * Print the CONNECT instruction before sending to proxy
 	 */
 	if( args_info.verbose_flag ) {
-		message( "Connect string sent to local proxy:\n");
-		print_line_prefix(buf, " đ»  ");
+//		message( "Connect string sent to local proxy:\n");
+		message( "Communication with local proxy:\n");
+		print_line_prefix(buf, "đ-> ");
 	}
 	
 	/*
@@ -207,8 +207,8 @@ void proxy_protocol(PTSTREAM *pts)
 	/*
 	 * Read the first line of the response and analyze it
 	 */
-	if( args_info.verbose_flag )
-		message( "Data received from local proxy:\n");
+//	if( args_info.verbose_flag )
+//		message( "Data received from local proxy:\n");
 
 	analyze_HTTP(pts);
 
@@ -246,8 +246,9 @@ void proxy_protocol(PTSTREAM *pts)
 		 * Print the CONNECT instruction before sending to proxy
 		 */
 		if( args_info.verbose_flag ) {
-			message( "Connect string sent to remote proxy:\n");
-			print_line_prefix(buf, "  »  ");
+//			message( "Connect string sent to remote proxy:\n");
+			message( "Communication with remote proxy:\n");
+			print_line_prefix(buf, " -> ");
 		}
 	
 		/*
@@ -262,8 +263,8 @@ void proxy_protocol(PTSTREAM *pts)
 		/*
 		 * Read the first line of the response and analyze it
 		 */
-		if( args_info.verbose_flag )
-			message( "Received from remote proxy:\n");
+//		if( args_info.verbose_flag )
+//			message( "Received from remote proxy:\n");
 
 		analyze_HTTP(pts);
 	}

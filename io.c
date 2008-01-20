@@ -65,7 +65,7 @@ int readline(PTSTREAM *pts)
 		char * dstr = malloc(sizeof(buf) + 1);
 		strlcpy( dstr, buf, strlen(buf) - 1);
 		if (strcmp(dstr, ""))
-			message( "  «  %s\n", dstr );
+			message( " <- %s\n", dstr );
 	}
 	return strlen( buf );
 }
