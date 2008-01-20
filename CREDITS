@@ -18,6 +18,7 @@ people.
 	Roberto Veldhoven at atosorigin.com	- Tandem compile fix
 	Stephane Engel at macchiati.org		- Fix for broken proxy
 	Mike Frysinger <vapier@gentoo.org>	- Makefile fix, 64bit fix
+	Dag Wieers <dag@wieers.com>		- Remote proxy support, various other
 	Alex Peuchert proxytunnel@peuchert.de	- SSL/Encrypt support
 	Mark.Cave-Ayland @ ilande.co.uk		- SSL to Proxy, Streams
 	Ingo Molnar <mingo@elte.hu>		- Interactivity improvement
