@@ -183,7 +183,7 @@ void proxy_protocol(PTSTREAM *pts)
 	if( args_info.verbose_flag ) {
 //		message( "Connect string sent to local proxy:\n");
 		message( "Communication with local proxy:\n");
-		print_line_prefix(buf, "đ-> ");
+		print_line_prefix(buf, " -> ");
 	}
 	
 	/*
