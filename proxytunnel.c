@@ -86,7 +86,7 @@ int tunnel_connect() {
 	if( ! ( he = gethostbyname( args_info.proxyhost_arg ) ) )
 	{
 // FIXME:	my_perror("Local proxy %s could not be resolved", args_info.proxyhost_arg);
-		my_perror("Local proxy could not be resolved" );
+		my_perror("Local proxy could not be resolved." );
 		exit(1);
 	}
  
@@ -119,12 +119,23 @@ int tunnel_connect() {
 		exit(1);
 	}
 
-	if( ! args_info.quiet_flag )
-	{
-		message( "Connected to %s:%d (local proxy)\n",
-			args_info.proxyhost_arg,
-			args_info.proxyport_arg );
-	}
+    if( ! args_info.quiet_flag )
+    {
+        if ( ! args_info.verbose_flag ) {
+            if ( args_info.remproxy_given ) {
+                message( "Via %s -> %s -> %s\n",
+                    args_info.proxy_arg,
+                    args_info.remproxy_arg,
+                    args_info.dest_arg );
+            } else {
+                message( "Via %s -> %s\n",
+                    args_info.proxy_arg,
+                    args_info.dest_arg );
+            }
+        } else {
+            message( "Connected to %s (local proxy)\n", args_info.proxy_arg );
+        }
+    }
 
 	{	/* Increase interactivity of tunnel, patch by Ingo Molnar */
 		int flag = 1;
@@ -146,16 +157,6 @@ int tunnel_connect() {
 void closeall() {
 //	message( "In closeall\n");
 
-	if( args_info.verbose_flag )
-	{
-		message( "Tunnel closed\n" );
-	}
-
-	if( !args_info.quiet_flag )
-	{
-		message( "Goodbye" );
-	}
-
 #ifndef CYGWIN
         closelog();
 #endif
@@ -173,6 +174,12 @@ void closeall() {
 		stream_close(std);
 		std = NULL;
 	}
+
+	if( args_info.verbose_flag )
+	{
+		message( "Tunnel closed.\n" );
+	}
+
 }
 
 /*

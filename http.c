@@ -108,20 +108,21 @@ void print_line_prefix(char *buf, char *prefix)
 }
 
 /*
- * Append an undefined number of strings together
+ * Append an variable number of strings together
  */
-void strzcat(char *strz, ...)
+size_t strzcat(char *strz, ...)
 {
     va_list ap;
-    va_start(ap, strz);
     char *z;
     int i;
-    for(i=0; i<sizeof(*ap); i++) {
+    size_t dlen = 0;
+    va_start(ap, strz);
+    for(i=0; i<sizeof(*ap); i+=sizeof(ap[0])) {
         z = va_arg(ap, char *);
-        strlcat(strz, z, SIZE);
-//      fprintf ( stderr, "strzcat: len-strz(%d)(%s), len-z(%d)(%s), size(%d)\n", strlen(strz), strz, strlen(z), z, SIZE );
+        dlen += strlcat(strz, z, SIZE);
     }
     va_end(ap);
+    return dlen;
 }
 
 /*
@@ -155,37 +156,26 @@ void proxy_protocol(PTSTREAM *pts)
                       if (ntlm_challenge == 1)
 		      {
 				build_type3_response();
-//				strzcat( buf, "Proxy-Authorization: NTLM ", ntlm_type3_buf, "\r\n" );
-				strlcat( buf, "Proxy-Authorization: NTLM ", SIZE );
-				strlcat( buf, ntlm_type3_buf, SIZE );
-				strlcat( buf, "\r\n", SIZE );
+				strzcat( buf, "Proxy-Authorization: NTLM ", ntlm_type3_buf, "\r\n" );
                       }
 		      else if (ntlm_challenge == 0)
 		      {
-//				strzcat( buf, "Proxy-Authorization: NTLM ", ntlm_type1_buf, "\r\n" );
-				strlcat( buf, "Proxy-Authorization: NTLM ", SIZE );
-				strlcat( buf, ntlm_type1_buf, SIZE );
-				strlcat( buf, "\r\n", SIZE );
+				strzcat( buf, "Proxy-Authorization: NTLM ", ntlm_type1_buf, "\r\n" );
                       }
               }
 	      else
 	      {
-//                     strzcat( buf, "Proxy-authorization: Basic ", basicauth, "\r\n" );
-			strlcat( buf, "Proxy-authorization: Basic ", SIZE );
-			strlcat( buf, basicauth, SIZE);
-			strlcat( buf, "\r\n", SIZE );
+            strzcat( buf, "Proxy-authorization: Basic ", basicauth, "\r\n" );
               }
 	}
 
 	/* Add extra header(s) */
 	if ( args_info.header_given )
 	{
-//		strzcat( buf, args_info.header_arg, "\r\n" );
-		strlcat( buf, args_info.header_arg, SIZE );
-		strlcat( buf, "\r\n", SIZE );
+		strzcat( buf, args_info.header_arg, "\r\n" );
 	}
 
-	strlcat( buf, "Proxy-Connection: Keep-Alive\r\n\r\n", SIZE);
+	strzcat( buf, "Proxy-Connection: Keep-Alive\r\n\r\n");
 	
 	/*
 	 * Print the CONNECT instruction before sending to proxy
@@ -228,19 +218,15 @@ void proxy_protocol(PTSTREAM *pts)
 		 */
 		if ( args_info.header_given )
 		{
-//			strzcat( buf, args_info.header_arg, "\r\n" );
-			strlcat( buf, args_info.header_arg, SIZE );
-			strlcat( buf, "\r\n", SIZE );
+			strzcat( buf, args_info.header_arg, "\r\n" );
 		}
 
 		if ( args_info.user_given && args_info.pass_given )
 		{
-			strlcat( buf, "Proxy-authorization: Basic ", SIZE );
-			strlcat( buf, basicauth, SIZE );
-			strlcat( buf, "\r\n", SIZE );
+			strzcat( buf, "Proxy-authorization: Basic ", basicauth, "\r\n" );
 		}
 
-		strlcat( buf, "Proxy-Connection: Keep-Alive\r\n\r\n", SIZE );
+        strzcat( buf, "Proxy-Connection: Keep-Alive\r\n\r\n" );
 		
 		/*
 		 * Print the CONNECT instruction before sending to proxy
