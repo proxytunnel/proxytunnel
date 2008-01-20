@@ -233,6 +233,13 @@ void proxy_protocol(PTSTREAM *pts)
 			strlcat( buf, "\r\n", SIZE );
 		}
 
+		if ( args_info.user_given && args_info.pass_given )
+		{
+			strlcat( buf, "Proxy-authorization: Basic ", SIZE );
+			strlcat( buf, basicauth, SIZE );
+			strlcat( buf, "\r\n", SIZE );
+		}
+
 		strlcat( buf, "Proxy-Connection: Keep-Alive\r\n\r\n", SIZE );
 		
 		/*
