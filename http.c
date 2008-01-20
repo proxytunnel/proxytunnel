@@ -119,6 +119,7 @@ int strzcat(char *strz, ...)
     for(i=0; i<=sizeof(*ap)-1; i++) {
         z = va_arg(ap, char *);
         strlcat(strz, z, SIZE);
+//	fprintf ( stderr, "strzcat: len-strz(%d)(%s), len-z(%d)(%s), size(%d)\n", strlen(strz), strz, strlen(z), z, SIZE );
     }
     va_end(ap);
     return 0;
@@ -137,13 +138,13 @@ void proxy_protocol(PTSTREAM *pts)
 	{
 		if( args_info.verbose_flag )
 			message( "\nTunneling to %s (remote proxy)\n", args_info.remproxy_arg );
-        sprintf( buf, "CONNECT %s  HTTP/1.0\r\n", args_info.remproxy_arg );
+		sprintf( buf, "CONNECT %s HTTP/1.0\r\n", args_info.remproxy_arg );
 	}
 	else
 	{
 		if( args_info.verbose_flag )
 			message( "\nTunneling to %s (destination)\n", args_info.dest_arg );
-        sprintf( buf, "CONNECT %s HTTP/1.0\r\n", args_info.dest_arg );
+		sprintf( buf, "CONNECT %s HTTP/1.0\r\n", args_info.dest_arg );
 	}
 	
 	if ( args_info.user_given && args_info.pass_given )
@@ -152,26 +153,40 @@ void proxy_protocol(PTSTREAM *pts)
 		 * Create connect string including the authorization part
 		 */
               if (args_info.ntlm_flag) {
-                      if (ntlm_challenge == 1) {
-                              build_type3_response();
-                              strzcat( buf, "Proxy-Authorization: NTLM ", ntlm_type3_buf, "\r\n" );
-                      } else if (ntlm_challenge == 0){
-                              strzcat( buf, "Proxy-Authorization: NTLM ", ntlm_type1_buf, "\r\n" );
+                      if (ntlm_challenge == 1)
+		      {
+				build_type3_response();
+//				strzcat( buf, "Proxy-Authorization: NTLM ", ntlm_type3_buf, "\r\n" );
+				strlcat( buf, "Proxy-Authorization: NTLM ", SIZE );
+				strlcat( buf, ntlm_type3_buf, SIZE );
+				strlcat( buf, "\r\n", SIZE );
                       }
-              } else {
-                      strzcat( buf, "Proxy-authorization: Basic ", basicauth, "\r\n" );
+		      else if (ntlm_challenge == 0)
+		      {
+//				strzcat( buf, "Proxy-Authorization: NTLM ", ntlm_type1_buf, "\r\n" );
+				strlcat( buf, "Proxy-Authorization: NTLM ", SIZE );
+				strlcat( buf, ntlm_type1_buf, SIZE );
+				strlcat( buf, "\r\n", SIZE );
+                      }
+              }
+	      else
+	      {
+//                     strzcat( buf, "Proxy-authorization: Basic ", basicauth, "\r\n" );
+			strlcat( buf, "Proxy-authorization: Basic ", SIZE );
+			strlcat( buf, basicauth, SIZE);
+			strlcat( buf, "\r\n", SIZE );
               }
 	}
 
+	/* Add extra header(s) */
 	if ( args_info.header_given )
 	{
-		/*
-		 * Add extra header(s)
-		 */
-		strzcat( buf, args_info.header_arg, "\r\n" );
+//		strzcat( buf, args_info.header_arg, "\r\n" );
+		strlcat( buf, args_info.header_arg, SIZE );
+		strlcat( buf, "\r\n", SIZE );
 	}
 
-	strzcat( buf, "Proxy-Connection: Keep-Alive\r\n\r\n");
+	strlcat( buf, "Proxy-Connection: Keep-Alive\r\n\r\n", SIZE);
 	
 	/*
 	 * Print the CONNECT instruction before sending to proxy
@@ -206,14 +221,19 @@ void proxy_protocol(PTSTREAM *pts)
 
 		if( args_info.verbose_flag )
 			message( "\nTunneling to %s (destination)\n", args_info.dest_arg );
-        sprintf( buf, "CONNECT %s HTTP/1.0\r\n", args_info.dest_arg);
+		sprintf( buf, "CONNECT %s HTTP/1.0\r\n", args_info.dest_arg);
 
 		/*
 		 * Add extra header(s)
 		 */
 		if ( args_info.header_given )
-            strzcat( buf, args_info.header_arg, "\r\n" );
-        strzcat( buf, "Proxy-Connection: Keep-Alive\r\n\r\n" );
+		{
+//			strzcat( buf, args_info.header_arg, "\r\n" );
+			strlcat( buf, args_info.header_arg, SIZE );
+			strlcat( buf, "\r\n", SIZE );
+		}
+
+		strlcat( buf, "Proxy-Connection: Keep-Alive\r\n\r\n", SIZE );
 		
 		/*
 		 * Print the CONNECT instruction before sending to proxy
