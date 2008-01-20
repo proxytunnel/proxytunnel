@@ -135,12 +135,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
   args_info->verbose_given = 0;
   args_info->ntlm_given = 0;
   args_info->inetd_given = 0;
-/* For Windows+Putty we cannot allow output by default. -- Dag */
-#ifdef CYGWIN
-  args_info->quiet_given = 1;
-#else
   args_info->quiet_given = 0;
-#endif
   args_info->header_given = 0;
   args_info->domain_given = 0;
   args_info->encrypt_given = 0;
@@ -451,6 +446,13 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	  cmdline_parser_print_help ();
 	  exit (0);
   }
+
+/* For Windows quiet is the default output. -- Dag */
+#ifdef CYGWIN
+if (! args_info->verbose_flag ) {
+    args_info->quiet_flag = 1;
+}
+#endif
 
 if (args_info->proxy_given )
   {
