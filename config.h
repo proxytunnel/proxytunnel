@@ -18,7 +18,7 @@
  */
 
 #define VERSION	"1.8.0"
-#define PACKAGE	"Proxytunnel"
+#define PACKAGE	"proxytunnel"
 #define PURPOSE "Build generic tunnels through HTTPS proxies"
 #define AUTHORS "Jos Visser (Muppet) <josv@osp.nl>, Mark Janssen (Maniac) <maniac@maniac.nl>"
 
