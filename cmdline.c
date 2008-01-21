@@ -52,40 +52,36 @@ cmdline_parser_print_help (void)
 "Build generic tunnels trough HTTPS proxy's, supports HTTP authorization\n"
 "\n"
 "Standard options:\n"
-#if 0
-"   -c, --config=FILE       Read config options from file (FIXME)\n"
-#endif
-"   -i, --inetd             Run from inetd (default=off)\n"
-"   -a, --standalone=INT    Run as standalone daemon on specified port INT\n"
-#if 0
-"   -f, --nobackground      Don't for to background in standalone mode (FIXME)\n"
-#endif
+// FIXME: "   -c, --config=FILE       Read config options from file\n"
+"  -i, --inetd             Run from inetd (default=off)\n"
+"  -a, --standalone=INT    Run as standalone daemon on specified port\n"
+// FIXME: "   -f, --nobackground      Don't for to background in standalone mode\n"
 #ifdef USE_SSL
-"   -e, --encrypt           Encrypt proxy<->destination using SSL\n"
-"   -E, --encrypt-proxy     Encrypt client<->proxy (proxy talks SSL)\n"
+"  -e, --encrypt           SSL encrypt data between local proxy and destination\n"
+"  -E, --encrypt-proxy     SSL encrypt data between client and local proxy\n"
 #endif
-#ifdef SETPROCTITLE
-"   -x, --proctitle=STRING  Set the process-title to STRING\n"
-#endif
-"   -p, --proxy=STRING      Proxy host:port combination to connect to\n"
-"   -d, --dest=STRING       Destination host:port to built the tunnel to\n"
+"  -p, --proxy=STRING      Local proxy host:port combination\n"
+"  -d, --dest=STRING       Destination host:port combination\n"
 "\n"
-"Options for Proxy-Authentication or remote proxy support:\n"
-"   -u, --user=STRING       Username to send to HTTPS proxy for auth\n"
-"   -s, --pass=STRING       Password to send to HTTPS proxy for auth\n"
-"   -U, --uservar=STRING    Env var with Username for HTTPS proxy auth\n"
-"   -S, --passvar=STRING    Env var with Password for HTTPS proxy auth\n"
-"   -F, --passfile=STRING   File with credentials for proxy auth\n"
-"   -N, --ntlm              Use NTLM Based Authentication\n"
-"   -t, --domain=STRING     NTLM Domain (default: autodetect)\n"
-"   -r, --remproxy=STRING   Use a remote proxy to tunnel over (2 proxies)\n"
-"   -H, --header=STRING     Add STRING to HTTP headers sent to proxy\n"
+"Additional options for specific features:\n"
+"  -F, --passfile=STRING   File with credentials for proxy authentication\n"
+"  -u, --user=STRING       Username for proxy authentication\n"
+"  -s, --pass=STRING       Password for proxy authentication\n"
+"  -U, --uservar=STRING    Environment variable that holds username\n"
+"  -S, --passvar=STRING    Environment variable that holds password\n"
+"  -N, --ntlm              Use NTLM based authentication\n"
+"  -t, --domain=STRING     NTLM domain (default: autodetect)\n"
+"  -r, --remproxy=STRING   Remote proxy host:port combination (using 2 proxies)\n"
+"  -H, --header=STRING     Add additional HTTP headers to send to proxy\n"
+#ifdef SETPROCTITLE
+"  -x, --proctitle=STRING  Use a different process title\n"
+#endif
 "\n"
 "Miscellaneous options:\n"
-"   -v, --verbose           Turn on verbosity (default=off)\n"
-"   -q, --quiet             Suppress messages  (default=off)\n"
-"   -h, --help              Print help and exit\n"
-"   -V, --version           Print version and exit\n", PACKAGE);
+"  -v, --verbose           Turn on verbosity\n"
+"  -q, --quiet             Suppress messages\n"
+"  -h, --help              Print help and exit\n"
+"  -V, --version           Print version and exit\n", PACKAGE);
 
 /* FIXME: Examples belong in the manpage, help is already too verbose
   printf( "\nExamples:\n"
