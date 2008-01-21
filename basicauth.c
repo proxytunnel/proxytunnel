@@ -48,10 +48,10 @@ void make_basicauth()
 	 */
 	base64( (unsigned char *)basicauth, (unsigned char *)p, strlen( p ) );
 
-	if( args_info.verbose_flag )
-	{
-		message( "Proxy basic auth is %s\n", basicauth );
-	}
+//	if( args_info.verbose_flag )
+//	{
+//		message( "Proxy basic auth is %s\n", basicauth );
+//	}
 
 	free( p );
 }
