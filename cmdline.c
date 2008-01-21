@@ -40,58 +40,60 @@ static char *getCredentialsFromFile( const char* filename, char **user, char **p
 void
 cmdline_parser_print_version (void)
 {
-  printf ("%s %s (rev %d)\nCopyright 2001-2007 Proxytunnel Project\n%s\n", PACKAGE, VERSION, REV, AUTHORS);
+  printf ("%s %s (rev %d)\nCopyright 2001-2008 Proxytunnel Project\n%s\n", PACKAGE, VERSION, REV, AUTHORS);
 }
 
 void
 cmdline_parser_print_help (void)
 {
-  cmdline_parser_print_version ();
-  printf("\n"
-"Purpose:\n"
-"  Build generic tunnels trough HTTPS proxy's, supports HTTP authorization\n"
-"\n"
+//  cmdline_parser_print_version ();
+  printf(
 "Usage: %s [OPTIONS]...\n"
-"   -h         --help              Print help and exit\n"
-"   -V         --version           Print version and exit\n"
+"Build generic tunnels trough HTTPS proxy's, supports HTTP authorization\n"
+"\n"
+"Standard options:\n"
 #if 0
-"   -c         --config=FILE       Read config options from file (FIXME)\n"
+"   -c, --config=FILE       Read config options from file (FIXME)\n"
 #endif
-"   -i         --inetd             Run from inetd (default=off)\n"
-"   -a INT     --standalone=INT    Run as standalone daemon on specified port\n"
+"   -i, --inetd             Run from inetd (default=off)\n"
+"   -a, --standalone=INT    Run as standalone daemon on specified port INT\n"
 #if 0
-"   -f         --nobackground      Don't for to background in standalone mode (FIXME)\n"
+"   -f, --nobackground      Don't for to background in standalone mode (FIXME)\n"
 #endif
 #ifdef USE_SSL
-"   -e         --encrypt           Encrypt proxy<->destination using SSL\n"
-"   -E         --encrypt-proxy     Encrypt client<->proxy (proxy talks SSL)\n"
+"   -e, --encrypt           Encrypt proxy<->destination using SSL\n"
+"   -E, --encrypt-proxy     Encrypt client<->proxy (proxy talks SSL)\n"
 #endif
 #ifdef SETPROCTITLE
-"   -x STRING  --proctitle=STRING  Set the process-title to STRING\n"
+"   -x, --proctitle=STRING  Set the process-title to STRING\n"
 #endif
-"   -p STRING  --proxy=STRING      Proxy host:port combination to connect to\n"
-"   -d STRING  --dest=STRING       Destination host:port to built the tunnel to\n"
-"\nParameters for proxy-authentication (not needed for plain proxies):\n"
-"   -u STRING  --user=STRING       Username to send to HTTPS proxy for auth\n"
-"   -s STRING  --pass=STRING       Password to send to HTTPS proxy for auth\n"
-"   -U STRING  --uservar=STRING    Env var with Username for HTTPS proxy auth\n"
-"   -S STRING  --passvar=STRING    Env var with Password for HTTPS proxy auth\n"
-"   -F STRING  --passfile=STRING   File with credentials for proxy auth\n"
-"   -N         --ntlm              Use NTLM Based Authentication\n"
-"   -t STRING  --domain=STRING     NTLM Domain (default: autodetect)\n"
-"   -r STRING  --remproxy=STRING   Use a remote proxy to tunnel over (2 proxies)\n"
-"   -H STRING  --header=STRING     Add STRING to HTTP headers sent to proxy\n\n"
-"  If you don't provide -s or -S you will be prompted for a password.\n"
-"\nMiscellaneous options:\n"
-"   -v         --verbose           Turn on verbosity (default=off)\n"
-"   -q         --quiet             Suppress messages  (default=off)\n", PACKAGE);
+"   -p, --proxy=STRING      Proxy host:port combination to connect to\n"
+"   -d, --dest=STRING       Destination host:port to built the tunnel to\n"
+"\n"
+"Options for Proxy-Authentication or remote proxy support:\n"
+"   -u, --user=STRING       Username to send to HTTPS proxy for auth\n"
+"   -s, --pass=STRING       Password to send to HTTPS proxy for auth\n"
+"   -U, --uservar=STRING    Env var with Username for HTTPS proxy auth\n"
+"   -S, --passvar=STRING    Env var with Password for HTTPS proxy auth\n"
+"   -F, --passfile=STRING   File with credentials for proxy auth\n"
+"   -N, --ntlm              Use NTLM Based Authentication\n"
+"   -t, --domain=STRING     NTLM Domain (default: autodetect)\n"
+"   -r, --remproxy=STRING   Use a remote proxy to tunnel over (2 proxies)\n"
+"   -H, --header=STRING     Add STRING to HTTP headers sent to proxy\n"
+"\n"
+"Miscellaneous options:\n"
+"   -v, --verbose           Turn on verbosity (default=off)\n"
+"   -q, --quiet             Suppress messages  (default=off)\n"
+"   -h, --help              Print help and exit\n"
+"   -V, --version           Print version and exit\n", PACKAGE);
 
+/* FIXME: Examples belong in the manpage, help is already too verbose
   printf( "\nExamples:\n"
 "%s [ -h | -V ]\n"
 "%s -i [ -u user ] -p proxy:port -d host:port [ -v | -q ]\n"
 "%s -i [ -U envvar ] -p proxy:port -d host:port [ -v | -q ]\n"
 "%s -a port -p proxy:port -d host:port [ -v | -q ]\n", PACKAGE, PACKAGE, PACKAGE, PACKAGE );
-
+*/
 
 #ifndef HAVE_GETOPT_LONG
   printf( "\n"
