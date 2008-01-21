@@ -105,6 +105,7 @@ void print_line_prefix(char *buf, char *prefix)
         message( "%s%s\n", prefix, cur );
         cur = strtok(NULL, "\r\n");
     }
+//    message( "%s: '%s\n", prefix, buf );
 }
 
 /*
@@ -164,19 +165,20 @@ void proxy_protocol(PTSTREAM *pts)
               }
 	}
 
+	strzcat( buf, "Proxy-Connection: Keep-Alive\r\n");
 	/* Add extra header(s) */
 	if ( args_info.header_given )
 	{
-		strzcat( buf, "%s\r\n", args_info.header_arg );
+		// Headers are already \r\n terminated
+		strzcat( buf, "%s", args_info.header_arg );
 	}
+	strzcat( buf, "\r\n" );
 
-	strzcat( buf, "Proxy-Connection: Keep-Alive\r\n\r\n");
 	
 	/*
 	 * Print the CONNECT instruction before sending to proxy
 	 */
 	if( args_info.verbose_flag ) {
-//		message( "Connect string sent to local proxy:\n");
 		message( "Communication with local proxy:\n");
 		print_line_prefix(buf, " -> ");
 	}
@@ -192,8 +194,8 @@ void proxy_protocol(PTSTREAM *pts)
 	/*
 	 * Read the first line of the response and analyze it
 	 */
-//	if( args_info.verbose_flag )
-//		message( "Data received from local proxy:\n");
+	if( args_info.verbose_flag )
+		message( "Data received from local proxy:\n");
 
 	analyze_HTTP(pts);
 
@@ -208,26 +210,24 @@ void proxy_protocol(PTSTREAM *pts)
 			message( "\nTunneling to %s (destination)\n", args_info.dest_arg );
 		sprintf( buf, "CONNECT %s HTTP/1.0\r\n", args_info.dest_arg);
 
-		/*
-		 * Add extra header(s)
-		 */
-		if ( args_info.header_given )
-		{
-			strzcat( buf, "%s\r\n", args_info.header_arg );
-		}
-
 		if ( args_info.user_given && args_info.pass_given )
 		{
 			strzcat( buf, "Proxy-authorization: Basic %s\r\n", basicauth );
 		}
 
-        strzcat( buf, "Proxy-Connection: Keep-Alive\r\n\r\n" );
+		strzcat( buf, "Proxy-Connection: Keep-Alive\r\n");
+		/* Add extra header(s) */
+		if ( args_info.header_given )
+		{
+			// Headers are already \r\n terminated
+			strzcat( buf, "%s", args_info.header_arg );
+		}
+		strzcat( buf, "\r\n" );
 		
 		/*
 		 * Print the CONNECT instruction before sending to proxy
 		 */
 		if( args_info.verbose_flag ) {
-//			message( "Connect string sent to remote proxy:\n");
 			message( "Communication with remote proxy:\n");
 			print_line_prefix(buf, " -> ");
 		}
