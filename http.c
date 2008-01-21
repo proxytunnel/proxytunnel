@@ -161,7 +161,7 @@ void proxy_protocol(PTSTREAM *pts)
               }
 	      else
 	      {
-            strzcat( buf, "Proxy-authorization: Basic %s\r\n", basicauth );
+            strzcat( buf, "Proxy-Authorization: Basic %s\r\n", basicauth );
               }
 	}
 
@@ -194,8 +194,8 @@ void proxy_protocol(PTSTREAM *pts)
 	/*
 	 * Read the first line of the response and analyze it
 	 */
-	if( args_info.verbose_flag )
-		message( "Data received from local proxy:\n");
+//	if( args_info.verbose_flag )
+//		message( "Data received from local proxy:\n");
 
 	analyze_HTTP(pts);
 
@@ -212,7 +212,7 @@ void proxy_protocol(PTSTREAM *pts)
 
 		if ( args_info.user_given && args_info.pass_given )
 		{
-			strzcat( buf, "Proxy-authorization: Basic %s\r\n", basicauth );
+			strzcat( buf, "Proxy-Authorization: Basic %s\r\n", basicauth );
 		}
 
 		strzcat( buf, "Proxy-Connection: Keep-Alive\r\n");
