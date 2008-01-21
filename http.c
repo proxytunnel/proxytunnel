@@ -110,19 +110,14 @@ void print_line_prefix(char *buf, char *prefix)
 /*
  * Append an variable number of strings together
  */
-size_t strzcat(char *strz, ...)
+size_t strzcat(char *strz, char *fmt, ...)
 {
+    int offset = strlen(strz);
     va_list ap;
-    char *z;
-    int i;
-    size_t dlen = 0;
-    va_start(ap, strz);
-    for(i=0; i<sizeof(*ap); i+=sizeof(ap[0])) {
-        z = va_arg(ap, char *);
-        dlen += strlcat(strz, z, SIZE);
-    }
+    va_start(ap, fmt);
+    size_t dlen = vsnprintf(&strz[offset], SIZE-offset, fmt, ap);
     va_end(ap);
-    return dlen;
+    return dlen+offset;
 }
 
 /*
@@ -156,23 +151,23 @@ void proxy_protocol(PTSTREAM *pts)
                       if (ntlm_challenge == 1)
 		      {
 				build_type3_response();
-				strzcat( buf, "Proxy-Authorization: NTLM ", ntlm_type3_buf, "\r\n" );
+				strzcat( buf, "Proxy-Authorization: NTLM %s\r\n", ntlm_type3_buf );
                       }
 		      else if (ntlm_challenge == 0)
 		      {
-				strzcat( buf, "Proxy-Authorization: NTLM ", ntlm_type1_buf, "\r\n" );
+				strzcat( buf, "Proxy-Authorization: NTLM %s\r\n", ntlm_type1_buf );
                       }
               }
 	      else
 	      {
-            strzcat( buf, "Proxy-authorization: Basic ", basicauth, "\r\n" );
+            strzcat( buf, "Proxy-authorization: Basic %s\r\n", basicauth );
               }
 	}
 
 	/* Add extra header(s) */
 	if ( args_info.header_given )
 	{
-		strzcat( buf, args_info.header_arg, "\r\n" );
+		strzcat( buf, "%s\r\n", args_info.header_arg );
 	}
 
 	strzcat( buf, "Proxy-Connection: Keep-Alive\r\n\r\n");
@@ -218,12 +213,12 @@ void proxy_protocol(PTSTREAM *pts)
 		 */
 		if ( args_info.header_given )
 		{
-			strzcat( buf, args_info.header_arg, "\r\n" );
+			strzcat( buf, "%s\r\n", args_info.header_arg );
 		}
 
 		if ( args_info.user_given && args_info.pass_given )
 		{
-			strzcat( buf, "Proxy-authorization: Basic ", basicauth, "\r\n" );
+			strzcat( buf, "Proxy-authorization: Basic %s\r\n", basicauth );
 		}
 
         strzcat( buf, "Proxy-Connection: Keep-Alive\r\n\r\n" );
