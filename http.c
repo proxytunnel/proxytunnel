@@ -36,35 +36,27 @@
  * Analyze the proxy's HTTP response. This must be a HTTP/1.? 200 OK type
  * header
  */
-void analyze_HTTP(PTSTREAM *pts)
-{
+void analyze_HTTP(PTSTREAM *pts) {
 	char *p = strtok( buf, " ");
 
-	/* 
-	 * Strip html error pages for faulty proxies
-	 * by: Stephane Engel <steph[at]macchiati.org>
-	 */
-	while (strncmp( p, "HTTP/", 5) != 0 )
-	{
-		if ( readline(pts) )
+	/* Strip html error pages for faulty proxies (Stephane Engel <steph[at]macchiati.org>) */
+	while (strncmp( p, "HTTP/", 5) != 0 ) {
+		if ( readline(pts) ) {
 			p = strtok( buf, " ");
-		else
-		{
+		} else {
 			message( "analyze_HTTP: readline failed: Connection closed by remote host\n" );
 			exit(2);
 		}
 	}
 
-	if (strcmp( p, "HTTP/1.0" ) != 0 && strcmp( p, "HTTP/1.1" ) != 0)
-	{
+	if (strcmp( p, "HTTP/1.0" ) != 0 && strcmp( p, "HTTP/1.1" ) != 0) {
 		message( "Unsupported HTTP version number %s\n", p );
 		exit( 1 );
 	}
 
 	p = strtok( NULL, " ");
 
-	if( strcmp( p, "200" ) != 0 )
-	{
+	if( strcmp( p, "200" ) != 0 ) {
 		if( ! args_info.quiet_flag )
 			message( "HTTP return code: %s ", p );
 
@@ -73,20 +65,17 @@ void analyze_HTTP(PTSTREAM *pts)
 		if( ! args_info.quiet_flag )
 			message( "%s", p );
 
-		if (!ntlm_challenge && strcmp( p, "407") != 0)
-		{
-			do
-			{
+		if (!ntlm_challenge && strcmp( p, "407") != 0) {
+			do {
 				readline(pts);
-				if (strncmp( buf, "Proxy-Authenticate: NTLM ", 25) == 0)
-				{
+				if (strncmp( buf, "Proxy-Authenticate: NTLM ", 25) == 0) {
 					if (parse_type2((unsigned char *)&buf[25]) < 0)
 						exit(1);
 				}
 			} while ( strcmp( buf, "\r\n" ) != 0 );
 		}
-		if (ntlm_challenge == 1)
-		{
+
+		if (ntlm_challenge == 1) {
 			proxy_protocol(pts);
 			return;
 		}
@@ -97,156 +86,120 @@ void analyze_HTTP(PTSTREAM *pts)
 /*
  * Prints lines from a buffer prepended with a prefix
  */
-void print_line_prefix(char *buf, char *prefix)
-{
-    buf = strdup(buf);
-    char *cur = strtok(buf, "\r\n");
-    while ( cur != NULL) {
-        message( "%s%s\n", prefix, cur );
-        cur = strtok(NULL, "\r\n");
-    }
-//    message( "%s: '%s\n", prefix, buf );
+void print_line_prefix(char *buf, char *prefix) {
+	buf = strdup(buf);
+	char *cur = strtok(buf, "\r\n");
+	while ( cur != NULL) {
+		message( "%s%s\n", prefix, cur );
+		cur = strtok(NULL, "\r\n");
+	}
+//	message( "%s: '%s\n", prefix, buf );
 }
 
 /*
  * Append an variable number of strings together
  */
-size_t strzcat(char *strz, char *fmt, ...)
-{
-    int offset = strlen(strz);
-    va_list ap;
-    va_start(ap, fmt);
-    size_t dlen = vsnprintf(&strz[offset], SIZE-offset, fmt, ap);
-    va_end(ap);
-    return dlen+offset;
+size_t strzcat(char *strz, char *fmt, ...) {
+	int offset = strlen(strz);
+	va_list ap;
+	va_start(ap, fmt);
+	size_t dlen = vsnprintf(&strz[offset], SIZE-offset, fmt, ap);
+	va_end(ap);
+	return dlen+offset;
 }
 
 /*
  * Execute the basic proxy protocol of CONNECT and response, until the
  * last line of the response has been read. The tunnel is then open.
  */
-void proxy_protocol(PTSTREAM *pts)
-{
-	/*
-	 * Create the proxy CONNECT command into buf
-	 */
-	if (args_info.remproxy_given )
-	{
+void proxy_protocol(PTSTREAM *pts) {
+	/* Create the proxy CONNECT command into buf */
+	if (args_info.remproxy_given ) {
 		if( args_info.verbose_flag )
 			message( "\nTunneling to %s (remote proxy)\n", args_info.remproxy_arg );
 		sprintf( buf, "CONNECT %s HTTP/1.0\r\n", args_info.remproxy_arg );
-	}
-	else
-	{
+	} else {
 		if( args_info.verbose_flag )
 			message( "\nTunneling to %s (destination)\n", args_info.dest_arg );
 		sprintf( buf, "CONNECT %s HTTP/1.0\r\n", args_info.dest_arg );
 	}
 	
-	if ( args_info.user_given && args_info.pass_given )
-	{
-		/*
-		 * Create connect string including the authorization part
-		 */
-              if (args_info.ntlm_flag) {
-                      if (ntlm_challenge == 1)
-		      {
+	if ( args_info.user_given && args_info.pass_given ) {
+		/* Create connect string including the authorization part */
+		if (args_info.ntlm_flag) {
+			if (ntlm_challenge == 1) {
 				build_type3_response();
 				strzcat( buf, "Proxy-Authorization: NTLM %s\r\n", ntlm_type3_buf );
-                      }
-		      else if (ntlm_challenge == 0)
-		      {
+			} else if (ntlm_challenge == 0) {
 				strzcat( buf, "Proxy-Authorization: NTLM %s\r\n", ntlm_type1_buf );
-                      }
-              }
-	      else
-	      {
-            strzcat( buf, "Proxy-Authorization: Basic %s\r\n", basicauth );
-              }
+			}
+		} else {
+			strzcat( buf, "Proxy-Authorization: Basic %s\r\n", basicauth );
+		}
 	}
 
 	strzcat( buf, "Proxy-Connection: Keep-Alive\r\n");
-	/* Add extra header(s) */
+	/* Add extra header(s), headers are already \r\n terminated */
 	if ( args_info.header_given )
-	{
-		// Headers are already \r\n terminated
 		strzcat( buf, "%s", args_info.header_arg );
-	}
+
 	strzcat( buf, "\r\n" );
 
-	
-	/*
-	 * Print the CONNECT instruction before sending to proxy
-	 */
+
+	/* Print the CONNECT instruction before sending to proxy */
 	if( args_info.verbose_flag ) {
 		message( "Communication with local proxy:\n");
 		print_line_prefix(buf, " -> ");
 	}
-	
-	/*
-	 * Send the CONNECT instruction to the proxy
-	 */
-	if( stream_write( pts, buf, strlen( buf )) < 0 )
-	{
+
+	/* Send the CONNECT instruction to the proxy */
+	if( stream_write( pts, buf, strlen( buf )) < 0 ) {
 		my_perror( "Socket write error" );
 		exit( 1 );
 	}
-	/*
-	 * Read the first line of the response and analyze it
-	 */
+
 //	if( args_info.verbose_flag )
 //		message( "Data received from local proxy:\n");
 
+	/* Read the first line of the response and analyze it */
 	analyze_HTTP(pts);
 
-	if (args_info.remproxy_given )
-	{
-		/*
-		 * Clean buffer for next analysis
-		 */
-		while ( strcmp( buf, "\r\n" ) != 0 ) readline(pts);
+	if (args_info.remproxy_given ) {
+		/* Clean buffer for next analysis */
+		while ( strcmp( buf, "\r\n" ) != 0 )
+			readline(pts);
 
 		if( args_info.verbose_flag )
 			message( "\nTunneling to %s (destination)\n", args_info.dest_arg );
 		sprintf( buf, "CONNECT %s HTTP/1.0\r\n", args_info.dest_arg);
 
 		if ( args_info.user_given && args_info.pass_given )
-		{
 			strzcat( buf, "Proxy-Authorization: Basic %s\r\n", basicauth );
-		}
 
 		strzcat( buf, "Proxy-Connection: Keep-Alive\r\n");
-		/* Add extra header(s) */
+
+		/* Add extra header(s), headers are already \r\n terminated */
 		if ( args_info.header_given )
-		{
-			// Headers are already \r\n terminated
 			strzcat( buf, "%s", args_info.header_arg );
-		}
+
 		strzcat( buf, "\r\n" );
-		
-		/*
-		 * Print the CONNECT instruction before sending to proxy
-		 */
+
+		/* Print the CONNECT instruction before sending to proxy */
 		if( args_info.verbose_flag ) {
 			message( "Communication with remote proxy:\n");
 			print_line_prefix(buf, " -> ");
 		}
-	
-		/*
-		 * Send the CONNECT instruction to the proxy
-		 */
-		if( stream_write( pts, buf, strlen( buf )) < 0 )
-		{
+
+		/* Send the CONNECT instruction to the proxy */
+		if( stream_write( pts, buf, strlen( buf )) < 0 ) {
 			my_perror( "Socket write error" );
 			exit( 1 );
 		}
 	
-		/*
-		 * Read the first line of the response and analyze it
-		 */
 //		if( args_info.verbose_flag )
 //			message( "Received from remote proxy:\n");
 
+		/* Read the first line of the response and analyze it */
 		analyze_HTTP(pts);
 	}
 
@@ -262,3 +215,5 @@ void proxy_protocol(PTSTREAM *pts)
 		} while ( strcmp( buf, "\r\n" ) != 0 );
 	}
 }
+
+// vim:noet
