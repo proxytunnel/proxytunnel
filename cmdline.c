@@ -179,8 +179,6 @@ cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *args_i
 			{ "passvar",	1, NULL, 'S' },
 			{ "passfile",	1, NULL, 'F' },
 			{ "proxy",		1, NULL, 'p' },
-			{ "proxyhost",	1, NULL, 'g' },
-			{ "proxyport",	1, NULL, 'G' },
 			{ "dest",		1, NULL, 'd' },
 			{ "remproxy",	1, NULL, 'r' },
 			{ "proctitle",	1, NULL, 'x' },
@@ -341,13 +339,6 @@ cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *args_i
 				}
 				break;
 
-			case 'g':	/* HTTPS Proxy host to connect to.  */
-			case 'G':	/* HTTPS Proxy host portnumber to connect to.  */
-				fprintf (stderr, "%s: `-g option is obsolete, use -p\n", PACKAGE);
-				clear_args ();
-				exit (1);
-				break;
-
 			case 'p':       /* HTTPS Proxy host:port to connect to.  */
 				if (args_info->proxy_given) {
 					fprintf (stderr, "%s: `--proxy' (`-p') option given more than once\n", PACKAGE);
@@ -434,8 +425,6 @@ cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *args_i
 
 		phost = malloc( 50+1 );
 
-//		fprintf( stderr, "%s: proxyhost (pre parse) given, it is: '%s'\n", PACKAGE, args_info->proxy_arg );
-
 		r = sscanf( args_info->proxy_arg, "%50[^:]:%5u", phost, &pport );
 		if ( r == 2 ) {
 			args_info->proxyhost_arg = phost;
@@ -446,7 +435,6 @@ cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *args_i
 			message( "parse_cmdline: couln't find your proxy hostname/ip\n" );
 			missing_required_options++;
 		}
-//		message( "%s: proxyhost (post parse) is '%s':'%d'\n", PACKAGE, args_info->proxyhost_arg, args_info->proxyport_arg );
 	}
 
 	if ( missing_required_options )
