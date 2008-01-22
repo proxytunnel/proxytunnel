@@ -1,4 +1,4 @@
-/* Proxytunnel - (C) 2001-2006 Jos Visser / Mark Janssen    */
+/* Proxytunnel - (C) 2001-2008 Jos Visser / Mark Janssen    */
 /* Contact:                  josv@osp.nl / maniac@maniac.nl */
 
 /*
@@ -44,8 +44,8 @@ int write_fd;                   /* The file destriptor to write to */
 char *program_name;             /* Guess what? */
 int i_am_daemon;                /* Also... */
 
-PTSTREAM *stunnel;		/* The stream representing the socket from us to the proxy */
-PTSTREAM *std;			/* The stream representing stdin/stdout */
+PTSTREAM *stunnel;	/* stream representing the socket from us to proxy */
+PTSTREAM *std;		/* stream representing stdin/stdout */
 
 /*
  * All the command line options

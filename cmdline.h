@@ -1,4 +1,4 @@
-/* Proxytunnel - (C) 2001-2006 Jos Visser / Mark Janssen    */
+/* Proxytunnel - (C) 2001-2008 Jos Visser / Mark Janssen    */
 /* Contact:                  josv@osp.nl / maniac@maniac.nl */
 
 /*
@@ -26,43 +26,41 @@
 #define MAX_HEADER_SIZE 1024
 
 struct gengetopt_args_info {
-  char * user_arg;	/* Username to send to HTTPS proxy for auth. */
-  char * pass_arg;	/* Password to send to HTTPS proxy for auth. */
-  char * domain_arg;	/* NTLM Domain override */
-  char * proxy_arg;     /* HTTPS Proxy host to connect to. */
-  char * proxyhost_arg;	/* HTTPS Proxy host to connect to. */
-  int proxyport_arg;	/* HTTPS Proxy host portnumber to connect to. */
-  char * dest_arg;	/* Destination host to built the tunnel to. */
-  char header_arg[MAX_HEADER_SIZE];	/* Extra headers to send to HTTPS proxy */
-  char * remproxy_arg;  /* Remote proxy to tunnel to. */
-  int verbose_flag;	/* Turn on verbosity (default=off). */
-  int ntlm_flag;	/* Turn on ntlm  (default=off). */
-  int inetd_flag;	/* Turn on inetd (default=off). */
-  int quiet_flag;	/* Turn on quiet mode (default=off). */
-  int standalone_arg;	/* Turn on stdalone (-a) on port */
-  int encrypt_flag;     /* Turn on SSL encryption (default=off). */
-  int encryptproxy_flag;/* Turn on client to proxy SSL encryption (def=off).*/
-
-  char * proctitle_arg; /* Override process title (default=off). */
-
-  int help_given;		/* Whether help was given. */
-  int version_given;		/* Whether version was given. */
-  int user_given;		/* Whether user was given. */
-  int pass_given;		/* Whether pass was given. */
-  int domain_given;		/* Whether domain was given. */
-  int proxy_given;      	/* Whether proxyhost was given. */
-  int proxyhost_given;		/* Whether proxyhost was given. */
-  int proxyport_given;		/* Whether proxyport was given. */
-  int dest_given;		/* Whether dest was given. */
-  int remproxy_given;   	/* Whether remproxy was given. */
-  int verbose_given;		/* Whether verbose was given. */
-  int ntlm_given;		/* Whether ntlm was given. */
-  int inetd_given;		/* Whether inetd was given. */
-  int quiet_given;		/* Whether quiet mode was given. */
-  int header_given;		/* Whether extra headers are given */
-  int encrypt_given;    	/* Whether encrypt was given */
-  int encryptproxy_given; 	/* Whether encrypt was given */
-  int proctitle_given;		/* Whether to override process title */
+	char * user_arg;		/* Username to send to HTTPS proxy for auth. */
+	char * pass_arg;		/* Password to send to HTTPS proxy for auth. */
+	char * domain_arg;		/* NTLM Domain override */
+	char * proxy_arg;		/* HTTPS Proxy host to connect to. */
+	char * proxyhost_arg;	/* HTTPS Proxy host to connect to. */
+	int proxyport_arg;		/* HTTPS Proxy host portnumber to connect to. */
+	char * dest_arg;		/* Destination host to built the tunnel to. */
+	char header_arg[MAX_HEADER_SIZE];	/* Extra headers to send to proxy */
+	char * remproxy_arg;	/* Remote proxy to tunnel to. */
+	int verbose_flag;		/* Turn on verbosity (default=off). */
+	int ntlm_flag;			/* Turn on ntlm  (default=off). */
+	int inetd_flag;			/* Turn on inetd (default=off). */
+	int quiet_flag;			/* Turn on quiet mode (default=off). */
+	int standalone_arg;		/* Turn on stdalone (-a) on port */
+	int encrypt_flag;		/* Turn on SSL encryption (default=off). */
+	int encryptproxy_flag;	/* Turn on client to proxy SSL encryption .*/
+	char * proctitle_arg;	/* Override process title (default=off). */
+	int help_given;			/* Whether help was given. */
+	int version_given;		/* Whether version was given. */
+	int user_given;			/* Whether user was given. */
+	int pass_given;			/* Whether pass was given. */
+	int domain_given;		/* Whether domain was given. */
+	int proxy_given;		/* Whether proxyhost was given. */
+	int proxyhost_given;	/* Whether proxyhost was given. */
+	int proxyport_given;	/* Whether proxyport was given. */
+	int dest_given;			/* Whether dest was given. */
+	int remproxy_given;		/* Whether remproxy was given. */
+	int verbose_given;		/* Whether verbose was given. */
+	int ntlm_given;			/* Whether ntlm was given. */
+	int inetd_given;		/* Whether inetd was given. */
+	int quiet_given;		/* Whether quiet mode was given. */
+	int header_given;		/* Whether extra headers are given */
+	int encrypt_given;		/* Whether encrypt was given */
+	int encryptproxy_given;	/* Whether encrypt was given */
+	int proctitle_given;	/* Whether to override process title */
 } ;
 
 int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *args_info );

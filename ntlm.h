@@ -1,4 +1,4 @@
-/* Proxytunnel - (C) 2001-2006 Jos Visser / Mark Janssen    */
+/* Proxytunnel - (C) 2001-2008 Jos Visser / Mark Janssen    */
 /* Contact:                  josv@osp.nl / maniac@maniac.nl */
 
 /*
@@ -18,14 +18,11 @@
  */
 
 /* ntlm.h */
-
-
 void build_type1();
 int parse_type2(unsigned char *buf);
 void build_type3_response();
 
 void build_ntlm2_response();
-
 
 extern int ntlm_challenge;
 
@@ -96,7 +93,6 @@ typedef struct {
 	unsigned char	pad[8];
 
 } ntlm_type3;
-
 
 typedef struct {
 	unsigned char	digest[16];

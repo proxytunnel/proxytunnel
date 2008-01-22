@@ -1,4 +1,4 @@
-/* Proxytunnel - (C) 2001-2006 Jos Visser / Mark Janssen    */
+/* Proxytunnel - (C) 2001-2008 Jos Visser / Mark Janssen    */
 /* Contact:                  josv@osp.nl / maniac@maniac.nl */
 
 /*
@@ -26,8 +26,7 @@
 #include <openssl/ssl.h>
 #endif
 
-typedef struct ptstream
-{
+typedef struct ptstream {
 	int incoming_fd;
 	int outgoing_fd;
 #ifdef USE_SSL
