@@ -67,8 +67,7 @@ static size_t argv_env_len = 0;
 
 #endif /* HAVE_SETPROCTITLE */
 
-void initsetproctitle(int argc, char *argv[])
-{
+void initsetproctitle(int argc, char *argv[]) {
 #if defined(SPT_TYPE) && SPT_TYPE == SPT_REUSEARGV
 	extern char **environ;
 	char *lastargv = NULL;
@@ -121,8 +120,7 @@ void initsetproctitle(int argc, char *argv[])
 
 #ifndef HAVE_SETPROCTITLE
 void
-setproctitle(const char *fmt, ...)
-{
+setproctitle(const char *fmt, ...) {
 #if SPT_TYPE != SPT_NONE
 	va_list ap;
 	char buf[1024];
@@ -139,11 +137,9 @@ setproctitle(const char *fmt, ...)
 
 	if( args_info.proctitle_given )
 		strlcpy(buf, args_info.proctitle_arg, sizeof(buf));
-	else
-	{
+	else {
 		strlcpy(buf, __progname, sizeof(buf));
 		strlcat(buf, ": ", sizeof(buf));
-
 	}
 
 

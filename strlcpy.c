@@ -40,8 +40,7 @@ static char *rcsid = "$OpenBSD: strlcpy.c,v 1.8 2003/06/17 21:56:24 millert Exp 
  * Returns strlen(src); if retval >= siz, truncation occurred.
  */
 size_t
-strlcpy(char *dst, const char *src, size_t siz)
-{
+strlcpy(char *dst, const char *src, size_t siz) {
 	register char *d = dst;
 	register const char *s = src;
 	register size_t n = siz;

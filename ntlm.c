@@ -1,4 +1,4 @@
-/* Proxytunnel - (C) 2001-2006 Jos Visser / Mark Janssen    */
+/* Proxytunnel - (C) 2001-2008 Jos Visser / Mark Janssen    */
 /* Contact:                  josv@osp.nl / maniac@maniac.nl */
 
 /*
@@ -88,8 +88,7 @@ void build_type1() {
 }
 
 
-int parse_type2(unsigned char *buf)
-{
+int parse_type2(unsigned char *buf) {
 	int len = unbase64(t2_buf, buf, TYPE2_BUF_SIZE);
 	ntlm_type2 *t2 = (ntlm_type2 *)t2_buf;
 	int i;
@@ -128,19 +127,16 @@ int parse_type2(unsigned char *buf)
 	if( args_info.verbose_flag )
 		message("NTLM Got Domain: %s\n", domain);
 
-	if( args_info.domain_given )
-	{
+	if( args_info.domain_given ) {
 		if( ! args_info.quiet_flag )
 			message( "NTLM Overriding domain: %s\n", args_info.domain_arg );
-		for( i = 0; i < strlen(args_info.domain_arg); i++ )
-		{
+		for( i = 0; i < strlen(args_info.domain_arg); i++ ) {
 			domain[i] = args_info.domain_arg[i];
 		}
 		domain[i] = 0;
 	}
 
-	if( args_info.verbose_flag )
-	{
+	if( args_info.verbose_flag ) {
 		message("NTLM Domain: %s\n", domain);
 		message("NTLM Got Challenge: ");
 
@@ -238,9 +234,6 @@ void build_type3_response() {
 	return;
 }
 
-
-
-
 /*
 ** Function: hmac_md5
 */
@@ -253,67 +246,57 @@ unsigned char* key; /* pointer to authentication key */
 int key_len; /* length of authentication key */
 unsigned char digest[16]; /* caller digest to be filled in */
 {
-        MD5_CTX context;
-        unsigned char k_ipad[65];    /* inner padding -
-                                      * key XORd with ipad
-                                      */
-        unsigned char k_opad[65];    /* outer padding -
-                                      * key XORd with opad
-                                      */
-        unsigned char tk[16];
-        int i;
+	MD5_CTX context;
+	unsigned char k_ipad[65];    /* inner padding - key XORd with ipad */
+	unsigned char k_opad[65];    /* outer padding - key XORd with opad */
+	unsigned char tk[16];
+	int i;
 
-		/* if key is longer than 64 bytes reset it to key=MD5(key) */
-        if (key_len > 64) {
+	/* if key is longer than 64 bytes reset it to key=MD5(key) */
+	if (key_len > 64) {
+		MD5_CTX tctx;
+		MD5_Init( &tctx );
+		MD5_Update( &tctx, key, key_len );
+		MD5_Final( tk, &tctx );
 
-			MD5_CTX      tctx;
-			MD5_Init(&tctx);
-			MD5_Update(&tctx, key, key_len);
-			MD5_Final(tk, &tctx);
+		key = tk;
+		key_len = 16;
+	}
 
-			key = tk;
-			key_len = 16;
-        }
+	/*
+	 * the HMAC_MD5 transform looks like:
+	 *
+	 * MD5(K XOR opad, MD5(K XOR ipad, text))
+	 *
+	 * where K is an n byte key
+	 * ipad is the byte 0x36 repeated 64 times
+	 * opad is the byte 0x5c repeated 64 times
+	 * and text is the data being protected
+	 */
 
-        /*
-         * the HMAC_MD5 transform looks like:
-         *
-         * MD5(K XOR opad, MD5(K XOR ipad, text))
-         *
-         * where K is an n byte key
-         * ipad is the byte 0x36 repeated 64 times
-         * opad is the byte 0x5c repeated 64 times
-         * and text is the data being protected
-         */
+	/* start out by storing key in pads */
+	bzero( k_ipad, sizeof k_ipad);
+	bzero( k_opad, sizeof k_opad);
+	bcopy( key, k_ipad, key_len);
+	bcopy( key, k_opad, key_len);
 
-        /* start out by storing key in pads */
-        bzero( k_ipad, sizeof k_ipad);
-        bzero( k_opad, sizeof k_opad);
-        bcopy( key, k_ipad, key_len);
-        bcopy( key, k_opad, key_len);
+	/* XOR key with ipad and opad values */
+	for (i=0; i<64; i++) {
+		k_ipad[i] ^= 0x36;
+		k_opad[i] ^= 0x5c;
+	}
 
-        /* XOR key with ipad and opad values */
-        for (i=0; i<64; i++) {
-                k_ipad[i] ^= 0x36;
-                k_opad[i] ^= 0x5c;
-        }
-        /*
-         * perform inner MD5
-         */
-        MD5_Init(&context);                   /* init context for 1st
-                                              * pass */
-        MD5_Update(&context, k_ipad, 64);     /* start with inner pad */
-        MD5_Update(&context, text, text_len); /* then text of datagram */
-        MD5_Final(digest, &context);          /* finish up 1st pass */
-        /*
-         * perform outer MD5
-         */
-        MD5_Init(&context);                   /* init context for 2nd
-                                              * pass */
-        MD5_Update(&context, k_opad, 64);     /* start with outer pad */
-        MD5_Update(&context, digest, 16);     /* then results of 1st
-                                              * hash */
-        MD5_Final(digest, &context);          /* finish up 2nd pass */
+	/* perform inner MD5 */
+	MD5_Init(&context);                   /* init context for 1st pass */
+	MD5_Update(&context, k_ipad, 64);     /* start with inner pad */
+	MD5_Update(&context, text, text_len); /* then text of datagram */
+	MD5_Final(digest, &context);          /* finish up 1st pass */
+
+	/* perform outer MD5 */
+	MD5_Init(&context);                   /* init context for 2nd pass */
+	MD5_Update(&context, k_opad, 64);     /* start with outer pad */
+	MD5_Update(&context, digest, 16);     /* then results of 1st hash */
+	MD5_Final(digest, &context);          /* finish up 2nd pass */
 }
 
 void build_ntlm2_response() {
@@ -348,8 +331,7 @@ void build_ntlm2_response() {
 	MD4_Update (&passcontext, unipasswd, passlen);
 	MD4_Final (passdigest, &passcontext);
 
-	if( args_info.verbose_flag )
-	{
+	if( args_info.verbose_flag ) {
 		message("NTLM: MD4 of password is: ");
 		for( i = 0; i < 16; i++)
 			message("%02X", passdigest[i]);
@@ -389,8 +371,7 @@ void build_ntlm2_response() {
 		}
 	}
 
-	if( args_info.verbose_flag )
-	{
+	if( args_info.verbose_flag ) {
 		message("userdom is: ");
 		for( i = 0; i < userdomlen; i++)
 			message("%02X", userdom[i]);
@@ -401,8 +382,7 @@ void build_ntlm2_response() {
 
 	free(userdom);
 
-	if( args_info.verbose_flag )
-	{
+	if( args_info.verbose_flag ) {
 		message("HMAC_MD5 of userdom keyed with MD4 pass is: ");
 		for( i = 0; i < 16; i++)
 			message("%02X", userdomdigest[i]);
@@ -431,8 +411,10 @@ void build_ntlm2_response() {
 
 	b->signature = 0x00000101;
 
-	// This is nasty, also not sure all this 64bit arithmetic will work all the time.. basically the spec says you
-	// need the number of 10ths of microseconds since jan 1, 1601.
+	/* This is nasty, also not sure all this 64bit arithmetic will
+	 * work all the time.. basically the spec says you need the
+	 * number of 10ths of microseconds since jan 1, 1601.
+	 */
 
 	gettimeofday(&t, NULL);
 	b->timestamp = (long long)t.tv_sec;
@@ -445,8 +427,7 @@ void build_ntlm2_response() {
 	for (i = 0; i < 8; i++)
 		b->client_challenge[i] = (unsigned char) ((256.0 * rand()) / (RAND_MAX + 1.0)) ;
 
-	if( args_info.verbose_flag )
-	{
+	if( args_info.verbose_flag ) {
 		message("client_challenge is: ");
 		for( i = 0; i < 8; i++)
 			message("%02X", b->client_challenge[i]);
@@ -460,8 +441,7 @@ void build_ntlm2_response() {
 	for(i = 0; i < 16; i++)
 		b->digest[i] = responsedigest[i];
 
-	if( args_info.verbose_flag )
-	{
+	if( args_info.verbose_flag ) {
 		message("HMAC is: ");
 		for( i = 0; i < 16; i++)
 			message("%02X", responsedigest[i]);

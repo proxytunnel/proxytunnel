@@ -1,4 +1,4 @@
-/* Proxytunnel - (C) 2001-2006 Jos Visser / Mark Janssen    */
+/* Proxytunnel - (C) 2001-2008 Jos Visser / Mark Janssen    */
 /* Contact:                  josv@osp.nl / maniac@maniac.nl */
 
 /*
@@ -27,8 +27,7 @@
 /*
  * Give a message to the user
  */
-void message( char *s, ... )
-{
+void message( char *s, ... ) {
 	va_list	ap;
 	char	buf[1024];
 
@@ -42,11 +41,8 @@ void message( char *s, ... )
 		fputs( buf, stderr );
 }
 
-/*
- * My own perror function (uses the internal message)
- */
-void my_perror( char *msg )
-{
+/* My own perror function (uses the internal message) */
+void my_perror( char *msg ) {
 	if (errno == 0) {
 		message( "error: %s.\n", msg );
 	} else {

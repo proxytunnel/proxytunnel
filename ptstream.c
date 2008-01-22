@@ -1,4 +1,4 @@
-/* Proxytunnel - (C) 2001-2006 Jos Visser / Mark Janssen    */
+/* Proxytunnel - (C) 2001-2008 Jos Visser / Mark Janssen    */
 /* Contact:                  josv@osp.nl / maniac@maniac.nl */
 
 /*
@@ -33,8 +33,7 @@
  * Open a stream for incoming and outgoing data with the specified fds
  */
 
-PTSTREAM *stream_open(int incoming_fd, int outgoing_fd)
-{
+PTSTREAM *stream_open(int incoming_fd, int outgoing_fd) {
 	PTSTREAM *pts;
 
 	/* Initialise the structure and store the file descriptor */
@@ -53,16 +52,14 @@ PTSTREAM *stream_open(int incoming_fd, int outgoing_fd)
  * Close a stream
  */
 
-int stream_close(PTSTREAM *pts)
-{
+int stream_close(PTSTREAM *pts) {
 	/* Destroy the SSL context */
-	if (pts->ssl)
-	{
+	if (pts->ssl) {
 #ifdef USE_SSL
         SSL_shutdown (pts->ssl);
         SSL_free (pts->ssl);
 		SSL_CTX_free (pts->ctx);
-#endif
+#endif /* USE_SSL */
 	}
 
 	/* Close the incoming fd */
@@ -70,7 +67,7 @@ int stream_close(PTSTREAM *pts)
 
 	/* Close the outgoing fd */
 	close(pts->outgoing_fd);
-		
+
 	/* Free the structure */
 	free(pts);
 
@@ -78,58 +75,45 @@ int stream_close(PTSTREAM *pts)
 }
 
 
-/*
- * Read from a stream
- */
+/* Read from a stream */
 
-int stream_read(PTSTREAM *pts, void *buf, size_t len)
-{
+int stream_read(PTSTREAM *pts, void *buf, size_t len) {
 	/* Read up to the specified number of bytes into the buffer */
 	int bytes_read;	
 
-	if (!pts->ssl)
-	{
+	if (!pts->ssl) {
 		/* For a non-SSL stream... */
 		bytes_read = read(pts->incoming_fd, buf, len);
-	}
-	else
-	{
+	} else {
 #ifdef USE_SSL
 		/* For an SSL stream... */
 		bytes_read = SSL_read(pts->ssl, buf, len);
 #else
 		/* No SSL support, so must use a non-SSL stream */
 		bytes_read = read(pts->incoming_fd, buf, len);
-#endif
+#endif /* USE_SSL */
 	}
 
 	return bytes_read;
 }
 
 
-/*
- * Write to a stream
- */
-
-int stream_write(PTSTREAM *pts, void *buf, size_t len)
-{
+/* * Write to a stream */
+int stream_write(PTSTREAM *pts, void *buf, size_t len) {
 	/* Write the specified number of bytes from the buffer */
 	int bytes_written;
 
-	if (!pts->ssl)
-	{
+	if (!pts->ssl) {
 		/* For a non-SSL stream... */
 		bytes_written = write(pts->outgoing_fd, buf, len);
-	}
-	else
-	{
+	} else {
 #ifdef USE_SSL
 		/* For an SSL stream... */
 		bytes_written = SSL_write(pts->ssl, buf, len);
 #else
 		/* No SSL support, so must use a non-SSL stream */
 		bytes_written = write(pts->outgoing_fd, buf, len);
-#endif
+#endif /* USE_SSL */
 	}
 
 	return bytes_written;
@@ -140,49 +124,33 @@ int stream_write(PTSTREAM *pts, void *buf, size_t len)
  * Copy a block of data from one stream to another. A true
  * return code signifies EOF on the from socket descriptor.
  */
-
-int stream_copy(PTSTREAM *pts_from, PTSTREAM *pts_to)
-{
+int stream_copy(PTSTREAM *pts_from, PTSTREAM *pts_to) {
 	char buf[SIZE];
 	int n;
 
-	/* 
-	 * Read a buffer from the source socket
-	 */
-	if ( ( n = stream_read( pts_from, buf, SIZE ) ) < 0 )
-	{
+	/* Read a buffer from the source socket */
+	if ( ( n = stream_read( pts_from, buf, SIZE ) ) < 0 ) {
 		my_perror( "Socket read error" );
 		exit( 1 );
 	}
 
-	/*
-	 * If we have read 0 bytes, there is an EOF on src
-	 */
+	/* If we have read 0 bytes, there is an EOF on src */
 	if( n==0 )
 		return 1;
 
-	/*
-	 * Write the buffer to the destination socket
-	 */
-	if ( stream_write( pts_to, buf, n ) != n )
-	{
+	/* Write the buffer to the destination socket */
+	if ( stream_write( pts_to, buf, n ) != n ) {
 		my_perror( "Socket write error" );
 		exit( 1 );
 	}
 
-	/*
-	 * We're not yet at EOF
-	 */
+	/* We're not yet at EOF */
 	return 0;
 }
 
 
-/*
- * Initiate an SSL handshake on this stream and encrypt all subsequent data
- */
-
-int stream_enable_ssl(PTSTREAM *pts)
-{
+/* Initiate an SSL handshake on this stream and encrypt all subsequent data */
+int stream_enable_ssl(PTSTREAM *pts) {
 #ifdef USE_SSL
 	SSL_METHOD *meth;
 	SSL *ssl;
@@ -204,18 +172,14 @@ int stream_enable_ssl(PTSTREAM *pts)
 	pts->ctx = ctx;
 #else
 	message("Warning: stream_open(): SSL stream requested but no SSL support available; using unencrypted connection");
-#endif
+#endif /* USE_SSL */
 
 	return 1;
 }
 
 
-/*
- * Return the incoming_fd for a given stream
- */
-
-int stream_get_incoming_fd(PTSTREAM *pts)
-{
+/* Return the incoming_fd for a given stream */
+int stream_get_incoming_fd(PTSTREAM *pts) {
 
 	if (!pts->ssl)
 		return pts->incoming_fd;
@@ -224,16 +188,11 @@ int stream_get_incoming_fd(PTSTREAM *pts)
 		return SSL_get_rfd(pts->ssl);
 #else
 		return pts->incoming_fd;
-#endif
+#endif /* USE_SSL */
 }
 
-
-/*
- * Return the outgoing_fd for a given stream
- */
-
-int stream_get_outgoing_fd(PTSTREAM *pts)
-{
+/* Return the outgoing_fd for a given stream */
+int stream_get_outgoing_fd(PTSTREAM *pts) {
 
 	if (!pts->ssl)
 		return pts->outgoing_fd;
@@ -242,7 +201,7 @@ int stream_get_outgoing_fd(PTSTREAM *pts)
 		return SSL_get_wfd(pts->ssl);
 #else
 		return pts->outgoing_fd;
-#endif
+#endif /* USE_SSL */
 }
 
 // vim:noet

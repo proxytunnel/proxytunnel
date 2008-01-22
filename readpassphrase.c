@@ -71,8 +71,7 @@ static volatile sig_atomic_t signo;
 static void handler(int);
 
 char *
-readpassphrase(const char *prompt, char *buf, size_t bufsiz, int flags)
-{
+readpassphrase(const char *prompt, char *buf, size_t bufsiz, int flags) {
 	ssize_t nr;
 	int input, output, save_errno;
 	char ch, *p, *end;
@@ -93,7 +92,7 @@ restart:
 	 * stdin and write to stderr unless a tty is required.
 	 */
 	if ((flags & RPP_STDIN) ||
-	    (input = output = open(_PATH_TTY, O_RDWR)) == -1) {
+		(input = output = open(_PATH_TTY, O_RDWR)) == -1) {
 		if (flags & RPP_REQUIRE_TTY) {
 			errno = ENOTTY;
 			return(NULL);
@@ -194,16 +193,13 @@ restart:
 }
   
 char *
-getpass_x(const char *prompt)
-{
+getpass_x(const char *prompt) {
 	static char buf[_PASSWORD_LEN + 1];
 
 	return(readpassphrase(prompt, buf, sizeof(buf), RPP_ECHO_OFF));
 }
 
-static void handler(int s)
-{
-
+static void handler(int s) {
 	signo = s;
 }
 #endif /* HAVE_READPASSPHRASE */
