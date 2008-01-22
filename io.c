@@ -1,4 +1,4 @@
-/* Proxytunnel - (C) 2001-2006 Jos Visser / Mark Janssen    */
+/* Proxytunnel - (C) 2001-2008 Jos Visser / Mark Janssen    */
 /* Contact:                  josv@osp.nl / maniac@maniac.nl */
 
 /*
@@ -34,20 +34,14 @@
  * Read one line of data from the tunnel. Line is terminated by a
  * newline character. Result is stored in buf.
  */
-int readline(PTSTREAM *pts)
-{
+int readline(PTSTREAM *pts) {
 	char	*p = buf;
 	char	c = 0;
 	int	i = 0;
 
-	/*
-	 * Read one character at a time into buf, until a newline is
-	 * encountered.
-	 */
-	while ( c != 10 && ( i < SIZE - 1 ) )
-	{
-		if( stream_read( pts, &c ,1) < 0)
-		{
+	/* Read one character at a time into buf, until a newline is encountered. */
+	while ( c != 10 && ( i < SIZE - 1 ) ) {
+		if( stream_read( pts, &c ,1) < 0) {
 			my_perror( "Socket read error" );
 			exit( 1 );
 		}
@@ -59,8 +53,7 @@ int readline(PTSTREAM *pts)
 
 	*p = 0;
 
-	if( args_info.verbose_flag )
-	{
+	if( args_info.verbose_flag ) {
         /* Copy line of data into dstr without trailing newline */
 		char * dstr = malloc(sizeof(buf) + 1);
 		strlcpy( dstr, buf, strlen(buf) - 1);
@@ -70,67 +63,46 @@ int readline(PTSTREAM *pts)
 	return strlen( buf );
 }
 
-
 /*
  * Bond stream1 and stream2 together; any data received in stream1 is relayed
  * to stream2, and vice-versa.
  */
-void cpio(PTSTREAM *stream1, PTSTREAM *stream2)
-{
-	fd_set	readfds;
-	fd_set	writefds;
-	fd_set	exceptfds;
-	int	in_max_fd, out_max_fd, max_fd;
+void cpio(PTSTREAM *stream1, PTSTREAM *stream2) {
+	fd_set readfds;
+	fd_set writefds;
+	fd_set exceptfds;
+	int in_max_fd, out_max_fd, max_fd;
 
-
-	/*
-	 * Find the biggest file descriptor for select()
-	 */
+	/* Find the biggest file descriptor for select() */
 
 	in_max_fd = MAX(stream_get_incoming_fd(stream1), stream_get_incoming_fd(stream2));
 	out_max_fd = MAX(stream_get_outgoing_fd(stream1), stream_get_outgoing_fd(stream2));
 	max_fd = MAX(in_max_fd, out_max_fd);
 
-	/*
-	 * We're never interested in sockets being available for write.
-	 */
+	/* We're never interested in sockets being available for write. */
 	FD_ZERO( &writefds );
 
 	if( args_info.verbose_flag )
 		message( "\nTunnel established.\n" );
 
-	/*
-	 * Only diamonds are forever :-)
-	 */
-	while( 1==1 )
-	{
-		/*
-		 * Clear the interesting socket sets
-		 */
+	/* Only diamonds are forever :-) */
+	while( 1==1 ) {
+		/* Clear the interesting socket sets */
 		FD_ZERO( &readfds );
 		FD_ZERO( &exceptfds );
 
-		/*
-		 * We want to know whether stream1 or stream2 is ready for reading
-		 */
+		/* We want to know whether stream1 or stream2 is ready for reading */
 		FD_SET( stream_get_incoming_fd(stream1), &readfds );
 		FD_SET( stream_get_incoming_fd(stream2), &readfds );
 
-		/*
-		 * And we want to know about exceptional conditions on either stream
-		 */
+		/* And we want to know about exceptional conditions on either stream */
 		FD_SET( stream_get_incoming_fd(stream1), &exceptfds );
 		FD_SET( stream_get_outgoing_fd(stream1), &exceptfds );
 		FD_SET( stream_get_incoming_fd(stream2), &exceptfds );
 		FD_SET( stream_get_outgoing_fd(stream2), &exceptfds );
 
-		/*
-		 * Wait until something happens on one of the registered
-		 * sockets/files
-		 */
-		if ( select( max_fd + 1, &readfds, &writefds,
-					&exceptfds, 0 ) < 0 )
-		{
+		/* Wait until something happens on the registered sockets/files */
+		if ( select( max_fd + 1, &readfds, &writefds, &exceptfds, 0 ) < 0 ) {
 			perror("select error");
 			exit(1);
 		}
@@ -142,18 +114,14 @@ void cpio(PTSTREAM *stream1, PTSTREAM *stream2)
 		 * stream2 to stream1. Otherwise an exceptional condition
 		 * is flagged and the program is terminated.
 		 */
-		if ( FD_ISSET( stream_get_incoming_fd(stream1), &readfds ) )
-		{
+		if ( FD_ISSET( stream_get_incoming_fd(stream1), &readfds ) ) {
 			if ( stream_copy(stream1, stream2 ) )
 				break;
 		}
-		else if( FD_ISSET( stream_get_incoming_fd(stream2), &readfds ) )
-		{
+		else if( FD_ISSET( stream_get_incoming_fd(stream2), &readfds ) ) {
 			if( stream_copy(stream2, stream1 ) )
 				break;
-		}
-		else
-		{
+		} else {
 			my_perror( "Exceptional condition" );
 			break;
 		}

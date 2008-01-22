@@ -1,4 +1,4 @@
-/* Proxytunnel - (C) 2001-2006 Jos Visser / Mark Janssen    */
+/* Proxytunnel - (C) 2001-2008 Jos Visser / Mark Janssen    */
 /* Contact:                  josv@osp.nl / maniac@maniac.nl */
 
 /*
@@ -33,8 +33,7 @@
  */
 void make_basicauth()
 {
-	int len = strlen( args_info.user_arg ) + \
-		strlen( args_info.pass_arg ) + 2;
+	int len = strlen( args_info.user_arg ) + strlen( args_info.pass_arg ) + 2;
 	char *p = (char *) malloc( len );
 
 	/*
