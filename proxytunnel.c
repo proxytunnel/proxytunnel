@@ -70,9 +70,7 @@ int tunnel_connect() {
 	struct hostent		*he;
 	int sd;
 
-	/*
-	 * Create the socket
-	 */
+	/* Create the socket */
 	if( ( sd = socket( AF_INET, SOCK_STREAM, 0 ) ) < 0 ) {
 		my_perror("Can not create socket");
 		exit(1);
@@ -80,14 +78,15 @@ int tunnel_connect() {
 
 	/* Lookup the IP address of the proxy */
 	if( ! ( he = gethostbyname( args_info.proxyhost_arg ) ) ) {
+// FIXME:	my_perror("Local proxy %s could not be resolved", args_info.proxyhost_arg);
 		my_perror("Local proxy could not be resolved." );
 		exit(1);
 	}
  
 	char ip[16];
 	snprintf(ip, 16, "%d.%d.%d.%d", he->h_addr[0] & 255, he->h_addr[1] & 255, he->h_addr[2] & 255, he->h_addr[3] & 255);
- 	if( args_info.verbose_flag && strcmp(args_info.proxyhost_arg, ip)) {
- 		message( "Local proxy %s resolves to %d.%d.%d.%d\n",
+	if( args_info.verbose_flag && strcmp(args_info.proxyhost_arg, ip)) {
+		message( "Local proxy %s resolves to %d.%d.%d.%d\n",
 			args_info.proxyhost_arg,
 			he->h_addr[0] & 255,
 			he->h_addr[1] & 255,
@@ -100,12 +99,19 @@ int tunnel_connect() {
 	sa.sin_family = AF_INET;
 	memcpy( &sa.sin_addr.s_addr, he->h_addr, 4);
 	sa.sin_port = htons( args_info.proxyport_arg );
-  
+
 	/* Connect the socket */
 	if( connect( sd, (struct sockaddr*) &sa, sizeof( sa ) ) < 0 ) {
 		my_perror("connect() failed");
 		exit(1);
 	}
+
+	/* Increase interactivity of tunnel, patch by Ingo Molnar */
+	int flag = 1;
+	setsockopt( sd, IPPROTO_TCP, TCP_NODELAY, (char *)&flag, sizeof(int));
+
+	/* Make sure we get warned when someone hangs up on us */
+	signal(SIGHUP,signal_handler);
 
 	if( ! args_info.quiet_flag ) {
 		if ( ! args_info.verbose_flag ) {
@@ -124,15 +130,6 @@ int tunnel_connect() {
 		}
 	}
 
-	{	/* Increase interactivity of tunnel, patch by Ingo Molnar */
-		int flag = 1;
-		setsockopt( sd, IPPROTO_TCP, TCP_NODELAY,
-			(char *)&flag, sizeof(int));
-	}
-
-	/* Make sure we get warned when someone hangs up on us */
-	signal(SIGHUP,signal_handler);
-
 	/* Return the socket */
 	return sd;
 }
@@ -141,21 +138,20 @@ int tunnel_connect() {
 /* Leave a goodbye message */
 void closeall() {
 #ifndef CYGWIN
-		closelog();
+	closelog();
 #endif
+
 	/* Close all streams */
-	if (stunnel)
-	{
+	if (stunnel) {
 		stream_close(stunnel);
 		stunnel = NULL;
 	}
-	if (std)
-	{
+
+	if (std) {
 		stream_close(std);
 		std = NULL;
 	}
-	if( args_info.verbose_flag )
-	{
+	if( args_info.verbose_flag ) {
 		message( "Tunnel closed.\n" );
 	}
 }
@@ -251,12 +247,12 @@ void do_daemon()
 			(struct sockaddr *)&sa_cli, &client_len );
 
 		if ( sd_client < 0 ) {
-				my_perror( "accept() failed. Bailing out..." );
-				exit(1);
+			my_perror( "accept() failed. Bailing out..." );
+			exit(1);
 		}
 
 		if ( ( pid = fork() ) < 0 ) {
-				my_perror( "Cannot fork worker" );
+			my_perror( "Cannot fork worker" );
 		} else if ( pid == 0 ) {
 			read_fd = write_fd = sd_client;
 
@@ -350,8 +346,9 @@ int main( int argc, char *argv[] ) {
 			build_type1();
 			if ( args_info.verbose_flag )
 				message("Build Type 1 NTLM Message : %s\n", ntlm_type1_buf);
-		} else
+		} else {
 			make_basicauth();
+		}
 	}
 
 	/* Only one of -E (SSL encrypt client to proxy connection) or

@@ -31,14 +31,11 @@
  * Create the HTTP basic authentication cookie for use by the proxy. Result
  * is stored in basicauth.
  */
-void make_basicauth()
-{
+void make_basicauth() {
 	int len = strlen( args_info.user_arg ) + strlen( args_info.pass_arg ) + 2;
 	char *p = (char *) malloc( len );
 
-	/*
-	 * Set up the cookie in clear text
-	 */
+	/* Set up the cookie in clear text */
 	sprintf( p, "%s:%s", args_info.user_arg, args_info.pass_arg );
 
 	/*
@@ -47,8 +44,7 @@ void make_basicauth()
 	 */
 	base64( (unsigned char *)basicauth, (unsigned char *)p, strlen( p ) );
 
-//	if( args_info.verbose_flag )
-//	{
+//	if( args_info.verbose_flag ) {
 //		message( "Proxy basic auth is %s\n", basicauth );
 //	}
 

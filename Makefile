@@ -58,11 +58,12 @@ OBJ = proxytunnel.o	\
 	base64.o	\
 	strlcpy.o	\
 	strlcat.o	\
+	strzcat.o	\
 	setproctitle.o	\
 	io.o		\
 	http.o		\
 	basicauth.o	\
-	readpassphrase.o \
+	readpassphrase.o	\
 	messages.o	\
 	cmdline.o	\
 	ntlm.o		\

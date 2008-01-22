@@ -29,7 +29,7 @@
 #include "proxytunnel.h"
 
 #ifndef HAVE_GETOPT_LONG
-	extern char * optarg;
+extern char * optarg;
 #else
 #include <getopt.h>
 #endif
@@ -37,16 +37,12 @@
 #include "cmdline.h"
 static char *getCredentialsFromFile( const char* filename, char **user, char **pwd);
 
-void
-cmdline_parser_print_version (void)
-{
+void cmdline_parser_print_version (void) {
 	printf ("%s %s (rev %d)\nCopyright 2001-2008 Proxytunnel Project\n%s\n", PACKAGE, VERSION, REV, AUTHORS);
 }
 
-void
-cmdline_parser_print_help (void)
-{
-	//  cmdline_parser_print_version ();
+void cmdline_parser_print_help (void) {
+//	cmdline_parser_print_version ();
 	printf(
 "Usage: %s [OPTIONS]...\n"
 "Build generic tunnels trough HTTPS proxy's, supports HTTP authorization\n"
@@ -91,14 +87,11 @@ cmdline_parser_print_help (void)
 }
 
 
-static char *
-gengetopt_strdup (char * s)
-{
+static char * gengetopt_strdup (char * s) {
 	char * n, * pn, * ps = s;
 	while (*ps) ps++;
 	n = (char *) malloc (1 + ps - s);
-	if (n != NULL)
-	{
+	if (n != NULL) {
 		for (ps=s,pn=n; *ps; ps++,pn++)
 			*pn = *ps;
 		*pn = 0;
@@ -106,11 +99,9 @@ gengetopt_strdup (char * s)
 	return n;
 }
 
-int
-cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *args_info )
-{
-	int c;	/* Character of the parsed option.  */
-	int r;	/* Tmd retval */
+int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *args_info ) {
+	int c;		/* Character of the parsed option.  */
+	int r;		/* Tmd retval */
 	int missing_required_options = 0;	
 	char * tmp_env_var;
 
@@ -171,24 +162,24 @@ cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *args_i
 		/* Struct option: Name, Has_arg, Flag, Value */
 		static struct option long_options[] = {
 			{ "help",		0, NULL, 'h' },
-			{ "version",	0, NULL, 'V' },
+			{ "version",		0, NULL, 'V' },
 			{ "user",		1, NULL, 'u' },
 			{ "pass",		1, NULL, 's' },
 			{ "domain",		1, NULL, 't' },
-			{ "uservar",	1, NULL, 'U' },
-			{ "passvar",	1, NULL, 'S' },
-			{ "passfile",	1, NULL, 'F' },
+			{ "uservar",		1, NULL, 'U' },
+			{ "passvar",		1, NULL, 'S' },
+			{ "passfile",		1, NULL, 'F' },
 			{ "proxy",		1, NULL, 'p' },
 			{ "dest",		1, NULL, 'd' },
-			{ "remproxy",	1, NULL, 'r' },
-			{ "proctitle",	1, NULL, 'x' },
+			{ "remproxy",		1, NULL, 'r' },
+			{ "proctitle",		1, NULL, 'x' },
 			{ "header",		1, NULL, 'H' },
-			{ "verbose",	0, NULL, 'v' },
+			{ "verbose",		0, NULL, 'v' },
 			{ "ntlm",		0, NULL, 'N' },
 			{ "inetd",		0, NULL, 'i' },
-			{ "standalone", 1, NULL, 'a' },
+			{ "standalone", 	1, NULL, 'a' },
 			{ "quiet",		0, NULL, 'q' },
-			{ "encrypt",	0, NULL, 'e' },
+			{ "encrypt",		0, NULL, 'e' },
 			{ "encrypt-proxy",	0, NULL, 'E' },
 			{ NULL,	0, NULL, 0 }
 		};
@@ -258,7 +249,7 @@ cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *args_i
 				if (args_info->user_given) {
 					fprintf (stderr, "%s: `--user' (`-u'), `--uservar' (`-U') or `--passfile' (`-F') option given more than once\n", PACKAGE);
 					clear_args ();
-					exit (1);
+					exit(1);
 				}
 				args_info->user_given = 1;
 				args_info->user_arg = gengetopt_strdup (optarg);
@@ -268,13 +259,13 @@ cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *args_i
 				if (args_info->user_given) {
 					fprintf (stderr, "%s: `--user' (`-u'), `--uservar' (`-U') or `--passfile' (`-F') option given more than once\n", PACKAGE);
 					clear_args ();
-					exit (1);
+					exit(1);
 				}
 				tmp_env_var = getenv(optarg) ;
 				if (!tmp_env_var) {
 					fprintf (stderr, "%s Invalid environment variable\n", optarg) ;
 					clear_args ();
-					exit (1);
+					exit(1);
 				}
 				args_info->user_given = 1;
 				args_info->user_arg = gengetopt_strdup (tmp_env_var);
@@ -284,7 +275,7 @@ cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *args_i
 				if (args_info->pass_given) {
 					fprintf (stderr, "%s: `--pass' (`-s'), `--passvar' (`-S') or `--passfile' (`-F') option given more than once\n", PACKAGE);
 					clear_args ();
-					exit (1);
+					exit(1);
 				}
 				args_info->pass_given = 1;
 				args_info->pass_arg = gengetopt_strdup (optarg);
@@ -294,7 +285,7 @@ cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *args_i
 				if (args_info->domain_given) {
 					fprintf (stderr, "%s: `--domain' (`-t') option given more than once\n", PACKAGE);
 					clear_args ();
-					exit (1);
+					exit(1);
 				}
 				args_info->domain_given = 1;
 				args_info->domain_arg = gengetopt_strdup (optarg);
@@ -304,29 +295,29 @@ cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *args_i
 				if (args_info->pass_given) {
 					fprintf (stderr, "%s: `--pass' (`-s') or `--passvar' (`-S') option given more than once\n", PACKAGE);
 					clear_args ();
-					exit (1);
+					exit(1);
 				}
 				tmp_env_var = getenv(optarg) ;
 				if (!tmp_env_var) {
 					fprintf (stderr, "%s Invalid environment variable\n", optarg) ;
 					clear_args ();
-					exit (1);
+					exit(1);
 				}
 				args_info->pass_given = 1;
 				args_info->pass_arg = gengetopt_strdup (tmp_env_var);
 				break;
 
-			case 'F':	/* File containing Username & Password to send to
+			case 'F':  /* File containing Username & Password to send to
 							HTTPS proxy for authentication.  */
 				if (args_info->user_given) {
 					fprintf (stderr, "%s: `--user' (`-u'), `--uservar' (`-U') or  `--passfile' (`-F') option given more than once\n", PACKAGE);
 					clear_args ();
-					exit (1);
+					exit(1);
 				}
 				if (args_info->pass_given) {
 					fprintf (stderr, "%s: `--pass' (`-s'), `--passvar' (`-S') or `--passfile' (`-F') option given more than once\n", PACKAGE);
 					clear_args ();
-					exit (1);
+					exit(1);
 				}
 				args_info->user_given = 1;
 				args_info->pass_given = 1;
@@ -335,7 +326,7 @@ cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *args_i
 				if( result != NULL ) {
 					fprintf( stderr, "%s: Bad password file for `--passfile' (`-F')\n%s\n", PACKAGE, result);
 					clear_args();
-					exit (1);
+					exit(1);
 				}
 				break;
 
@@ -343,7 +334,7 @@ cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *args_i
 				if (args_info->proxy_given) {
 					fprintf (stderr, "%s: `--proxy' (`-p') option given more than once\n", PACKAGE);
 					clear_args ();
-					exit (1);
+					exit(1);
 				}
 				args_info->proxy_given = 1;
 				args_info->proxy_arg = gengetopt_strdup (optarg);
@@ -353,7 +344,7 @@ cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *args_i
 				if (args_info->remproxy_given) {
 					fprintf (stderr, "%s: `--remproxy' (`-r') option given more than once\n", PACKAGE);
 					clear_args ();
-					exit (1);
+					exit(1);
 				}
 				args_info->remproxy_given = 1;
 				args_info->remproxy_arg = gengetopt_strdup (optarg);
@@ -363,20 +354,19 @@ cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *args_i
 				if (args_info->dest_given) {
 					fprintf (stderr, "%s: `--dest' (`-d') option given more than once\n", PACKAGE);
 					clear_args ();
-					exit (1);
+					exit(1);
 				}
 				args_info->dest_given = 1;
 				args_info->dest_arg = gengetopt_strdup (optarg);
 				break;
 
 			case 'H':	/* Extra headers to send to HTTPS proxy. */
-				args_info->header_given++;		/* Amount of extra headers */
-				strlcat( args_info->header_arg, optarg, MAX_HEADER_SIZE );
-				strlcat( args_info->header_arg, "\r\n", MAX_HEADER_SIZE );
+				args_info->header_given++;
+				strzcat( args_info->header_arg, "%s\r\n", optarg);
 				break;
 
 			case 'v':	/* Turn on verbosity.  */
-				if (args_info->quiet_flag) {        /* -q also on cmd line */
+				if (args_info->quiet_flag) {       /* -q also on cmd line */
 					fprintf (stderr, "-v and -q are mutually exclusive\n");
 					clear_args();
 					exit(1);
@@ -397,7 +387,7 @@ cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *args_i
 			case '?':	/* Invalid option.  */
 				/* `getopt_long' already printed an error message.  */
 				clear_args();
-				exit (1);
+				exit(1);
 
 			default:	/* bug: option not considered.  */
 				fprintf (stderr, "%s: option unknown: %c\n", PACKAGE, c);
@@ -438,13 +428,12 @@ cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *args_i
 	}
 
 	if ( missing_required_options )
-		exit (1);
+		exit(1);
 
 	return 0;
 }
 
-static char *
-getCredentialsFromFile( const char* filename, char **user, char **pwd ) {
+static char *getCredentialsFromFile( const char* filename, char **user, char **pwd ) {
 	/* Check file permissions, must have '0' for group and other */
 	struct stat statbuf;
 	if ( stat( filename, &statbuf ) == 0 ) {

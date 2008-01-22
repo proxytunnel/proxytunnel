@@ -49,15 +49,15 @@
 #include <unistd.h>
 #ifdef HAVE_SYS_PSTAT_H
 #include <sys/pstat.h>
-#define SPT_TYPE	SPT_PSTAT
+#define SPT_TYPE SPT_PSTAT
 #endif
 
 #ifndef SPT_TYPE
-# define SPT_TYPE	SPT_NONE
+# define SPT_TYPE SPT_NONE
 #endif
 
 #ifndef SPT_PADCHAR
-# define SPT_PADCHAR	'\0'
+# define SPT_PADCHAR '\0'
 #endif
 
 #if SPT_TYPE == SPT_REUSEARGV
@@ -119,8 +119,7 @@ void initsetproctitle(int argc, char *argv[]) {
 }
 
 #ifndef HAVE_SETPROCTITLE
-void
-setproctitle(const char *fmt, ...) {
+void setproctitle(const char *fmt, ...) {
 #if SPT_TYPE != SPT_NONE
 	va_list ap;
 	char buf[1024];
@@ -135,13 +134,12 @@ setproctitle(const char *fmt, ...) {
 		return;
 #endif
 
-	if( args_info.proctitle_given )
+	if( args_info.proctitle_given ) {
 		strlcpy(buf, args_info.proctitle_arg, sizeof(buf));
-	else {
+	} else {
 		strlcpy(buf, __progname, sizeof(buf));
 		strlcat(buf, ": ", sizeof(buf));
 	}
-
 
 	va_start(ap, fmt);
 	if (fmt != NULL) {
@@ -155,8 +153,7 @@ setproctitle(const char *fmt, ...) {
 	pst.pst_command = buf;
 	pstat(PSTAT_SETCMD, pst, strlen(buf), 0, 0);
 #elif SPT_TYPE == SPT_REUSEARGV
-/*	message("setproctitle: copy \"%s\" into len %d", 
-	    buf, argv_env_len); */
+//	message("setproctitle: copy \"%s\" into len %d", buf, argv_env_len);
 	len = strlcpy(argv_start, buf, argv_env_len);
 	for(; len < argv_env_len; len++)
 		argv_start[len] = SPT_PADCHAR;

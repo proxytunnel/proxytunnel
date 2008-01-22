@@ -1,7 +1,7 @@
-/* Proxytunnel - (C) 2001-2008 Jos Visser / Mark Janssen    */
-/* Contact:                  josv@osp.nl / maniac@maniac.nl */
 
 /*
+ * Copyright (c) 2008 Dag Wieers <dag@wieers.com>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -20,35 +20,27 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <string.h>
-#include <errno.h>
-#include <syslog.h>
-#include "proxytunnel.h"
+#include <stdlib.h>
+#include <sys/ioctl.h>
+#include <sys/param.h>
+
+#ifndef HAVE_STRZCAT
+
+#define STRZCAT_SIZE 65535
 
 /*
- * Give a message to the user
+ * Append an variable number of strings together
  */
-void message( char *s, ... ) {
-	va_list ap;
-	char buf[1024];
+size_t strzcat(char *dst, char *format, ...) {
+    // FIXME: Implement similar boundary checks as strlcat
 
-	va_start( ap, s );
-	vsnprintf( (char *)buf, sizeof( buf ), s, ap );
-	va_end( ap );
+    int offset = strlen(dst);
+    va_list ap;
+    va_start(ap, format);
+    size_t dlen = vsnprintf(&dst[offset], STRZCAT_SIZE-offset, format, ap);
+    va_end(ap);
 
-	if ( i_am_daemon )
-		syslog( LOG_NOTICE, "%s", buf );
-	else
-		fputs( buf, stderr );
+    return ( dlen+offset );
 }
 
-/* My own perror function (uses the internal message) */
-void my_perror( char *msg ) {
-	if (errno == 0) {
-		message( "error: %s.\n", msg );
-	} else {
-		char *errstr = strerror( errno );
-		message( "error: %s: [%d] %s\n", msg, errno, errstr );
-	}
-}
-
-// vim:noet
+#endif /* !HAVE_STRZCAT */

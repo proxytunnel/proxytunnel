@@ -70,8 +70,7 @@ static volatile sig_atomic_t signo;
 
 static void handler(int);
 
-char *
-readpassphrase(const char *prompt, char *buf, size_t bufsiz, int flags) {
+char * readpassphrase(const char *prompt, char *buf, size_t bufsiz, int flags) {
 	ssize_t nr;
 	int input, output, save_errno;
 	char ch, *p, *end;
@@ -191,11 +190,9 @@ restart:
 	errno = save_errno;
 	return(nr == -1 ? NULL : buf);
 }
-  
-char *
-getpass_x(const char *prompt) {
-	static char buf[_PASSWORD_LEN + 1];
 
+char * getpass_x(const char *prompt) {
+	static char buf[_PASSWORD_LEN + 1];
 	return(readpassphrase(prompt, buf, sizeof(buf), RPP_ECHO_OFF));
 }
 

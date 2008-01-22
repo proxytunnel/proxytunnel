@@ -41,9 +41,7 @@ static const char base64val[] = {
 #define DECODE64(c)  (isascii(c) ? base64val[c] : BAD)
 
 
-/*
- * Small MAX macro
- */
+/* Small MAX macro */
 #ifndef MAX
 #define MAX( x, y )	( ( (x)>(y) ) ? (x) : (y) )
 #endif
@@ -62,8 +60,7 @@ static const char base64val[] = {
  */
 
 /* raw bytes to null-terminated base 64 string */
-void base64(unsigned char *out, const unsigned char *in, int len)
-{
+void base64(unsigned char *out, const unsigned char *in, int len) {
 	while (len >= 3) {
 		*out++ = base64digits[in[0] >> 2];
 		*out++ = base64digits[((in[0] << 4) & 0x30) | (in[1] >> 4)];
@@ -88,17 +85,16 @@ void base64(unsigned char *out, const unsigned char *in, int len)
 	*out = '\0';
 }
 
-int unbase64(unsigned char *out, const unsigned char *in, int maxlen)
 /* base 64 to raw bytes in quasi-big-endian order, returning count of bytes */
 /* maxlen limits output buffer size, set to zero to ignore */
-{
+int unbase64(unsigned char *out, const unsigned char *in, int maxlen) {
 	int len = 0;
 	register unsigned char digit1, digit2, digit3, digit4;
 
 	if (in[0] == '+' && in[1] == ' ')
-	in += 2;
+		in += 2;
 	if (*in == '\r')
-	return(0);
+		return(0);
 
 	do {
 		digit1 = in[0];
@@ -118,22 +114,19 @@ int unbase64(unsigned char *out, const unsigned char *in, int maxlen)
 		if (maxlen && len > maxlen)
 			return(-1);
 		*out++ = (DECODE64(digit1) << 2) | (DECODE64(digit2) >> 4);
-		if (digit3 != '=')
-		{
+		if (digit3 != '=') {
 			++len;
 			if (maxlen && len > maxlen)
 				return(-1);
 			*out++ = ((DECODE64(digit2) << 4) & 0xf0) | (DECODE64(digit3) >> 2);
-			if (digit4 != '=')
-			{
+			if (digit4 != '=') {
 				++len;
-			if (maxlen && len > maxlen)
-				return(-1);
-			*out++ = ((DECODE64(digit3) << 6) & 0xc0) | DECODE64(digit4);
+				if (maxlen && len > maxlen)
+					return(-1);
+				*out++ = ((DECODE64(digit3) << 6) & 0xc0) | DECODE64(digit4);
 			}
 		}
-	} while
-	(*in && *in != '\r' && digit4 != '=');
+	} while (*in && *in != '\r' && digit4 != '=');
 
 	return (len);
 }

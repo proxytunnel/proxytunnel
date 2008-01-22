@@ -97,18 +97,6 @@ void print_line_prefix(char *buf, char *prefix) {
 }
 
 /*
- * Append an variable number of strings together
- */
-size_t strzcat(char *strz, char *fmt, ...) {
-	int offset = strlen(strz);
-	va_list ap;
-	va_start(ap, fmt);
-	size_t dlen = vsnprintf(&strz[offset], SIZE-offset, fmt, ap);
-	va_end(ap);
-	return dlen+offset;
-}
-
-/*
  * Execute the basic proxy protocol of CONNECT and response, until the
  * last line of the response has been read. The tunnel is then open.
  */

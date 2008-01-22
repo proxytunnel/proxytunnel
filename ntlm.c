@@ -118,8 +118,9 @@ int parse_type2(unsigned char *buf) {
 		for (i = 0; i < t2->target_name.length / sp; i++)
 			domain[i] = t2_buf[t2->target_name.offset + i * sp];
 		domain[i] = 0;
-	} else
+	} else {
 		domain[0] = 0;
+	}
 
 	for (i = 0; i < 8; i++)
 		challenge[i] = t2->challenge[i];
@@ -258,7 +259,6 @@ unsigned char digest[16]; /* caller digest to be filled in */
 		MD5_Init( &tctx );
 		MD5_Update( &tctx, key, key_len );
 		MD5_Final( tk, &tctx );
-
 		key = tk;
 		key_len = 16;
 	}
@@ -335,9 +335,7 @@ void build_ntlm2_response() {
 		message("NTLM: MD4 of password is: ");
 		for( i = 0; i < 16; i++)
 			message("%02X", passdigest[i]);
-		message("\n");
-
-		message("DOMAIN: %s\nUSER: %s\n", domain, args_info.user_arg);
+		message("\nDOMAIN: %s\nUSER: %s\n", domain, args_info.user_arg);
 	}
 
 	userdomlen = sizeof(unsigned char) * (strlen(args_info.user_arg) + strlen(domain)) * 2;

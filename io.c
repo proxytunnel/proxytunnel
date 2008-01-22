@@ -35,9 +35,9 @@
  * newline character. Result is stored in buf.
  */
 int readline(PTSTREAM *pts) {
-	char	*p = buf;
-	char	c = 0;
-	int	i = 0;
+	char *p = buf;
+	char c = 0;
+	int i = 0;
 
 	/* Read one character at a time into buf, until a newline is encountered. */
 	while ( c != 10 && ( i < SIZE - 1 ) ) {
@@ -54,8 +54,8 @@ int readline(PTSTREAM *pts) {
 	*p = 0;
 
 	if( args_info.verbose_flag ) {
-        /* Copy line of data into dstr without trailing newline */
-		char * dstr = malloc(sizeof(buf) + 1);
+		/* Copy line of data into dstr without trailing newline */
+		char *dstr = malloc(sizeof(buf) + 1);
 		strlcpy( dstr, buf, strlen(buf) - 1);
 		if (strcmp(dstr, ""))
 			message( " <- %s\n", dstr );
@@ -74,12 +74,11 @@ void cpio(PTSTREAM *stream1, PTSTREAM *stream2) {
 	int in_max_fd, out_max_fd, max_fd;
 
 	/* Find the biggest file descriptor for select() */
-
 	in_max_fd = MAX(stream_get_incoming_fd(stream1), stream_get_incoming_fd(stream2));
 	out_max_fd = MAX(stream_get_outgoing_fd(stream1), stream_get_outgoing_fd(stream2));
 	max_fd = MAX(in_max_fd, out_max_fd);
 
-	/* We're never interested in sockets being available for write. */
+	/* We are never interested in sockets being available for write */
 	FD_ZERO( &writefds );
 
 	if( args_info.verbose_flag )
@@ -117,8 +116,7 @@ void cpio(PTSTREAM *stream1, PTSTREAM *stream2) {
 		if ( FD_ISSET( stream_get_incoming_fd(stream1), &readfds ) ) {
 			if ( stream_copy(stream1, stream2 ) )
 				break;
-		}
-		else if( FD_ISSET( stream_get_incoming_fd(stream2), &readfds ) ) {
+		} else if( FD_ISSET( stream_get_incoming_fd(stream2), &readfds ) ) {
 			if( stream_copy(stream2, stream1 ) )
 				break;
 		} else {

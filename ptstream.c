@@ -29,10 +29,7 @@
 #include "proxytunnel.h"
 
 
-/*
- * Open a stream for incoming and outgoing data with the specified fds
- */
-
+/* Open a stream for incoming and outgoing data with the specified fds */
 PTSTREAM *stream_open(int incoming_fd, int outgoing_fd) {
 	PTSTREAM *pts;
 
@@ -42,22 +39,19 @@ PTSTREAM *stream_open(int incoming_fd, int outgoing_fd) {
 	pts->outgoing_fd = outgoing_fd;
 	pts->ssl = NULL;
 	pts->ctx = NULL;
-	
+
 	/* Return a pointer to the structure */
 	return pts;
 }
 
 
-/*
- * Close a stream
- */
-
+/* Close a stream */
 int stream_close(PTSTREAM *pts) {
 	/* Destroy the SSL context */
 	if (pts->ssl) {
 #ifdef USE_SSL
-        SSL_shutdown (pts->ssl);
-        SSL_free (pts->ssl);
+		SSL_shutdown (pts->ssl);
+		SSL_free (pts->ssl);
 		SSL_CTX_free (pts->ctx);
 #endif /* USE_SSL */
 	}
@@ -76,7 +70,6 @@ int stream_close(PTSTREAM *pts) {
 
 
 /* Read from a stream */
-
 int stream_read(PTSTREAM *pts, void *buf, size_t len) {
 	/* Read up to the specified number of bytes into the buffer */
 	int bytes_read;	
@@ -98,7 +91,7 @@ int stream_read(PTSTREAM *pts, void *buf, size_t len) {
 }
 
 
-/* * Write to a stream */
+/* Write to a stream */
 int stream_write(PTSTREAM *pts, void *buf, size_t len) {
 	/* Write the specified number of bytes from the buffer */
 	int bytes_written;
@@ -193,7 +186,6 @@ int stream_get_incoming_fd(PTSTREAM *pts) {
 
 /* Return the outgoing_fd for a given stream */
 int stream_get_outgoing_fd(PTSTREAM *pts) {
-
 	if (!pts->ssl)
 		return pts->outgoing_fd;
 	else
