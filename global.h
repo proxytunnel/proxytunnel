@@ -29,3 +29,5 @@ If using PROTOTYPES, then PROTO_LIST returns the list, otherwise it
 #else
 #define PROTO_LIST(list) ()
 #endif
+
+// vim:noet

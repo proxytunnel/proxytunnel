@@ -244,3 +244,5 @@ int stream_get_outgoing_fd(PTSTREAM *pts)
 		return pts->outgoing_fd;
 #endif
 }
+
+// vim:noet

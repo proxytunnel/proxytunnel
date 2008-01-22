@@ -522,3 +522,5 @@ static char *getCredentialsFromFile( const char* filename, char **user, char **p
 
     return strdup( "Error opening password file" );
 }
+
+// vim:noet

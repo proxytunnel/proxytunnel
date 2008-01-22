@@ -21,3 +21,5 @@
 
 void base64(unsigned char *out, const unsigned char *in, int len);
 int unbase64(unsigned char *out, const unsigned char *in, int maxlen);
+
+// vim:noet

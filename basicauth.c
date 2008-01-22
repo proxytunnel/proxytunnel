@@ -56,3 +56,4 @@ void make_basicauth()
 	free( p );
 }
 
+// vim:noet

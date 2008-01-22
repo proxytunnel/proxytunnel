@@ -71,3 +71,5 @@ void cmdline_parser_print_help( void );
 void cmdline_parser_print_version( void );
 
 #endif /* _cmdline_h */
+
+// vim:noet

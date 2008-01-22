@@ -170,3 +170,5 @@ setproctitle(const char *fmt, ...)
 }
 
 #endif /* HAVE_SETPROCTITLE */
+
+// vim:noet

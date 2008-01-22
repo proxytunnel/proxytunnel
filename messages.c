@@ -54,3 +54,5 @@ void my_perror( char *msg )
 		message( "error: %s: [%d] %s\n", msg, errno, errstr );
 	}
 }
+
+// vim:noet

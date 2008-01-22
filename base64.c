@@ -137,3 +137,5 @@ int unbase64(unsigned char *out, const unsigned char *in, int maxlen)
 
     return (len);
 }
+
+// vim:noet

@@ -28,3 +28,5 @@
 #ifndef _PASSWORD_LEN
 # define _PASSWORD_LEN 80
 #endif
+
+// vim:noet

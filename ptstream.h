@@ -48,3 +48,5 @@ int stream_copy(PTSTREAM *pts_from, PTSTREAM *pts_to);
 int stream_enable_ssl(PTSTREAM *pts);
 int stream_get_incoming_fd(PTSTREAM *pts);
 int stream_get_outgoing_fd(PTSTREAM *pts);
+
+// vim:noet

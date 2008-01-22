@@ -207,3 +207,5 @@ static void handler(int s)
 	signo = s;
 }
 #endif /* HAVE_READPASSPHRASE */
+
+// vim:noet
