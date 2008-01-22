@@ -3,9 +3,10 @@ Changes to proxytunnel version 1.8.0svn -- Sat Jan 19 04:42:11 CET 2008
 - Fixes for runtime error on RHEL5/CENTOS-5 (gcc4 and -D_FORTIFY_SOURCE=2) (Dag Wieers)
 - Small thinko in io.c wrt. malloc() (Dag Wieers)
 - Disable output by default on Windows build (Dag Wieers)
-- Headers now have a trailing \r\n (Dag Wieers)
 - Updated SPEC file to RPMforge standards (Dag Wieers)
 - Improved verbose output, easier for the eyes (Dag Wieers)
+- Improved help output (Dag Wieers)
+- Added basic authentication support for remote proxy
 
 Changes to proxytunnel version 1.8.0 -- Mon Dec 31 16:46:52 CET 2007
 

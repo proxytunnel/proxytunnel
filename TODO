@@ -13,12 +13,6 @@
   see: http://issues.apache.org/bugzilla/show_bug.cgi?id=29744
 
 
-### Generic improvements
-- Allow to add more than one HTTP header
-  eg. -H "User-Agent: Mozilla/4.0 (compatible; MSIE 6.0; Win32)" -H "Keep-Alive: 300" -H "Connection: keep-alive"
----> Work-around is using newlines in your single -H argument
----> But shouldn't be too hard, to support multiple -H's
-
 ### Code cleanup
 - Fix permissions in subversion tree (some files are wrongly executable)
 
