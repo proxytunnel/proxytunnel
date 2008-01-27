@@ -303,9 +303,15 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 					clear_args ();
 					exit(1);
 				}
-				args_info->user_given = 1;
-				args_info->pass_given = 1;
 				char *result = getCredentialsFromFile(optarg, &(args_info->user_arg), &(args_info->pass_arg), &(args_info->remuser_arg), &(args_info->rempass_arg) );
+				if ( args_info->user_arg != NULL )
+					args_info->user_given = 1;
+				if ( args_info->pass_arg != NULL )
+					args_info->pass_given = 1;
+				if ( args_info->remuser_arg != NULL )
+					args_info->remuser_given = 1;
+				if ( args_info->rempass_arg != NULL )
+					args_info->rempass_given = 1;
 
 				if( result != NULL ) {
 					fprintf( stderr, "%s: Bad password file for `--passfile' (`-F')\n%s\n", PACKAGE, result);
