@@ -37,7 +37,7 @@ size_t strlcpy(char *dst, const char *src, size_t siz);
 size_t strzcat(char *dst, char *format, ...);
 int main( int argc, char *argv[] );
 char * readpassphrase(const char *, char *, size_t, int);
-char * getpass_x(const char *prompt);
+char * getpass_x(const char *format, ...);
 
 /* Globals */
 int read_fd;                    /* The file descriptor to read from */

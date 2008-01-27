@@ -191,8 +191,15 @@ restart:
 	return(nr == -1 ? NULL : buf);
 }
 
-char * getpass_x(const char *prompt) {
+char * getpass_x(const char *format, ...) {
 	static char buf[_PASSWORD_LEN + 1];
+	char *prompt = malloc(SIZE);
+
+	va_list ap;
+	va_start(ap, format);
+	vsnprintf(prompt, SIZE, format, ap);
+	va_end(ap);
+
 	return(readpassphrase(prompt, buf, sizeof(buf), RPP_ECHO_OFF));
 }
 
