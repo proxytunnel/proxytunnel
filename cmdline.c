@@ -406,13 +406,6 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 		} /* switch */
 	} /* while */
 
-	if (! args_info->proxy_given && ! args_info->dest_given ) {
-		clear_args ();
-//		cmdline_parser_print_help ();
-		message( "No proxy or destination given, exiting\nUse '--help' flag for usage info\n" );
-		exit(1);
-	}
-
 /* For Windows quiet is the default output. -- Dag */
 #ifdef CYGWIN
 	if (! args_info->verbose_flag ) {
@@ -451,8 +444,30 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 			args_info->rempass_given = 1;
 			args_info->user_arg = gengetopt_strdup (tmp);
 			if( args_info->verbose_flag )
-				message( "Found remote password in env variable REMPROXYPASS.\n", args_info->rempass_arg);
+				message( "Found remote password in env variable REMPROXYPASS.\n" );
 		}
+	}
+
+	if ( args_info->proxy_arg == NULL ) {
+		if ( (tmp = getenv("HTTP_PROXY")) != NULL ) {
+			int r;
+			char * temp;
+			temp = malloc( 56+1 );
+			r = sscanf( tmp, "http://%56[^/]/", temp );
+			message( "r = '%d'\ntemp = '%s'\n", r, temp);
+
+			args_info->proxy_given = 1;
+			args_info->proxy_arg = gengetopt_strdup (temp);
+			if( args_info->verbose_flag )
+				message( "Proxy info found using env variable HTTP_PROXY (%s).\n", args_info->proxy_arg);
+		}
+	}
+
+	if (! args_info->proxy_given && ! args_info->dest_given ) {
+		clear_args ();
+//		cmdline_parser_print_help ();
+		message( "No proxy or destination given, exiting\nUse '--help' flag for usage info\n" );
+		exit(1);
 	}
 
 	if (args_info->proxy_given ) {
@@ -468,7 +483,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 			args_info->proxyhost_given = 1;
 			args_info->proxyport_given = 1;
 		} else {
-			message( "parse_cmdline: couln't find your proxy hostname/ip\n" );
+			message( "parse_cmdline: couln't find your proxy hostname/ip (%s)\n", args_info->proxy_arg );
 			missing_required_options++;
 		}
 	}
