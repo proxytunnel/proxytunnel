@@ -18,9 +18,8 @@
  */
 
 /* basicauth.h */
-char basicauth[80];   /* Buffer to hold the proxies basic authentication data */
 
 /* Functions */
-void make_basicauth();
+char *basicauth(char *user, char *pass);
 
 // vim:noexpandtab:ts=4

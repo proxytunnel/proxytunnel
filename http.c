@@ -122,7 +122,7 @@ void proxy_protocol(PTSTREAM *pts) {
 				strzcat( buf, "Proxy-Authorization: NTLM %s\r\n", ntlm_type1_buf );
 			}
 		} else {
-			strzcat( buf, "Proxy-Authorization: Basic %s\r\n", basicauth );
+			strzcat( buf, "Proxy-Authorization: Basic %s\r\n", basicauth(args_info.user_arg, args_info.pass_arg ) );
 		}
 	}
 
@@ -161,8 +161,8 @@ void proxy_protocol(PTSTREAM *pts) {
 			message( "\nTunneling to %s (destination)\n", args_info.dest_arg );
 		sprintf( buf, "CONNECT %s HTTP/1.0\r\n", args_info.dest_arg);
 
-		if ( args_info.user_given && args_info.pass_given )
-			strzcat( buf, "Proxy-Authorization: Basic %s\r\n", basicauth );
+		if ( args_info.remuser_given && args_info.rempass_given )
+			strzcat( buf, "Proxy-Authorization: Basic %s\r\n", basicauth(args_info.remuser_arg, args_info.rempass_arg ));
 
 		strzcat( buf, "Proxy-Connection: Keep-Alive\r\n");
 

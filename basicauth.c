@@ -31,24 +31,28 @@
  * Create the HTTP basic authentication cookie for use by the proxy. Result
  * is stored in basicauth.
  */
-void make_basicauth() {
-	int len = strlen( args_info.user_arg ) + strlen( args_info.pass_arg ) + 2;
+char *basicauth(char *user, char *pass) {
+	char b64str[80];   /* Buffer to hold the proxies basic authentication data */
+
+	int len = strlen( user ) + strlen( pass ) + 2;
 	char *p = (char *) malloc( len );
 
 	/* Set up the cookie in clear text */
-	sprintf( p, "%s:%s", args_info.user_arg, args_info.pass_arg );
+	sprintf( p, "%s:%s", user, pass );
 
 	/*
 	 * Base64 encode the clear text cookie to create the HTTP base64
 	 * authentication cookie
 	 */
-	base64( (unsigned char *)basicauth, (unsigned char *)p, strlen(p) );
+	base64( (unsigned char *)b64str, (unsigned char *)p, strlen(p) );
 
 //	if( args_info.verbose_flag ) {
 //		message( "Proxy basic auth of %s is %s\n", p, basicauth );
 //	}
 
 	free( p );
+
+	return b64str;
 }
 
 // vim:noexpandtab:ts=4
