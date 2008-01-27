@@ -7,6 +7,10 @@ Changes to proxytunnel version 1.8.0svn -- Sat Jan 19 04:42:11 CET 2008
 - Improved verbose output, easier for the eyes (Dag Wieers)
 - Improved help output (Dag Wieers)
 - Added basic authentication support for remote proxy
+- Removed custom environment variables, now use PROXYUSER, PROXYPASS (Dag Wieers)
+- Replaced -U/--user and -S/--pass by -P/--proxyauth (Dag Wieers)
+- Added remote proxy authentication (-R/--remproxyauth) (Dag Wieers)
+- Use REMPROXYUSER and REMPROXYPASS environment variables (Dag Wieers)
 
 Changes to proxytunnel version 1.8.0 -- Mon Dec 31 16:46:52 CET 2007
 
