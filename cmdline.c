@@ -42,7 +42,7 @@ void cmdline_parser_print_version (void) {
 }
 
 void cmdline_parser_print_help (void) {
-//	cmdline_parser_print_version ();
+	cmdline_parser_print_version ();
 	printf(
 "Usage: %s [OPTIONS]...\n"
 "Build generic tunnels trough HTTPS proxy's, supports HTTP authorization\n"
@@ -408,8 +408,9 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 
 	if (! args_info->proxy_given && ! args_info->dest_given ) {
 		clear_args ();
-		cmdline_parser_print_help ();
-		exit(0);
+//		cmdline_parser_print_help ();
+		message( "No proxy or destination given, exiting\nUse '--help' flag for usage info\n" );
+		exit(1);
 	}
 
 /* For Windows quiet is the default output. -- Dag */
