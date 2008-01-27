@@ -16,8 +16,6 @@
 ### Code cleanup
 - Fix permissions in subversion tree (some files are wrongly executable)
 
-- Adopt a style guide for C (different styles are now being used)
-
 - Find some hardcore C experts to help us improve the code quality
 
 - Improve the error output, make it consistent throughout the program

@@ -100,9 +100,11 @@ static char * gengetopt_strdup (char * s) {
 }
 
 int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *args_info ) {
-	int c;		/* Character of the parsed option.  */
-	int r;		/* Tmd retval */
-	int missing_required_options = 0;	
+	/* Character of the parsed option.  */
+	int c;
+	/* Tmd retval */
+	int r;
+	int missing_required_options = 0;
 	char * tmp_env_var;
 
 	args_info->help_given = 0;
@@ -161,27 +163,27 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 
 		/* Struct option: Name, Has_arg, Flag, Value */
 		static struct option long_options[] = {
-			{ "help",		0, NULL, 'h' },
+			{ "help",			0, NULL, 'h' },
 			{ "version",		0, NULL, 'V' },
-			{ "user",		1, NULL, 'u' },
-			{ "pass",		1, NULL, 's' },
-			{ "domain",		1, NULL, 't' },
+			{ "user",			1, NULL, 'u' },
+			{ "pass",			1, NULL, 's' },
+			{ "domain",			1, NULL, 't' },
 			{ "uservar",		1, NULL, 'U' },
 			{ "passvar",		1, NULL, 'S' },
 			{ "passfile",		1, NULL, 'F' },
-			{ "proxy",		1, NULL, 'p' },
-			{ "dest",		1, NULL, 'd' },
+			{ "proxy",			1, NULL, 'p' },
+			{ "dest",			1, NULL, 'd' },
 			{ "remproxy",		1, NULL, 'r' },
 			{ "proctitle",		1, NULL, 'x' },
-			{ "header",		1, NULL, 'H' },
+			{ "header",			1, NULL, 'H' },
 			{ "verbose",		0, NULL, 'v' },
-			{ "ntlm",		0, NULL, 'N' },
-			{ "inetd",		0, NULL, 'i' },
+			{ "ntlm",			0, NULL, 'N' },
+			{ "inetd",			0, NULL, 'i' },
 			{ "standalone", 	1, NULL, 'a' },
-			{ "quiet",		0, NULL, 'q' },
+			{ "quiet",			0, NULL, 'q' },
 			{ "encrypt",		0, NULL, 'e' },
 			{ "encrypt-proxy",	0, NULL, 'E' },
-			{ NULL,	0, NULL, 0 }
+			{ NULL,				0, NULL, 0 }
 		};
 
 		c = getopt_long (argc, argv, "hVia:u:s:t:U:S:F:p:r:d:H:x:nvNeEq", long_options, &option_index);
@@ -470,4 +472,4 @@ static char *getCredentialsFromFile( const char* filename, char **user, char **p
 	return strdup( "Error opening password file" );
 }
 
-// vim:noet
+// vim:noexpandtab:ts=4

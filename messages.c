@@ -51,4 +51,4 @@ void my_perror( char *msg ) {
 	}
 }
 
-// vim:noet
+// vim:noexpandtab:ts=4

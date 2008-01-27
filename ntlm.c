@@ -460,4 +460,4 @@ void build_ntlm2_response() {
 		lm2digest[16 + i] = b->client_challenge[i];
 }
 
-// vim:noet
+// vim:noexpandtab:ts=4

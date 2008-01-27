@@ -196,4 +196,4 @@ int stream_get_outgoing_fd(PTSTREAM *pts) {
 #endif /* USE_SSL */
 }
 
-// vim:noet
+// vim:noexpandtab:ts=4

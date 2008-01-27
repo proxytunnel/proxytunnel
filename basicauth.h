@@ -23,4 +23,4 @@ char basicauth[80];   /* Buffer to hold the proxies basic authentication data */
 /* Functions */
 void make_basicauth();
 
-// vim:noet
+// vim:noexpandtab:ts=4

@@ -21,4 +21,4 @@
 int readline(PTSTREAM *pts);
 void cpio(PTSTREAM *stream1, PTSTREAM *stream2);
 
-// vim:noet
+// vim:noexpandtab:ts=4

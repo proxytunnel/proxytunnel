@@ -64,4 +64,4 @@ char buf[SIZE];         /* Data transfer buffer */
 #define MAX( x, y )     ( ( (x)>(y) ) ? (x) : (y) )
 #endif
 
-// vim:noet
+// vim:noexpandtab:ts=4

@@ -127,4 +127,4 @@ void cpio(PTSTREAM *stream1, PTSTREAM *stream2) {
 	closeall();
 }
 
-// vim:noet
+// vim:noexpandtab:ts=4

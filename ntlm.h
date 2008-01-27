@@ -105,4 +105,4 @@ typedef struct {
 	unsigned long	data_start;
 } blob;
 
-// vim:noet
+// vim:noexpandtab:ts=4

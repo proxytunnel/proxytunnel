@@ -30,4 +30,4 @@
 #define _PASSWORD_LEN 80
 #endif
 
-// vim:noet
+// vim:noexpandtab:ts=4

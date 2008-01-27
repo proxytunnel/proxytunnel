@@ -27,7 +27,7 @@
 static const char base64digits[] =
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-#define BAD	-1
+#define BAD -1
 static const char base64val[] = {
 	BAD,BAD,BAD,BAD, BAD,BAD,BAD,BAD, BAD,BAD,BAD,BAD, BAD,BAD,BAD,BAD,
 	BAD,BAD,BAD,BAD, BAD,BAD,BAD,BAD, BAD,BAD,BAD,BAD, BAD,BAD,BAD,BAD,
@@ -131,4 +131,4 @@ int unbase64(unsigned char *out, const unsigned char *in, int maxlen) {
 	return (len);
 }
 
-// vim:noet
+// vim:noexpandtab:ts=4

@@ -23,7 +23,7 @@ option it specifies it's command-line options.
 
 $ ./proxytunnel --help
 Proxytunnel 1.8.0 (rev 165)
-Copyright 2001-2007 Proxytunnel Project
+Copyright 2001-2008 Proxytunnel Project
 Jos Visser (Muppet) <josv@osp.nl>, Mark Janssen (Maniac) <maniac@maniac.nl>
 
 Purpose:

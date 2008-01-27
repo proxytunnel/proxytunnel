@@ -201,4 +201,4 @@ static void handler(int s) {
 }
 #endif /* HAVE_READPASSPHRASE */
 
-// vim:noet
+// vim:noexpandtab:ts=4

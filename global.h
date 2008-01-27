@@ -30,4 +30,4 @@ If using PROTOTYPES, then PROTO_LIST returns the list, otherwise it
 #define PROTO_LIST(list) ()
 #endif
 
-// vim:noet
+// vim:noexpandtab:ts=4

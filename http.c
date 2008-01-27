@@ -204,4 +204,4 @@ void proxy_protocol(PTSTREAM *pts) {
 	}
 }
 
-// vim:noet
+// vim:noexpandtab:ts=4

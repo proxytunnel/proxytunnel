@@ -164,4 +164,4 @@ void setproctitle(const char *fmt, ...) {
 
 #endif /* HAVE_SETPROCTITLE */
 
-// vim:noet
+// vim:noexpandtab:ts=4

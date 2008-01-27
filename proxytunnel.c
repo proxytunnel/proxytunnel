@@ -66,8 +66,8 @@ void signal_handler( int signal ) {
  * the socket that is connected to the proxy
  */
 int tunnel_connect() {
-	struct sockaddr_in 	sa;
-	struct hostent		*he;
+	struct sockaddr_in sa;
+	struct hostent *he;
 	int sd;
 
 	/* Create the socket */
@@ -407,4 +407,4 @@ int main( int argc, char *argv[] ) {
 	exit( 0 );
 }
 
-// vim:noet
+// vim:noexpandtab:ts=4
