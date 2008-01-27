@@ -28,13 +28,17 @@
 struct gengetopt_args_info {
 	char *user_arg;			/* Username to send to HTTPS proxy for auth. */
 	char *pass_arg;			/* Password to send to HTTPS proxy for auth. */
+	char *remuser_arg;		/* Username to send to remote HTTPS proxy for auth. */
+	char *rempass_arg;		/* Password to send to remote HTTPS proxy for auth. */
 	char *domain_arg;		/* NTLM Domain override */
 	char *proxy_arg;		/* HTTPS Proxy host to connect to. */
+	char *proxyauth_arg;	/* Local proxy auth. */
 	char *proxyhost_arg;	/* HTTPS Proxy host to connect to. */
 	int proxyport_arg;		/* HTTPS Proxy host portnumber to connect to. */
 	char *dest_arg;			/* Destination host to built the tunnel to. */
 	char header_arg[MAX_HEADER_SIZE];	/* Extra headers to send to proxy */
 	char *remproxy_arg;		/* Remote proxy to tunnel to. */
+	char *remproxyauth_arg;	/* Remote proxy auth. */
 	int verbose_flag;		/* Turn on verbosity (default=off). */
 	int ntlm_flag;			/* Turn on ntlm  (default=off). */
 	int inetd_flag;			/* Turn on inetd (default=off). */
@@ -47,12 +51,16 @@ struct gengetopt_args_info {
 	int version_given;		/* Whether version was given. */
 	int user_given;			/* Whether user was given. */
 	int pass_given;			/* Whether pass was given. */
+	int remuser_given;		/* Whether remote user was given. */
+	int rempass_given;		/* Whether remote pass was given. */
 	int domain_given;		/* Whether domain was given. */
 	int proxy_given;		/* Whether proxyhost was given. */
+	int proxyauth_given;	/* Whether proxyhost was given. */
 	int proxyhost_given;	/* Whether proxyhost was given. */
 	int proxyport_given;	/* Whether proxyport was given. */
 	int dest_given;			/* Whether dest was given. */
 	int remproxy_given;		/* Whether remproxy was given. */
+	int remproxyauth_given;	/* Whether remproxy was given. */
 	int verbose_given;		/* Whether verbose was given. */
 	int ntlm_given;			/* Whether ntlm was given. */
 	int inetd_given;		/* Whether inetd was given. */
