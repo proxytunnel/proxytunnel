@@ -38,7 +38,7 @@ extern char * optarg;
 static char *getCredentialsFromFile( const char* filename, char **user, char **pass, char **rem_user, char **rem_pass);
 
 void cmdline_parser_print_version (void) {
-	printf ("%s %s (rev %d)\nCopyright 2001-2008 Proxytunnel Project\n%s\n", PACKAGE, VERSION, REV, AUTHORS);
+	printf ("%s %s (rev %d) Copyright 2001-2008 Proxytunnel Project\n", PACKAGE, VERSION, REV);
 }
 
 void cmdline_parser_print_help (void) {
