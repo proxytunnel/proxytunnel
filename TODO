@@ -1,8 +1,8 @@
 ### Proxy bouncing support
-- Add multi-level proxy bouncing support (with syntax for it)
+- Add multi-level proxy bouncing support with new syntax
   eg. proxytunnel -p local-proxy:port -r remote-proxy1:port -r remote-proxy2:port -d %h:%p
 
-- Add proxy bouncing authentication support (with syntax for it)
+- Add proxy bouncing authentication support with new syntax
   eg. proxytunnel -p user@local-proxy:port -r user@remote-proxy:port -d %h:%p
   or: proxytunnel -p username:password@local-proxy:port -r username:password@remote-proxy:port -d %h:%p
 
