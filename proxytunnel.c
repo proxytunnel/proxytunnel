@@ -333,10 +333,20 @@ int main( int argc, char *argv[] ) {
 	/* If the usename is given, but password is not, prompt for it */
 	if( args_info.user_given && !args_info.pass_given ) {
 		char *cp;
-		cp = getpass_x ("Enter proxy password:");
+		cp = getpass_x ("Enter local proxy password:");
 		if (cp != NULL && strlen (cp) > 0) {
 			args_info.pass_arg = strdup (cp);
 			args_info.pass_given = 1;
+			memset (cp, 0, strlen(cp));
+		}
+	}
+
+	if( args_info.remuser_given && !args_info.rempass_given ) {
+		char *cp;
+		cp = getpass_x ("Enter remote proxy password:");
+		if (cp != NULL && strlen (cp) > 0) {
+			args_info.rempass_arg = strdup (cp);
+			args_info.rempass_given = 1;
 			memset (cp, 0, strlen(cp));
 		}
 	}
