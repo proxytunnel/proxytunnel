@@ -553,7 +553,6 @@ static char *getCredentialsFromFile( const char* filename, char **user, char **p
 		if ( *user == NULL && *pass == NULL && *remuser == NULL && *rempass == NULL) {
 			return strdup( "proxy_user & proxy_passwd not found in password file" );
 		} else {
-			fclose( pwfile );
 			return NULL;
 		}
 	}
