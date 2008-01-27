@@ -42,20 +42,6 @@ kPrint the version of the program and exit.
 .B \-i, \-\-inetd
 Run from inetd. Default is off.
 .TP
-.B \-u STRING, \-\-user=STRING
-The username to send to HTTPS proxy for authentification.
-.TP
-.B \-s STRING, \-\-pass=STRING
-The password to send to HTTPS proxy for authentification.
-.TP
-.B \-U STRING, \-\-uservar=STRING
-Environment variable containing the username to send to HTTPS proxy
-for authentification.
-.TP
-.B \-S STRING, \-\-passvar=STRING
-Environment variable containing the password to send to HTTPS proxy
-for authentification.
-.TP
 .B \-F STRING, \-\-passfile=STRING
 The file containing Username & Password to send to HTTPS proxy for
 authentification.  This file uses the same format as .wgetrc, and so
@@ -63,14 +49,22 @@ can use the credentials in common with wget.  This option can be used
 to at least hide the password from anyone clever enough to use the
 `ps' command.
 .TP
-.B \-g STRING, \-\-proxyhost=STRING
+.B \-p STRING, \-\-proxy=STRING
 The HTTPS Proxy host:port combo to connect to.
+.TP
+.B \-P STRING, \-\-proxyauth=STRING
+The credentials (user:pass) to use for local HTTP(S) proxy
+authentication.
 .TP
 .B \-d STRING, \-\-dest=STRING
 The destination host:port to built the tunnel to.
 .TP
 .B \-r STRING, \-\-remproxy=STRING
 The second-level proxy host:port to connect to.
+.TP
+.B \-R STRING, \-\-remproxyauth=STRING
+The credentials (user:pass) to use for remote HTTP(S) proxy
+authentication.
 .TP
 .B \-v, \-\-verbose
 Turn on verbosity. Default is off.
