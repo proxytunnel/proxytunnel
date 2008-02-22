@@ -359,10 +359,12 @@ int main( int argc, char *argv[] ) {
 		}
 	}
 
-	/* Only one of -E (SSL encrypt client to proxy connection) or
-	 * -e (SSL encrypt tunnel data) can be specified. */
-	if (args_info.encryptproxy_flag && args_info.encrypt_flag) {
-		message("Error: only one of --encrypt-proxy and --encrypt can be specified for a tunnel\n");
+	/* Only one of -E/-e/-R can be specified. */
+	if ((args_info.encrypt_flag ? 1 : 0) +
+		(args_info.encryptproxy_flag ? 1 : 0) +
+		(args_info.encryptremproxy_flag ? 1 : 0) > 1)
+	{
+		message("Error: only one of --encrypt-proxy, --encrypt-remproxy and --encrypt can be specified for a tunnel\n");
 		exit( 1 );
 	}
 

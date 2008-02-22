@@ -58,6 +58,7 @@ void cmdline_parser_print_help (void) {
 #ifdef USE_SSL
 " -e, --encrypt             SSL encrypt data between local proxy and destination\n"
 " -E, --encrypt-proxy       SSL encrypt data between client and local proxy\n"
+" -X, --encrypt-remproxy    Encrypt between 1st and 2nd proxy using SSL\n"
 #endif
 "\n"
 "Additional options for specific features:\n"
@@ -129,6 +130,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	args_info->domain_given = 0;
 	args_info->encrypt_given = 0;
 	args_info->encryptproxy_given = 0;
+	args_info->encryptremproxy_given = 0;
 	args_info->proctitle_given = 0;
 
 /* No... we can't make this a function... -- Maniac */
@@ -153,6 +155,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	args_info->standalone_arg = 0; \
 	args_info->encrypt_flag = 0; \
 	args_info->encryptproxy_flag = 0; \
+	args_info->encryptremproxy_flag = 0; \
 	args_info->proctitle_arg = NULL; \
 } 
 
@@ -194,12 +197,13 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 			{ "quiet",			0, NULL, 'q' },
 			{ "encrypt",		0, NULL, 'e' },
 			{ "encrypt-proxy",	0, NULL, 'E' },
+			{ "encrypt-remproxy",0,NULL, 'X' },
 			{ NULL,				0, NULL, 0 }
 		};
 
-		c = getopt_long (argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:nvNeEq", long_options, &option_index);
+		c = getopt_long (argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:nvNeEXq", long_options, &option_index);
 #else
-		c = getopt( argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:nvNeEq" );
+		c = getopt( argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:nvNeEXq" );
 #endif
 
 		if (c == -1)
@@ -359,6 +363,13 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 				args_info->remproxyauth_given = 1;
 				args_info->remproxyauth_arg = gengetopt_strdup (optarg);
 				break;
+
+			case 'X':   /* Turn on local to remote proxy SSL encryption */
+				args_info->encryptremproxy_flag = !(args_info->encryptremproxy_flag);
+				if( args_info->verbose_flag )
+					message("SSL local to remote proxy enabled\n");
+				break;
+
 
 			case 'd':	/* Destination host to built the tunnel to.  */
 				if (args_info->dest_given) {

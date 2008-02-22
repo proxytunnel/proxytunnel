@@ -46,6 +46,7 @@ struct gengetopt_args_info {
 	int standalone_arg;		/* Turn on stdalone (-a) on port */
 	int encrypt_flag;		/* Turn on SSL encryption (default=off). */
 	int encryptproxy_flag;	/* Turn on client to proxy SSL encryption (def=off).*/
+	int encryptremproxy_flag;  /* Turn on local to remote proxy SSL encryption (def=off).*/
 	char *proctitle_arg;	/* Override process title (default=off). */
 	int help_given;			/* Whether help was given. */
 	int version_given;		/* Whether version was given. */
@@ -68,6 +69,7 @@ struct gengetopt_args_info {
 	int header_given;		/* Whether extra headers are given */
 	int encrypt_given;		/* Whether encrypt was given */
 	int encryptproxy_given;	/* Whether encrypt was given */
+	int encryptremproxy_given;   /* Whether encrypt was given */
 	int proctitle_given;	/* Whether to override process title */
 };
 

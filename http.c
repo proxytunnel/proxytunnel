@@ -157,6 +157,12 @@ void proxy_protocol(PTSTREAM *pts) {
 		while ( strcmp( buf, "\r\n" ) != 0 )
 			readline(pts);
 
+/* If --encrypt-remproxy is specified, connect to the remote proxy using SSL */
+#ifdef USE_SSL
+	if ( args_info.encryptremproxy_flag )
+		stream_enable_ssl(stunnel);
+#endif
+
 		if( args_info.verbose_flag )
 			message( "\nTunneling to %s (destination)\n", args_info.dest_arg );
 		sprintf( buf, "CONNECT %s HTTP/1.0\r\n", args_info.dest_arg);
