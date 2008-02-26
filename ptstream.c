@@ -47,14 +47,14 @@ PTSTREAM *stream_open(int incoming_fd, int outgoing_fd) {
 
 /* Close a stream */
 int stream_close(PTSTREAM *pts) {
+#ifdef USE_SSL
 	/* Destroy the SSL context */
 	if (pts->ssl) {
-#ifdef USE_SSL
 		SSL_shutdown (pts->ssl);
 		SSL_free (pts->ssl);
 		SSL_CTX_free (pts->ctx);
-#endif /* USE_SSL */
 	}
+#endif /* USE_SSL */
 
 	/* Close the incoming fd */
 	close(pts->incoming_fd);

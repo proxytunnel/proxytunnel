@@ -1,4 +1,4 @@
-Changes to proxytunnel version 1.8.0svn -- Sat Jan 19 04:42:11 CET 2008
+Changes to proxytunnel version 1.9.0 -- Sat Feb 23 22:03:10 CET 2008
 
 - Fixes for runtime error on RHEL5/CENTOS-5 (gcc4 and -D_FORTIFY_SOURCE=2) (Dag Wieers)
 - Small thinko in io.c wrt. malloc() (Dag Wieers)
@@ -12,7 +12,7 @@ Changes to proxytunnel version 1.8.0svn -- Sat Jan 19 04:42:11 CET 2008
 - Added remote proxy authentication (-R/--remproxyauth) (Dag Wieers)
 - Use REMPROXYUSER and REMPROXYPASS environment variables (Dag Wieers)
 - Pick up proxy settings from HTTP_PROXY env var (Mark)
-- Remote Proxy SSL (-X --encrypt-remproxy)
+- Remote Proxy SSL (-X --encrypt-remproxy) (Mark)
 
 Changes to proxytunnel version 1.8.0 -- Mon Dec 31 16:46:52 CET 2007
 
