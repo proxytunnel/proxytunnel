@@ -1,0 +1,38 @@
+Proxytunnel 1.9.0 release notes
+
+Proxytunnel 1.9.0 summarizes the development in Proxytunnel over the last
+year. It includes many bugfixes and a few new features. This release wouln't
+have been possible without the help from the Proxytunnel community, and I
+especially would like to thank Dag Wieer for his many patches and fixes.
+
+Proxytunnel 1.9.0 should work on all Posix compliant systems, including Linux
+*BSD, Windows and OS X. It can work with 1 proxy (default, and most used)
+or with 2 proxies chained together (-r). For information regarding the use
+of 2 proxies, why you would want or need this, see Dag's page at:
+http://dag.wieers.com/howto/ssh-http-tunneling/
+
+Proxytunnel now supports SSL encryption on 3 different phases in the
+connection chain. Between proxytunnel and the primary proxy (-E), between
+the local primary and the destination (-e), and between the primary and
+secondary proxies (-X)
+
+Proxytunnel supports proxies with Basic (-P/-R) and NTLM (-N) authentication,
+and can read the username/password information from the commandline, the
+environment or a configfile.
+
+The old -u/--user and -s/--pass options have been deprecated, and replaced
+by a single -P/--proxyauth option. This accepts the authentication information
+in the format user:password, or will prompt for the password when only the
+username is given (omit the ':' sign in this case)
+
+The -U/--uservar -S/--passvar options have been removed, use the environment
+variables named in the README file in stead.
+
+Proxytunnel can now also read the proxy configuration from the environment
+by reading the HTTP_PROXY (format http://host:port/)
+
+If you require any assistance, have any comments or want to participate
+in proxytunnel development, you can send a message to the proxytunnel-users
+mailinglist: proxytunnel-users@sourceforge.net
+
+The Proxytunnel Team
