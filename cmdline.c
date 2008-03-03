@@ -465,7 +465,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 			char * temp;
 			temp = malloc( 56+1 );
 			r = sscanf( tmp, "http://%56[^/]/", temp );
-			message( "r = '%d'\ntemp = '%s'\n", r, temp);
+//			message( "r = '%d'\ntemp = '%s'\n", r, temp);
 
 			args_info->proxy_given = 1;
 			args_info->proxy_arg = gengetopt_strdup (temp);
@@ -474,7 +474,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 		}
 	}
 
-	if (! args_info->proxy_given && ! args_info->dest_given ) {
+	if (! args_info->proxy_given || ! args_info->dest_given ) {
 		clear_args ();
 //		cmdline_parser_print_help ();
 		message( "No proxy or destination given, exiting\nUse '--help' flag for usage info\n" );
