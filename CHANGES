@@ -6,7 +6,7 @@ Changes to proxytunnel version 1.9.0 -- Sat Feb 23 22:03:10 CET 2008
 - Updated SPEC file to RPMforge standards (Dag Wieers)
 - Improved verbose output, easier for the eyes (Dag Wieers)
 - Improved help output (Dag Wieers)
-- Added basic authentication support for remote proxy
+- Added basic authentication support for remote proxy (Mark)
 - Removed custom environment variables, now use PROXYUSER, PROXYPASS (Dag Wieers)
 - Replaced -U/--user and -S/--pass by -P/--proxyauth (Dag Wieers)
 - Added remote proxy authentication (-R/--remproxyauth) (Dag Wieers)
@@ -169,11 +169,11 @@ Changes to proxytunnel version 1.1.0 -- Mon Apr 22 22:58:05 CEST 2002
 - Ported new features (like stand-alone mode) to CYGWIN and fixed some
   bugs when running on CYGWIN. The cygwin version differs from the normal
   proxytunnel in these issues:
-  	- Syslog isn't used, messages in stand-alone mode are displayed
-	  in the window where the proxytunnel proces runs.
-	- Proxytunnel doesn't fork into the background on cygwin, so it's
-	  logging messages can be seen here, and it can easily be killed
-	  using CTRL-C in the window.
+   - Syslog isn't used, messages in stand-alone mode are displayed
+     in the window where the proxytunnel proces runs.
+   - Proxytunnel doesn't fork into the background on cygwin, so it's
+     logging messages can be seen here, and it can easily be killed
+     using CTRL-C in the window.
 
 - Added Makefile.cygwin for use on CYGWIN platform.
 

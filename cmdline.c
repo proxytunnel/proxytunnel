@@ -494,7 +494,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 			args_info->proxyhost_given = 1;
 			args_info->proxyport_given = 1;
 		} else {
-			message( "parse_cmdline: couln't find your proxy hostname/ip (%s)\n", args_info->proxy_arg );
+			message( "parse_cmdline: could not find your proxy hostname/ip (%s)\n", args_info->proxy_arg );
 			missing_required_options++;
 		}
 	}
@@ -517,7 +517,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 			args_info->user_arg = args_info->proxyauth_arg;
 			args_info->user_given = 1;
 		} else {
-			message( "parse_cmdline: couln't find your proxy auth user/pass\n" );
+			message( "parse_cmdline: could not find your proxy auth user/pass\n" );
 			missing_required_options++;
 		}
 	}
@@ -540,7 +540,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 			args_info->remuser_arg = args_info->remproxyauth_arg;
 			args_info->remuser_given = 1;
 		} else {
-			message( "parse_cmdline: couln't find your proxy auth user/pass\n" );
+			message( "parse_cmdline: could not find your proxy auth user/pass\n" );
 			missing_required_options++;
 		}
 	}
