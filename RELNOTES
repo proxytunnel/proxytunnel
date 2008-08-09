@@ -3,7 +3,7 @@ Proxytunnel 1.9.0 release notes
 Proxytunnel 1.9.0 summarizes the development in Proxytunnel over the last
 year. It includes many bugfixes and a few new features. This release wouln't
 have been possible without the help from the Proxytunnel community, and I
-especially would like to thank Dag Wieer for his many patches and fixes.
+especially would like to thank Dag Wieers for his many patches and fixes.
 
 Proxytunnel 1.9.0 should work on all Posix compliant systems, including Linux
 *BSD, Windows and OS X. It can work with 1 proxy (default, and most used)
