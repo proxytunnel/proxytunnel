@@ -1,9 +1,6 @@
 # Makefile for proxytunnel
 #
 # Please uncomment the appropriate settings
-name = proxytunnel
-#version = 1.9.0
-version = $(shell awk 'BEGIN { FS="\"" } /^\#define VERSION / { print $$2 }' config.h)
 
 CC ?= cc
 CFLAGS ?= -Wall -O2 -ggdb
@@ -49,12 +46,13 @@ SSL_LIBS := -lssl -lcrypto
 endif
 LDFLAGS += $(SSL_LIBS)
 
-PREFIX =/usr/local
-BINDIR = $(PREFIX)/bin
-DATADIR = $(PREFIX)/share
-MANDIR = $(DATADIR)/man
+name = proxytunnel
+version = $(shell awk 'BEGIN { FS="\"" } /^\#define VERSION / { print $$2 }' config.h)
 
-PROGNAME = proxytunnel
+prefix = /usr/local
+bindir = $(prefix)/bin
+datadir = $(prefix)/share
+mandir = $(datadir)/man
 
 # Remove strlcpy/strlcat on (open)bsd/darwin systems
 OBJ = proxytunnel.o	\
@@ -80,15 +78,15 @@ docs:
 	$(MAKE) -C docs
 
 proxytunnel: $(OBJ)
-	$(CC) -o $(PROGNAME) $(CFLAGS) $(OPTFLAGS) $(OBJ) $(LDFLAGS)
+	$(CC) -o $(name) $(CFLAGS) $(OPTFLAGS) $(OBJ) $(LDFLAGS)
 
 clean:
-	@rm -f $(PROGNAME) $(OBJ)
+	@rm -f $(name) $(OBJ)
 	$(MAKE) -C docs clean
 
 install:
-	install -Dp -m0755 $(PROGNAME) $(DESTDIR)$(BINDIR)/$(PROGNAME)
-	install -Dp -m0644 $(PROGNAME).1 $(DESTDIR)$(MANDIR)/man1/$(PROGNAME).1
+	install -Dp -m0755 $(name) $(DESTDIR)$(bindir)/$(name)
+	$(MAKE) -C docs install
 
 .c.o:
 	$(CC) $(CFLAGS) $(OPTFLAGS) -c -o $@ $<
