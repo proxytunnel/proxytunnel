@@ -2,8 +2,8 @@
 #
 # Please uncomment the appropriate settings
 name = proxytunnel
-version = 1.9.0
-#version = $(shell sed -e '/^#define VERSION /s/^.\+"\(.\+\)".*$/\1/' config.h)
+#version = 1.9.0
+version = $(shell awk 'BEGIN { FS="\"" } /^\#define VERSION / { print $$2 }' config.h)
 
 CC ?= cc
 CFLAGS ?= -Wall -O2 -ggdb
