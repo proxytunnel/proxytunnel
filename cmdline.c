@@ -45,20 +45,20 @@ void cmdline_parser_print_help (void) {
 	cmdline_parser_print_version ();
 	printf(
 "Usage: %s [OPTIONS]...\n"
-"Build generic tunnels trough HTTPS proxy's, supports HTTP authorization\n"
+"Build generic tunnels trough HTTPS proxies using HTTP authentication\n"
 "\n"
 "Standard options:\n"
 // FIXME: "   -c, --config=FILE       Read config options from file\n"
-" -i, --inetd               Run from inetd (default=off)\n"
+" -i, --inetd               Run from inetd (default: off)\n"
 " -a, --standalone=INT      Run as standalone daemon on specified port\n"
-// FIXME: " -f, --nobackground      Don't for to background in standalone mode\n"
+// FIXME: " -f, --nobackground        Don't for tok background in standalone mode\n"
 " -p, --proxy=STRING        Local proxy host:port combination\n"
 " -r, --remproxy=STRING     Remote proxy host:port combination (using 2 proxies)\n"
 " -d, --dest=STRING         Destination host:port combination\n"
 #ifdef USE_SSL
 " -e, --encrypt             SSL encrypt data between local proxy and destination\n"
 " -E, --encrypt-proxy       SSL encrypt data between client and local proxy\n"
-" -X, --encrypt-remproxy    Encrypt between 1st and 2nd proxy using SSL\n"
+" -X, --encrypt-remproxy    SSL encrypt data between local and remote proxy\n"
 #endif
 "\n"
 "Additional options for specific features:\n"

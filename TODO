@@ -28,12 +28,6 @@
   (Users need to understand that proxytunnel fails, not ssh itself)
 
 
-### Documentation
-- Add all documentation in asciidoc standard
-
-- Fix the man page (does not seem to match the current set of options)
-
-
 ### Add default test-cases
 - Before releasing proxytunnel, we should validate the different error-cases
   + local proxy does not exist (unresolvable)

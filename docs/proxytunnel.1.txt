@@ -4,96 +4,208 @@ v1.9.0, Augustus 2008
 
 
 == NAME
-proxytunnel - program to tunnel a connection throught an standard HTTPS proxy
+proxytunnel - program to tunnel a connection through a standard HTTPS proxy
 
 
 == SYNOPSIS
-*proxytunnel* _[options]_ _host_:_port_
+*proxytunnel* _[OPTION]_...
 
 
 == DESCRIPTION
-This manual page documents the proxytunnel command.
-
-*proxytunnel* is a program that open a tunnel through a HTTPS proxy.
+*proxytunnel* is a program to tunnel any connection through a standard HTTPS
+proxy, circumventing standard HTTP filtering mechanisms. It's mostly used as
+a backend for OpenSSH's ProxyCommand, and as a proxy backend for Putty. It can
+also be used for other proxy-traversing purposes like proxy bouncing.
 
 
 == OPTIONS
-This program follow the usual GNU command line syntax, with long
-options starting with two dashes (‘--’).
 
-*-h, --help*::
-              Print help and exit.
+*-i*, *--inetd*::
+    Run from inetd (default: off)
 
-*-V, --version*::
-              Print the version of the program and exit.
+*-a*, *--standalone*=_port_::
+    Run as standalone daemon on specified _port_
 
-*-i, --inetd*::
-              Run from inetd. Default is off.
+*-p*, *--proxy*=_host_:_port_::
+    Use _host_ and _port_ as the local proxy to connect to, if not specified
+    the *HTTP_PROXY* environment variable, if set, will be used instead
 
-*-F* _STRING_, *--passfile=*_STRING_::
-              The file containing Username & Password to send to HTTPS proxy for authentication. This file uses the same format as .wgetrc, and so can use the credentials in common with wget. This option can be used to at least hide the password from anyone clever enough to use the ‘ps’ command.
+*-r*, *--remproxy*=_host_:_port_::
+    Use _host_ and _port_ as the remote (secondary) proxy to connect to
 
-*-p* _STRING_, *--proxy=*_STRING_::
-              The HTTPS Proxy host:port combo to connect to.
+*-d*, *--dest*=_host_:_port_::
+    Use _host_ and _port_ as the destination for the tunnel, you can also
+    specify them as the argument to the proxytunnel command
 
-*-P* _STRING_, *--proxyauth=*_STRING_::
-              The credentials (user:pass) to use for local HTTP(S) proxy
-              authentication.
+*-e*, *--encrypt*::
+    SSL encrypt data between local proxy and destination
 
-*-d* _STRING_, *--dest=*_STRING_::
-              The destination host:port to built the tunnel to.
+*-E*, *--encrypt-proxy*::
+    SSL encrypt data between client and local proxy
 
-*-r* _STRING_, *--remproxy=*_STRING_::
-              The second-level proxy host:port to connect to.
+*-X*, *--encrypt-remproxy*::
+    SSL encrypt data between local and remote (secondary) proxy
 
-*-R* _STRING_, *--remproxyauth=*_STRING_::
-              The credentials (user:pass) to use for remote HTTP(S) proxy
-              authentication.
 
-*-v, --verbose*::
-              Turn on verbosity. Default is off.
+== ADDITIONAL OPTIONS
 
-*-q, --quiet*::
-              Suppress messages. Default is off.
+*-F*, *--passfile*=_filename_::
+    Use _filename_ for reading username and password for HTTPS proxy
+    authentication, the file uses the same format as .wgetrc and can be shared
+    with wget. Use this option, or environment variables to hide the password
+    from other users
+
+*-P*, *--proxyauth*=_username_:_password_::
+    Use _username_ and _password_ as credentials to authenticate against a
+    local HTTPS proxy, the username and password can also be specified in
+    the *PROXYUSER* and *PROXYPASS* environment variables to hide them from
+    other users.
+    If the _password_ is ommited and no *PROXYPASS* environment variable is
+    set, proxytunnel will prompt for a password
+
+*-R*, *--remproxyauth*=_username_:_password_::
+    Use _username_ and _password_ as credentials to authenticate against a
+    remote (secondary) HTTPS proxy, the username and password can also be
+    specified in the *REMPROXYUSER* and *REMPROXYPASS* environment variables
+    to hide them from other users.
+    If the _password_ is ommited and no *REMPROXYPASS* environment variable is
+    set, proxytunnel will prompt for a password
+
+*-N*, *--ntlm*::
+    Use NTLM basd authentication
+
+*-t*, *--domain*=_STRING_::
+    Specify NTLM domain (default: autodetect)
+
+*-H*, *--header*=_STRING_::
+    Add additional HTTP headers to send to proxy
+
+*-x*, *--proctitle*=_STRING_::
+    Use a different process title
+
+
+== MISCELLANEOUS OPTIONS
+
+*-v*, *--verbose*::
+    Turn on verbosity
+
+*-q*, *--quiet*::
+    Suppress messages
+
+*-h*, *--help*::
+    Print help and exit
+
+*-V*, *--version*::
+    Print version and exit
 
 
 == ARGUMENTS
-*host* is the destination hostname
+_host_:_port_ is the destination hostname and port number combination
 
-*port* is the destination port
-
-Specifying the destination as arguments is exactly the same as specifying them using the *--dest* option.
+NOTE: Specifying the destination as arguments is exactly the same as
+specifying them using the *-d* or *--dest* option.
 
 
 == USAGE
-FIXME: Usage cases to be added here.
+Depending on your situation you might want to do any of the following things:
 
-== NOTES
-To use this program with OpenSSH to connect to a host somewhere, create a ~/.ssh/config file with the following content:
+ * *Connect through a local proxy to your home system on port 22*
+
+   $ proxytunnel -v -p proxy.company.com:8080 -d system.home.nl:22
+
+ * *Connect through a local proxy (with authentication) to your home system*
+
+   $ proxytunnel -v -p proxy.company.com:8080 -P username:password -d system.home.nl:22
+
+ * *Connect through a local proxy (with authentication) hiding your password*
+
+   $ export PROXYPASS=password
+   $ proxytunnel -v -p proxy.company.com:8080 -P username -d system.home.nl:22
+
+ * *Connect through a local proxy to a remote proxy and bounce to any system*
+
+   $ proxytunnel -v -p proxy.company.com:8080 -r proxy.athome.nl:443 -d system.friend.nl:22
+
+ * *Connect using SSL through a local proxy to your home system*
+
+   $ proxytunnel -v -E -p proxy.company.com:8080 -d system.home.nl:22
+
+
+== OPENSSH CONFIGURATION
+To use this program with OpenSSH to connect to a host somewhere, create a
+_~/.ssh/config_ file with the following content:
 
 ----
-Host foobar
-    DynamicForward 1080
-    ProxyCommand proxytunnel -p proxy.customer.com:8080 -u user -s password %h:%p
+Host system.athome.nl
+    ProxyCommand proxytunnel -p proxy.company.com:8080 -d %h:%p
     ServerAliveInterval 30
 ----
 
-If your proxy doesn’t require the username and password for using it, you can skip these options.
+NOTE: The +ServerAliveInterval+ directive makes sure that idle connections are
+not being dropped by intermediate firewalls that remove active sessions
+aggresively. If you see your connection dropping out, try to lower the value
+even more.
 
-If you want to run proxytunnel from inetd add the *--inetd* option.
+To use the dynamic (SOCKS) portforwarding capability of the SSH client, you
+can specify the +DynamicForward+ directive in your ssh_config file like:
 
-Most HTTPS proxies do not allow access to ports other than 443 (HTTPS) and 563 (SNEWS), so some hacking is necessary to start the SSH daemon on the required port. (On the server side add an extra Port statement in the sshd_config file)
+----
+Host system.athome.nl
+    DynamicForward 1080
+    ProxyCommand proxytunnel -p proxy.company.com:8080 -d %h:%p
+    ServerAliveInterval 30
+----
 
 
-== BUGS
-This software is bug-free, at least we'd like to think so. If you do not agree with us, please let us know in a friendly email :)
+== NOTES
+IMPORTANT: Most HTTPS proxies do not allow access to ports other than HTTPS
+(tcp/443) and SNEWS (tcp/563). In this case you need to make sure the SSH
+daemon or remote proxy on the destination system is listening on either
+tcp/443 or tcp/563 to get through.
+
+
+== ENVIRONMENT
+Proxytunnel can be influenced by setting one of the following environment
+variables:
+
+*HTTP_PROXY*::
+    If this environment variable is set, proxytunnel will use it as the
+    _local proxy_ if *-p* or *--proxy* is not provided
+
+*PROXYUSER*::
+    If this environment variable is set, proxytunnel will use it as the
+    _username_ for proxy authentication, unless specified using the *-P* or
+    *--proxyauth* option
+
+*PROXYPASS*::
+    If this environment variable is set, proxytunnel will use it as the
+    _password_ for proxy authentication, unless specified using the *-P* or
+    *--proxyauth* option
+
+*REMPROXYUSER*::
+    If this environment variable is set, proxytunnel will use it as the
+    _username_ for remote (secondary) proxy authentication, unless specified
+    using the *-R* or *--remproxyauth* option
+
+*REMPROXYPASS*::
+    If this environment variable is set, proxytunnel will use it as the
+    _password_ for remote (secondary) proxy authentication, unless specified
+    using the *-R* or *--remproxyauth* option
 
 
 == SEE ALSO
     ssh(1), ssh_config(8)
 
 
+== BUGS
+This software is bug-free, at least we'd like to think so. If you do not
+agree with us, please attach the proof to your friendly email :)
+
+
 == AUTHOR
-This manpage was initially written by Loïc Le Guyader <loic.leguyader@laposte.net> for the Debian GNU/Linux system, and maintained by the Proxytunnel developers.
+This manpage was initially written by Loïc Le Guyader
+<loic.leguyader@laposte.net> for the Debian GNU/Linux system, revamped in
+asciidoc by Dag Wieërs <dag@wieers.com> and is now maintained by the
+Proxytunnel developers.
 
 Homepage at http://proxytunnel.sourceforge.net/
