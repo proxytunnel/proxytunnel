@@ -1,6 +1,9 @@
 # Makefile for proxytunnel
 #
 # Please uncomment the appropriate settings
+name = proxytunnel
+version = 1.9.0
+#version = $(shell sed -e '/^#define VERSION /s/^.\+"\(.\+\)".*$/\1/' config.h)
 
 CC ?= cc
 CFLAGS ?= -Wall -O2 -ggdb
@@ -69,11 +72,19 @@ OBJ = proxytunnel.o	\
 	ntlm.o		\
 	ptstream.o
 
+.PHONY: all clean docs install
+
+all: proxytunnel docs
+
+docs:
+	$(MAKE) -C docs
+
 proxytunnel: $(OBJ)
 	$(CC) -o $(PROGNAME) $(CFLAGS) $(OPTFLAGS) $(OBJ) $(LDFLAGS)
 
 clean:
 	@rm -f $(PROGNAME) $(OBJ)
+	$(MAKE) -C docs clean
 
 install:
 	install -Dp -m0755 $(PROGNAME) $(DESTDIR)$(BINDIR)/$(PROGNAME)
@@ -81,3 +92,6 @@ install:
 
 .c.o:
 	$(CC) $(CFLAGS) $(OPTFLAGS) -c -o $@ $<
+
+dist: clean docs
+	find . ! -wholename '*/.svn*' | pax -d -w -x ustar -s ,^./,$(name)-$(version)/, | bzip2 >../$(name)-$(version).tar.bz2

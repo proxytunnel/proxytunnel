@@ -1,8 +1,6 @@
-= Proxytunnel: punghcing holes through the corporate firewall
-:author: Mark Janssen <maniac@maniac.nl>
-:author: Dag Wieers <dag@wieers.com>
-$Revision$
-$Date$
+= Proxytunnel: punching holes through the corporate firewall
+Proxytunnel developers
+$Id$
 
 == Introduction
 ProxyTunnel is a program that connects stdin and stdout to a server somewhere on the network, through a standard HTTPS proxy. We mostly use it to tunnel SSH sessions through HTTP(S) proxies, allowing us to do many things that wouldn't be possible without ProxyTunnel.
@@ -29,7 +27,9 @@ We now have access to SSH on our 'unrestricted' system on the internet. As you m
 == History
 
 
-== Supported platforms
+== Requirements
+What is required to use proxytunnel ?
+What Operating Systems are supported ?
 
 == How does it work ?
 

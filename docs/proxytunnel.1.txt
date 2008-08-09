@@ -1,0 +1,99 @@
+= proxytunnel(1)
+Proxytunnel developers
+v1.9.0, Augustus 2008
+
+
+== NAME
+proxytunnel - program to tunnel a connection throught an standard HTTPS proxy
+
+
+== SYNOPSIS
+*proxytunnel* _[options]_ _host_:_port_
+
+
+== DESCRIPTION
+This manual page documents the proxytunnel command.
+
+*proxytunnel* is a program that open a tunnel through a HTTPS proxy.
+
+
+== OPTIONS
+This program follow the usual GNU command line syntax, with long
+options starting with two dashes (‘--’).
+
+*-h, --help*::
+              Print help and exit.
+
+*-V, --version*::
+              Print the version of the program and exit.
+
+*-i, --inetd*::
+              Run from inetd. Default is off.
+
+*-F* _STRING_, *--passfile=*_STRING_::
+              The file containing Username & Password to send to HTTPS proxy for authentication. This file uses the same format as .wgetrc, and so can use the credentials in common with wget. This option can be used to at least hide the password from anyone clever enough to use the ‘ps’ command.
+
+*-p* _STRING_, *--proxy=*_STRING_::
+              The HTTPS Proxy host:port combo to connect to.
+
+*-P* _STRING_, *--proxyauth=*_STRING_::
+              The credentials (user:pass) to use for local HTTP(S) proxy
+              authentication.
+
+*-d* _STRING_, *--dest=*_STRING_::
+              The destination host:port to built the tunnel to.
+
+*-r* _STRING_, *--remproxy=*_STRING_::
+              The second-level proxy host:port to connect to.
+
+*-R* _STRING_, *--remproxyauth=*_STRING_::
+              The credentials (user:pass) to use for remote HTTP(S) proxy
+              authentication.
+
+*-v, --verbose*::
+              Turn on verbosity. Default is off.
+
+*-q, --quiet*::
+              Suppress messages. Default is off.
+
+
+== ARGUMENTS
+*host* is the destination hostname
+
+*port* is the destination port
+
+Specifying the destination as arguments is exactly the same as specifying them using the *--dest* option.
+
+
+== USAGE
+FIXME: Usage cases to be added here.
+
+== NOTES
+To use this program with OpenSSH to connect to a host somewhere, create a ~/.ssh/config file with the following content:
+
+----
+Host foobar
+    DynamicForward 1080
+    ProxyCommand proxytunnel -p proxy.customer.com:8080 -u user -s password %h:%p
+    ServerAliveInterval 30
+----
+
+If your proxy doesn’t require the username and password for using it, you can skip these options.
+
+If you want to run proxytunnel from inetd add the *--inetd* option.
+
+Most HTTPS proxies do not allow access to ports other than 443 (HTTPS) and 563 (SNEWS), so some hacking is necessary to start the SSH daemon on the required port. (On the server side add an extra Port statement in the sshd_config file)
+
+
+== BUGS
+This software is bug-free, at least we'd like to think so. If you do not agree with us, please let us know in a friendly email :)
+
+
+== SEE ALSO
+    ssh(1), ssh_config(8)
+
+
+== AUTHOR
+This manpage was initially written by Loïc Le Guyader <loic.leguyader@laposte.net> for the Debian GNU/Linux system, and maintained by the Proxytunnel developers.
+
+Homepage at http://proxytunnel.sourceforge.net/
