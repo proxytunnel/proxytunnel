@@ -46,7 +46,7 @@
  * inconsistencies. (Darwin doesn't know socklen_t) */
 #ifdef DARWIN
 #define socklen_t int
-#endif
+#endif /* DARWIN */
 
 /* Globals */
 int read_fd=0;				  /* The file descriptor to read from */
@@ -139,7 +139,7 @@ int tunnel_connect() {
 void closeall() {
 #ifndef CYGWIN
 	closelog();
-#endif
+#endif /* CYGWIN */
 
 	/* Close all streams */
 	if (stunnel) {
@@ -179,7 +179,7 @@ void do_daemon()
 
 #ifdef SO_REUSEPORT	 /* doesnt exist everywhere... */
 	setsockopt(listen_sd, SOL_SOCKET, SO_REUSEPORT, &one, sizeof(one));
-#endif
+#endif /* SO_REUSEPORT */
 	setsockopt(listen_sd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
 
 	memset( &sa_serv, '\0', sizeof( sa_serv ) );
@@ -203,7 +203,7 @@ void do_daemon()
 #else
 	if( args_info.proctitle_given )
 		message( "Setting process-title is not supported in this build\n");
-#endif
+#endif /* SETPROCTITLE */
 
 /* For the moment, turn of forking into background on the cygwin platform
  * so users can run it in a command window and ctrl-c it to cancel.
