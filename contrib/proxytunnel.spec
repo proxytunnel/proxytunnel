@@ -10,7 +10,7 @@ License: GPL
 Group: Applications/Internet
 URL: http://proxytunnel.sourceforge.net/
 
-Source: http://dl.sf.net/proxytunnel/proxytunnel-%{version}.tgz
+Source: http://dl.sf.net/proxytunnel/proxytunnel-%{version}.tar.bz2
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 
 BuildRequires: openssl-devel
@@ -40,14 +40,14 @@ proxy authentication.
 
 %install
 %{__rm} -rf %{buildroot}
-%{__make} install DESTDIR="%{buildroot}" PREFIX="%{_prefix}"
+%{__make} install DESTDIR="%{buildroot}" prefix="%{_prefix}"
 
 %clean
 %{__rm} -rf %{buildroot}
 
 %files
 %defattr(-, root, root, 0755)
-%doc CHANGES CREDITS INSTALL KNOWN_ISSUES LICENSE.txt README REL_NOTES TODO docs/*.txt docs/*.html
+%doc CHANGES CREDITS INSTALL KNOWN_ISSUES LICENSE.txt README RELNOTES TODO docs/*.txt docs/*.html
 %doc %{_mandir}/man1/proxytunnel.1*
 %{_bindir}/proxytunnel
 
