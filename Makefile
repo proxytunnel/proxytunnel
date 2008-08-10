@@ -2,11 +2,19 @@
 #
 # Please uncomment the appropriate settings
 
+name = proxytunnel
+version = $(shell awk 'BEGIN { FS="\"" } /^\#define VERSION / { print $$2 }' config.h)
+
+ifneq ($(wildcard .svn),)
+revision = $(shell svnversion | awk 'BEGIN { RS=":" } { next } END { print $$1 }')
+else
+revision = $(shell echo '$$Revision$$' | sed -e 's/\$$Revision: \([0-9]\+\) \$$$$/\1/')
+endif
+
 CC ?= cc
 CFLAGS ?= -Wall -O2 -ggdb
 
-#OPTFLAGS = -DREVISION=\"$(shell svnversion | awk 'BEGIN { RS=":" } { next } END { print $$1 }')\"
-OPTFLAGS = -DREVISION=\"$(shell echo '$$Revision$$' | sed -e 's/\$$Revision: \([0-9]\+\)\$$$$/\1/')\"
+OPTFLAGS = -DREVISION=\"$(revision)\"
 
 # Comment on non-gnu systems
 OPTFLAGS += -DHAVE_GETOPT_LONG
@@ -46,9 +54,6 @@ ifeq ($(SSL_LIBS),)
 SSL_LIBS := -lssl -lcrypto
 endif
 LDFLAGS += $(SSL_LIBS)
-
-name = proxytunnel
-version = $(shell awk 'BEGIN { FS="\"" } /^\#define VERSION / { print $$2 }' config.h)
 
 prefix = /usr/local
 bindir = $(prefix)/bin
@@ -95,3 +100,9 @@ install:
 dist: clean docs
 	sed -i -e 's/^Version:.*$$/Version: $(version)/' contrib/proxytunnel.spec
 	find . ! -wholename '*/.svn*' | pax -d -w -x ustar -s ,^./,$(name)-$(version)/, | bzip2 >../$(name)-$(version).tar.bz2
+
+rpm: dist
+	rpmbuild -tb --clean --rmsource --rmspec --define "_rpmfilename %%{NAME}-%%{VERSION}-%%{RELEASE}.%%{ARCH}.rpm" --define "_rpmdir ../" ../$(name)-$(version).tar.bz2
+
+srpm: dist
+	rpmbuild -ts --clean --rmsource --rmspec --define "_rpmfilename %%{NAME}-%%{VERSION}-%%{RELEASE}.%%{ARCH}.rpm" --define "_srcrpmdir ../" ../$(name)-$(version).tar.bz2
