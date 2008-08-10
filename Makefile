@@ -92,4 +92,5 @@ install:
 	$(CC) $(CFLAGS) $(OPTFLAGS) -c -o $@ $<
 
 dist: clean docs
+	sed -i -e 's/^Version:.*$$/Version: $(version)/' contrib/proxytunnel.spec
 	find . ! -wholename '*/.svn*' | pax -d -w -x ustar -s ,^./,$(name)-$(version)/, | bzip2 >../$(name)-$(version).tar.bz2

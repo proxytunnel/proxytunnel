@@ -52,6 +52,9 @@ proxy authentication.
 %{_bindir}/proxytunnel
 
 %changelog
+* Tue Mar 04 2008 Dag Wieers <dag@wieers.com> - 1.9.0-1
+- Updated to release 1.9.0.
+
 * Fri Jan 18 2008 Dag Wieers <dag@wieers.com> - 1.8.0-1
 - Updated to release 1.8.0.
 
