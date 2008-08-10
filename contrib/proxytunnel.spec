@@ -2,9 +2,9 @@
 # Authority: dag
 # Upstream: <proxytunnel-users$lists,sourceforge,net>
 
-Summary: Punching holes in HTTP(S) proxy's
+Summary: Punching holes through HTTPS proxies
 Name: proxytunnel
-Version: 1.8.0
+Version: 1.9.0
 Release: 1
 License: GPL
 Group: Applications/Internet
@@ -47,7 +47,7 @@ proxy authentication.
 
 %files
 %defattr(-, root, root, 0755)
-%doc CHANGES CREDITS INSTALL KNOWN_ISSUES LICENSE.txt README TODO
+%doc CHANGES CREDITS INSTALL KNOWN_ISSUES LICENSE.txt README REL_NOTES TODO docs/*.txt docs/*.html
 %doc %{_mandir}/man1/proxytunnel.1*
 %{_bindir}/proxytunnel
 

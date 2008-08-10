@@ -5,7 +5,7 @@
 CC ?= cc
 CFLAGS ?= -Wall -O2 -ggdb
 
-OPTFLAGS = -DREV=$(shell ./getrev.sh)
+OPTFLAGS = -DREVISION=\"$(shell svnversion | awk 'BEGIN { RS=":" } { next } END { print $$1 }')\"
 
 # Comment on non-gnu systems
 OPTFLAGS += -DHAVE_GETOPT_LONG
