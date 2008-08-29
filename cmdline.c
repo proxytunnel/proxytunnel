@@ -460,7 +460,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	}
 
 	if ( args_info->proxy_arg == NULL ) {
-		if ( (tmp = getenv("HTTP_PROXY")) != NULL ) {
+		if ( ((tmp = getenv("http_proxy")) != NULL) || ((tmp = getenv("HTTP_PROXY")) != NULL) ) {
 			int r;
 			char * temp;
 			temp = malloc( 56+1 );
