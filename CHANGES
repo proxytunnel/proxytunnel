@@ -1,3 +1,8 @@
+Changes to proxytunnel after 1.9.0 -- Unreleased
+
+- Switch to HTTP/1.1 commands, so we can tunnel over JoikuSpot's which
+  don't understand http/1.0 command (Mark Janssen)
+
 Changes to proxytunnel version 1.9.0 -- Sat Feb 23 22:03:10 CET 2008
 
 - Fixes for runtime error on RHEL5/CENTOS-5 (gcc4 and -D_FORTIFY_SOURCE=2) (Dag Wieers)
