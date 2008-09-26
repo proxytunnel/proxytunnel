@@ -109,7 +109,7 @@ void proxy_protocol(PTSTREAM *pts) {
 	} else {
 		if( args_info.verbose_flag )
 			message( "\nTunneling to %s (destination)\n", args_info.dest_arg );
-		sprintf( buf, "CONNECT %s HTTP/1.1\r\nHost: %s", args_info.dest_arg, args_info.dest_arg );
+		sprintf( buf, "CONNECT %s HTTP/1.1\r\nHost: %s\r\n", args_info.dest_arg, args_info.dest_arg );
 	}
 	
 	if ( args_info.user_given && args_info.pass_given ) {
