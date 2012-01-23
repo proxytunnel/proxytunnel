@@ -1,6 +1,25 @@
 Proxytunnel is covered by the GNU GPL, version 2, included below. Most of
-the code was written by Jos Visser and Mark Janssen, the snippet of base64
-code came from mutt, and was written by: Brendan Cully <brendan@kublai.com>
+the code was written by Jos Visser and Mark Janssen.
+
+Linking to OpenSSL
+
+In addition, as a special exception, Mark Janssen and Jos Visser
+give permission to link the code of proxytunnel with the OpenSSL
+project's "OpenSSL" library (or with modified versions of it that
+use the same license as the "OpenSSL" library), and distribute the
+linked executables. You must obey the GNU General Public License in
+all respects for all of the code used other than "OpenSSL". If you
+modify this file, you may extend this exception to your version of
+the file, but you are not obligated to do so. If you do not wish to
+do so, delete this exception statement from your version.
+
+Code Snippets
+
+Various bits of code came from other packages. The following copyright
+notices apply to those bits:
+
+The snippet of base64 code came from mutt, and was written by:
+Brendan Cully <brendan@kublai.com>
 and came with the following copyright notice:
 
 /* 
