@@ -96,7 +96,6 @@ typedef struct {
 
 typedef struct {
 	unsigned char	digest[16];
-	unsigned char	challenge[8];
 	unsigned long	signature;
 	unsigned long	reserved;
 	unsigned long long	timestamp;

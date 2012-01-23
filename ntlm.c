@@ -405,7 +405,7 @@ void build_ntlm2_response() {
 	b = (blob *)pblob;
 
 	for (i = 0; i < 8; i++)
-		b->challenge[i] = challenge[i];
+		b->digest[8 + i] = challenge[i];
 
 	b->signature = 0x00000101;
 
@@ -434,7 +434,7 @@ void build_ntlm2_response() {
 
 	memcpy(&b->data_start, t_info, t_info_len);
 
-	hmac_md5(&pblob[16], bloblen - 16, userdomdigest, 16, responsedigest);
+	hmac_md5(&pblob[8], bloblen - 8, userdomdigest, 16, responsedigest);
 
 	for(i = 0; i < 16; i++)
 		b->digest[i] = responsedigest[i];
@@ -449,7 +449,7 @@ void build_ntlm2_response() {
 	// LM2 response generation
 
 	for (i = 0; i < 8; i++)
-		lm2data[i] = b->challenge[i];
+		lm2data[i] = challenge[i];
 
 	for (i = 0; i < 8; i++)
 		lm2data[8 + i] = b->client_challenge[i];
