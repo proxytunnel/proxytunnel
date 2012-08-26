@@ -474,7 +474,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 		}
 	}
 
-	if (! args_info->proxy_given || ! args_info->dest_given ) {
+	if (! args_info->proxy_given && ! args_info->dest_given ) {
 		clear_args ();
 //		cmdline_parser_print_help ();
 		message( "No proxy or destination given, exiting\nUse '--help' flag for usage info\n" );
