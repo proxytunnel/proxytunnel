@@ -47,7 +47,7 @@ proxy authentication.
 
 %files
 %defattr(-, root, root, 0755)
-%doc CHANGES CREDITS INSTALL KNOWN_ISSUES LICENSE.txt README RELNOTES TODO docs/*.txt docs/*.html
+%doc CHANGES CREDITS INSTALL KNOWN_ISSUES LICENSE.txt README RELNOTES TODO docs/*.adoc docs/*.html
 %doc %{_mandir}/man1/proxytunnel.1*
 %{_bindir}/proxytunnel
 
