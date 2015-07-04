@@ -46,9 +46,9 @@ OPTFLAGS += -DSO_REUSEPORT
 
 # END system dependant block
 
-SSL_LIBS := $(shell pkg-config --libs libssl 2>/dev/null)
-ifeq ($(SSL_LIBS),)
 SSL_LIBS := $(shell pkg-config --libs openssl 2>/dev/null)
+ifeq ($(SSL_LIBS),)
+SSL_LIBS := $(shell pkg-config --libs libssl 2>/dev/null)
 endif
 ifeq ($(SSL_LIBS),)
 SSL_LIBS := -lssl -lcrypto
