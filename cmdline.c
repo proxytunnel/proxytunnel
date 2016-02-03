@@ -45,7 +45,7 @@ void cmdline_parser_print_help (void) {
 	cmdline_parser_print_version ();
 	printf(
 "Usage: %s [OPTIONS]...\n"
-"Build generic tunnels trough HTTPS proxies using HTTP authentication\n"
+"Build generic tunnels through HTTPS proxies using HTTP authentication\n"
 "\n"
 "Standard options:\n"
 // FIXME: "   -c, --config=FILE       Read config options from file\n"
