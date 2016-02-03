@@ -29,6 +29,8 @@
 #include "proxytunnel.h"
 #include "io.h"
 
+#define ACTIVE 1
+#define CLOSED 0
 
 /*
  * Read one line of data from the tunnel. Line is terminated by a
@@ -41,7 +43,7 @@ int readline(PTSTREAM *pts) {
 
 	/* Read one character at a time into buf, until a newline is encountered. */
 	while ( c != 10 && ( i < SIZE - 1 ) ) {
-		if( stream_read( pts, &c ,1) < 0) {
+		if( stream_read( pts, &c ,1) <= 0) {
 			my_perror( "Socket read error" );
 			exit( 1 );
 		}
@@ -56,7 +58,7 @@ int readline(PTSTREAM *pts) {
 	if( args_info.verbose_flag ) {
 		/* Copy line of data into dstr without trailing newline */
 		char *dstr = malloc(strlen(buf) + 1);
-		strlcpy( dstr, buf, strlen(buf) );
+		strncpy( dstr, buf, strlen(buf));
 		if (strcmp(dstr, ""))
 			message( " <- %s\n", dstr );
 	}
@@ -81,11 +83,17 @@ void cpio(PTSTREAM *stream1, PTSTREAM *stream2) {
 	/* We are never interested in sockets being available for write */
 	FD_ZERO( &writefds );
 
+
+	/* experimental timeout */
+	struct timeval select_timeout;
+	select_timeout.tv_sec = 30; /* should be fine */
+	select_timeout.tv_usec = 0;
+
 	if( args_info.verbose_flag )
 		message( "\nTunnel established.\n" );
 
-	/* Only diamonds are forever :-) */
-	while( 1==1 ) {
+        int stream_status = ACTIVE;
+	while( stream_status == ACTIVE ) {
 		/* Clear the interesting socket sets */
 		FD_ZERO( &readfds );
 		FD_ZERO( &exceptfds );
@@ -99,32 +107,37 @@ void cpio(PTSTREAM *stream1, PTSTREAM *stream2) {
 		FD_SET( stream_get_outgoing_fd(stream1), &exceptfds );
 		FD_SET( stream_get_incoming_fd(stream2), &exceptfds );
 		FD_SET( stream_get_outgoing_fd(stream2), &exceptfds );
+                
+                /* reset the timeout, since select() does modify this struct! */
+                select_timeout.tv_sec = 30;
+                select_timeout.tv_usec = 0;
 
-		/* Wait until something happens on the registered sockets/files */
-		if ( select( max_fd + 1, &readfds, &writefds, &exceptfds, 0 ) < 0 ) {
+		/* Wait/timeout something happens on the registered sockets/files */
+		int number_of_fds_ready;
+		number_of_fds_ready = select( max_fd + 1, &readfds, &writefds, &exceptfds, &select_timeout );
+		if ( number_of_fds_ready < 0 ) {
 			perror("select error");
 			exit(1);
 		}
 
-		/*
-		 * Is stream1 ready for read? If so, copy a block of data
-		 * from stream1 to stream2. Or else if stream2
-		 * is ready for read, copy a block of data from the
-		 * stream2 to stream1. Otherwise an exceptional condition
-		 * is flagged and the program is terminated.
-		 */
-		if ( FD_ISSET( stream_get_incoming_fd(stream1), &readfds ) ) {
-			if ( stream_copy(stream1, stream2 ) )
-				break;
-		} else if( FD_ISSET( stream_get_incoming_fd(stream2), &readfds ) ) {
-			if( stream_copy(stream2, stream1 ) )
-				break;
-		} else {
-			my_perror( "Exceptional condition" );
-			break;
-		}
+		if (number_of_fds_ready > 0) {
+			/* Is stream1 ready for read? If so, copy a block of data
+			 * from stream1 to stream2. Or else if stream2
+			 * is ready for read, copy a block of data from the
+			 * stream2 to stream1. Otherwise an exceptional condition
+			 * is flagged and the program is terminated.
+			 */
+			if ( FD_ISSET( stream_get_incoming_fd(stream1), &readfds ) ) {
+				if ( stream_copy(stream1, stream2 ) )
+					stream_status = CLOSED;
+			} else if( FD_ISSET( stream_get_incoming_fd(stream2), &readfds ) ) {
+				if( stream_copy(stream2, stream1 ) )
+					stream_status = CLOSED;
+			} else {
+				my_perror( "Exceptional condition" );
+				stream_status = CLOSED;
+			}
+		} 
 	}
 	closeall();
 }
-
-// vim:noexpandtab:ts=4

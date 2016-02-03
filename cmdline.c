@@ -59,6 +59,7 @@ void cmdline_parser_print_help (void) {
 " -e, --encrypt             SSL encrypt data between local proxy and destination\n"
 " -E, --encrypt-proxy       SSL encrypt data between client and local proxy\n"
 " -X, --encrypt-remproxy    SSL encrypt data between local and remote proxy\n"
+" -L                        (legacy) enforce TLSv1 connection\n"
 #endif
 "\n"
 "Additional options for specific features:\n"
@@ -72,6 +73,7 @@ void cmdline_parser_print_help (void) {
 " -N, --ntlm                Use NTLM based authentication\n"
 " -t, --domain=STRING       NTLM domain (default: autodetect)\n"
 " -H, --header=STRING       Add additional HTTP headers to send to proxy\n"
+" -o STRING                 send custom Host Header\n"
 #ifdef SETPROCTITLE
 " -x, --proctitle=STRING    Use a different process title\n"
 #endif
