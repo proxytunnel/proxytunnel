@@ -481,10 +481,11 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 
 	if ( args_info->proxy_arg == NULL ) {
 		if ( ((tmp = getenv("http_proxy")) != NULL) || ((tmp = getenv("HTTP_PROXY")) != NULL) ) {
-			int r;
+			//int r;
 			char * temp;
 			temp = malloc( 56+1 );
-			r = sscanf( tmp, "http://%56[^/]/", temp );
+			sscanf( tmp, "http://%56[^/]/", temp );
+			//r = sscanf( tmp, "http://%56[^/]/", temp );
 //			message( "r = '%d'\ntemp = '%s'\n", r, temp);
 
 			args_info->proxy_given = 1;

@@ -145,7 +145,7 @@ int stream_copy(PTSTREAM *pts_from, PTSTREAM *pts_to) {
 /* Initiate an SSL handshake on this stream and encrypt all subsequent data */
 int stream_enable_ssl(PTSTREAM *pts) {
 #ifdef USE_SSL
-	SSL_METHOD *meth;
+	const SSL_METHOD *meth;
 	SSL *ssl;
 	SSL_CTX *ctx;
 	

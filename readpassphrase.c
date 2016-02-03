@@ -135,8 +135,13 @@ restart:
 		oterm.c_lflag |= ECHO;
 	}
 
-	if (!(flags & RPP_STDIN))
-		(void)write(output, prompt, strlen(prompt));
+	if (!(flags & RPP_STDIN)) {
+		ssize_t bytes_written = write(output, prompt, strlen(prompt));
+		if (bytes_written != strlen(prompt)) {
+			message("Error on writing bytes to prompt\n");
+		}
+	}
+
 	end = buf + bufsiz - 1;
 	for (p = buf; (nr = read(input, &ch, 1)) == 1 && ch != '\n' && ch != '\r';) {
 		if (p < end) {
@@ -153,8 +158,12 @@ restart:
 	}
 	*p = '\0';
 	save_errno = errno;
-	if (!(term.c_lflag & ECHO))
-		(void)write(output, "\n", 1);
+	if (!(term.c_lflag & ECHO)) {
+		ssize_t bytes_written = write(output, "\n", 1);
+		if (bytes_written != 1) {
+			message("Error writing one byte to prompt\n");
+		}
+	}
 
 	/* Restore old terminal settings and signals. */
 	if (memcmp(&term, &oterm, sizeof(term)) != 0) {
