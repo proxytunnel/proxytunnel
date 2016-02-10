@@ -48,6 +48,8 @@ struct gengetopt_args_info {
 	int encryptproxy_flag;	/* Turn on client to proxy SSL encryption (def=off).*/
 	int encryptremproxy_flag;  /* Turn on local to remote proxy SSL encryption (def=off).*/
 	char *proctitle_arg;	/* Override process title (default=off). */
+	int enforcetls1_flag;    /* Override default and enforce TLSv1 */
+	char *host_arg;         /* Optional Host Header */
 	int help_given;			/* Whether help was given. */
 	int version_given;		/* Whether version was given. */
 	int user_given;			/* Whether user was given. */
@@ -71,6 +73,8 @@ struct gengetopt_args_info {
 	int encryptproxy_given;	/* Whether encrypt was given */
 	int encryptremproxy_given;   /* Whether encrypt was given */
 	int proctitle_given;	/* Whether to override process title */
+	int enforcetls1_given;   /* Wheter to enforce TLSv1 */
+	int host_given;         /* Wheter we override the Host Header */
 };
 
 int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *args_info );

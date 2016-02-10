@@ -45,7 +45,7 @@ void cmdline_parser_print_help (void) {
 	cmdline_parser_print_version ();
 	printf(
 "Usage: %s [OPTIONS]...\n"
-"Build generic tunnels trough HTTPS proxies using HTTP authentication\n"
+"Build generic tunnels through HTTPS proxies using HTTP authentication\n"
 "\n"
 "Standard options:\n"
 // FIXME: "   -c, --config=FILE       Read config options from file\n"
@@ -59,6 +59,7 @@ void cmdline_parser_print_help (void) {
 " -e, --encrypt             SSL encrypt data between local proxy and destination\n"
 " -E, --encrypt-proxy       SSL encrypt data between client and local proxy\n"
 " -X, --encrypt-remproxy    SSL encrypt data between local and remote proxy\n"
+" -L                        (legacy) enforce TLSv1 connection\n"
 #endif
 "\n"
 "Additional options for specific features:\n"
@@ -72,6 +73,7 @@ void cmdline_parser_print_help (void) {
 " -N, --ntlm                Use NTLM based authentication\n"
 " -t, --domain=STRING       NTLM domain (default: autodetect)\n"
 " -H, --header=STRING       Add additional HTTP headers to send to proxy\n"
+" -o STRING                 send custom Host Header\n"
 #ifdef SETPROCTITLE
 " -x, --proctitle=STRING    Use a different process title\n"
 #endif
@@ -132,6 +134,8 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	args_info->encryptproxy_given = 0;
 	args_info->encryptremproxy_given = 0;
 	args_info->proctitle_given = 0;
+	args_info->enforcetls1_given = 0;
+	args_info->host_given = 0;
 
 /* No... we can't make this a function... -- Maniac */
 #define clear_args() \
@@ -157,6 +161,8 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	args_info->encryptproxy_flag = 0; \
 	args_info->encryptremproxy_flag = 0; \
 	args_info->proctitle_arg = NULL; \
+	args_info->enforcetls1_flag = 0; \
+	args_info->host_arg = NULL; \
 } 
 
 	clear_args();
@@ -189,6 +195,8 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 			{ "remproxy",		1, NULL, 'r' },
 			{ "remproxyauth",	1, NULL, 'R' },
 			{ "proctitle",		1, NULL, 'x' },
+			{ "host",           1, NULL, 'o' },
+			{ "tlsenforce",     1, NULL, 'L' },
 			{ "header",			1, NULL, 'H' },
 			{ "verbose",		0, NULL, 'v' },
 			{ "ntlm",			0, NULL, 'N' },
@@ -201,9 +209,9 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 			{ NULL,				0, NULL, 0 }
 		};
 
-		c = getopt_long (argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:nvNeEXq", long_options, &option_index);
+		c = getopt_long (argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:nvNeEXqLo", long_options, &option_index);
 #else
-		c = getopt( argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:nvNeEXq" );
+		c = getopt( argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:nvNeEXqLo" );
 #endif
 
 		if (c == -1)
@@ -260,6 +268,18 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 				args_info->proctitle_given = 1;
 				message( "Proctitle override enabled\n" );
 				args_info->proctitle_arg = gengetopt_strdup (optarg);
+				break;
+
+			case 'L':
+				args_info->enforcetls1_given = 1;
+				message("Enforcing TLSv1");
+				args_info->enforcetls1_flag = 1;
+				break;
+
+			case 'o':
+				args_info->host_given = 1;
+				message("Host-header override enabled\n");
+				args_info->host_arg = gengetopt_strdup (optarg);
 				break;
 
 			case 'u':	/* Username to send to HTTPS proxy for authentication.  */
@@ -461,10 +481,11 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 
 	if ( args_info->proxy_arg == NULL ) {
 		if ( ((tmp = getenv("http_proxy")) != NULL) || ((tmp = getenv("HTTP_PROXY")) != NULL) ) {
-			int r;
+			//int r;
 			char * temp;
 			temp = malloc( 56+1 );
-			r = sscanf( tmp, "http://%56[^/]/", temp );
+			sscanf( tmp, "http://%56[^/]/", temp );
+			//r = sscanf( tmp, "http://%56[^/]/", temp );
 //			message( "r = '%d'\ntemp = '%s'\n", r, temp);
 
 			args_info->proxy_given = 1;

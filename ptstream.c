@@ -145,13 +145,17 @@ int stream_copy(PTSTREAM *pts_from, PTSTREAM *pts_to) {
 /* Initiate an SSL handshake on this stream and encrypt all subsequent data */
 int stream_enable_ssl(PTSTREAM *pts) {
 #ifdef USE_SSL
-	SSL_METHOD *meth;
+	const SSL_METHOD *meth;
 	SSL *ssl;
 	SSL_CTX *ctx;
 	
 	/* Initialise the connection */
 	SSLeay_add_ssl_algorithms();
-	meth = SSLv23_client_method();
+	if (args_info.enforcetls1_flag) {
+		meth = TLSv1_client_method();
+	} else {
+		meth = SSLv23_client_method();
+	}
 	SSL_load_error_strings();
 
 	ctx = SSL_CTX_new (meth);
