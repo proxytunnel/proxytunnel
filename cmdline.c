@@ -163,7 +163,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	args_info->proctitle_arg = NULL; \
 	args_info->enforcetls1_flag = 0; \
 	args_info->host_arg = NULL; \
-} 
+}
 
 	clear_args();
 
