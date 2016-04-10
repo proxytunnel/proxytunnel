@@ -1,0 +1,9 @@
+language: c
+addons:
+  apt:
+    packages:
+    - openssl-dev
+install:
+  - make clean
+script:
+  - make
