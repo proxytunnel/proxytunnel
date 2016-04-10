@@ -2,6 +2,7 @@ language: c
 addons:
   apt:
     packages:
+    - asciidoc
     - openssl-dev
 install:
   - make clean
