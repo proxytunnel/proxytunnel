@@ -3,7 +3,7 @@ addons:
   apt:
     packages:
     - asciidoc
-    - openssl-dev
+    - xmlto
 install:
   - make clean
 script:
