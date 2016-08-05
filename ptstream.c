@@ -148,6 +148,7 @@ int stream_enable_ssl(PTSTREAM *pts) {
 	const SSL_METHOD *meth;
 	SSL *ssl;
 	SSL_CTX *ctx;
+	long res = 1;
 	
 	/* Initialise the connection */
 	SSLeay_add_ssl_algorithms();
@@ -160,6 +161,17 @@ int stream_enable_ssl(PTSTREAM *pts) {
 
 	ctx = SSL_CTX_new (meth);
 	ssl = SSL_new (ctx);
+	
+	/* SNI support */
+	if ( args_info.verbose_flag ) {
+           message( "Set SNI hostname to %s\n", args_info.proxyhost_arg );
+        }
+        res = SSL_set_tlsext_host_name(ssl,args_info.proxyhost_arg);
+        if (res < 0) {
+           message( "TLS SNI error, giving up: SSL_set_tlsext_host_name returned error message:\n  %u\n", res );
+           exit( 1 );
+        }
+	
 	SSL_set_rfd (ssl, stream_get_incoming_fd(pts));
 	SSL_set_wfd (ssl, stream_get_outgoing_fd(pts));	
 	SSL_connect (ssl);
