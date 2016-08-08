@@ -78,7 +78,7 @@ OBJ = proxytunnel.o	\
 
 .PHONY: all clean docs install
 
-all: proxytunnel docs
+all: proxytunnel
 
 docs:
 	$(MAKE) -C docs
