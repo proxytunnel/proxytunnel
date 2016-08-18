@@ -52,6 +52,12 @@ also be used for other proxy-traversing purposes like proxy bouncing.
 *-T*, *--no-ssl3*::
     Prevent the use of SSLv3 in encrypted connections (default: enabled)
 
+*-z*, *--no-check-certificate*::
+    Do not verify server SSL certificate when establishing an SSL connection.
+    By default, the server SSL certficate is verified and the target host name
+    is checked against the server certificate's subject alternative names if
+    any are present, or common name if there are no subject alternative names.
+
 *-F*, *--passfile*=_filename_::
     Use _filename_ for reading username and password for HTTPS proxy
     authentication, the file uses the same format as .wgetrc and can be shared

@@ -265,7 +265,7 @@ void do_daemon()
 #ifdef USE_SSL
 			/* If --encrypt-proxy is specified, connect to the proxy using SSL */
 			if ( args_info.encryptproxy_flag )
-				stream_enable_ssl(stunnel);
+				stream_enable_ssl(stunnel, args_info.proxy_arg);
 #endif /* USE_SSL */
 
 			/* Open the tunnel */
@@ -274,7 +274,7 @@ void do_daemon()
 #ifdef USE_SSL
 			/* If --encrypt is specified, wrap all traffic after the proxy handoff in SSL */
 			if( args_info.encrypt_flag )
-				stream_enable_ssl(stunnel);
+				stream_enable_ssl(stunnel, args_info.dest_arg);
 #endif /* USE_SSL */
 
 #ifdef SETPROCTITLE
@@ -387,7 +387,7 @@ int main( int argc, char *argv[] ) {
 		/* If --encrypt-proxy is specified, connect to the proxy using SSL */
 #ifdef USE_SSL
 		if ( args_info.encryptproxy_flag )
-			stream_enable_ssl(stunnel);
+			stream_enable_ssl(stunnel, args_info.proxy_arg);
 #endif /* USE_SSL */
 
 		/* Open the tunnel */
@@ -396,7 +396,7 @@ int main( int argc, char *argv[] ) {
 		/* If --encrypt is specified, wrap all traffic after the proxy handoff in SSL */
 #ifdef USE_SSL
 		if( args_info.encrypt_flag )
-			stream_enable_ssl(stunnel);
+			stream_enable_ssl(stunnel, args_info.dest_arg);
 #endif /* USE_SSL */
 
 #ifdef SETPROCTITLE

@@ -159,7 +159,7 @@ void proxy_protocol(PTSTREAM *pts) {
 
 /* If --encrypt-remproxy is specified, connect to the remote proxy using SSL */
 	if ( args_info.encryptremproxy_flag )
-		stream_enable_ssl(stunnel);
+		stream_enable_ssl(stunnel, args_info.remproxy_arg);
 
 		if( args_info.verbose_flag )
 			message( "\nTunneling to %s (destination)\n", args_info.dest_arg );

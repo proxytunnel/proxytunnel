@@ -51,6 +51,7 @@ struct gengetopt_args_info {
 	char *proctitle_arg;	/* Override process title (default=off). */
 	int enforcetls1_flag;    /* Override default and enforce TLSv1 */
 	char *host_arg;         /* Optional Host Header */
+	int no_check_cert_flag;	/* Turn off server SSL certificate verification (default=on) */
 	int help_given;			/* Whether help was given. */
 	int version_given;		/* Whether version was given. */
 	int user_given;			/* Whether user was given. */

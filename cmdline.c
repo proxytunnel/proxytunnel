@@ -64,6 +64,9 @@ void cmdline_parser_print_help (void) {
 #endif
 "\n"
 "Additional options for specific features:\n"
+#ifdef USE_SSL
+" -z, --no-check-certficate Don't verify server SSL certificate\n"
+#endif
 " -F, --passfile=STRING     File with credentials for proxy authentication\n"
 " -P, --proxyauth=STRING    Proxy auth credentials user:pass combination\n"
 " -R, --remproxyauth=STRING Remote proxy auth credentials user:pass combination\n"
@@ -165,6 +168,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	args_info->proctitle_arg = NULL; \
 	args_info->enforcetls1_flag = 0; \
 	args_info->host_arg = NULL; \
+	args_info->no_check_cert_flag = 0; \
 }
 
 	clear_args();
@@ -209,12 +213,13 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 			{ "encrypt-proxy",	0, NULL, 'E' },
 			{ "encrypt-remproxy",0,NULL, 'X' },
 			{ "no-ssl3",		0, NULL, 'T' },
+			{ "no-check-certificate",0,NULL,'z' },
 			{ NULL,				0, NULL, 0 }
 		};
 
-		c = getopt_long (argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:nvNeEXqLo:T", long_options, &option_index);
+		c = getopt_long (argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:nvNeEXqLo:Tz", long_options, &option_index);
 #else
-		c = getopt( argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:nvNeEXqLo:T" );
+		c = getopt( argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:nvNeEXqLo:Tz" );
 #endif
 
 		if (c == -1)
@@ -429,6 +434,12 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 
 			case 'q':	/* Suppress messages -- Quiet mode */
 				args_info->quiet_flag = !(args_info->quiet_flag);
+				break;
+
+			case 'z':	/* Don't verify server SSL certificate */
+				args_info->no_check_cert_flag = 1;
+				if( args_info->verbose_flag )
+					message("Server SSL certificate verification disabled\n");
 				break;
 
 			case 0:	/* Long option with no short option */
