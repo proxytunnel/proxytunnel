@@ -503,12 +503,18 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	}
 
 	if (args_info->proxy_given ) {
+		char proxy_arg_fmt[32];
+		size_t proxy_arg_len;
 		char * phost;
 		int pport;
 
-		phost = malloc( 50+1 );
-
-		r = sscanf( args_info->proxy_arg, "%50[^:]:%5u", phost, &pport );
+		proxy_arg_len = strlen( args_info->proxy_arg );
+		if ( (phost = malloc( proxy_arg_len + 1 )) == NULL ) {
+			message( "Out of memory\n" );
+			exit(1);
+		}
+		snprintf( proxy_arg_fmt, sizeof(proxy_arg_fmt), "%%%zu[^:]:%%5u", proxy_arg_len - 1 );
+		r = sscanf( args_info->proxy_arg, proxy_arg_fmt, phost, &pport );
 		if ( r == 2 ) {
 			args_info->proxyhost_arg = phost;
 			args_info->proxyport_arg = pport;
