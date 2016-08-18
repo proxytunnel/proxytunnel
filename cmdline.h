@@ -47,6 +47,7 @@ struct gengetopt_args_info {
 	int encrypt_flag;		/* Turn on SSL encryption (default=off). */
 	int encryptproxy_flag;	/* Turn on client to proxy SSL encryption (def=off).*/
 	int encryptremproxy_flag;  /* Turn on local to remote proxy SSL encryption (def=off).*/
+	int no_ssl3_flag;		/* Turn off SSLv3 (default=on) */
 	char *proctitle_arg;	/* Override process title (default=off). */
 	int enforcetls1_flag;    /* Override default and enforce TLSv1 */
 	char *host_arg;         /* Optional Host Header */

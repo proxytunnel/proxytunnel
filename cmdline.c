@@ -60,6 +60,7 @@ void cmdline_parser_print_help (void) {
 " -E, --encrypt-proxy       SSL encrypt data between client and local proxy\n"
 " -X, --encrypt-remproxy    SSL encrypt data between local and remote proxy\n"
 " -L                        (legacy) enforce TLSv1 connection\n"
+" -T, --no-ssl3             Do not connect using SSLv3\n"
 #endif
 "\n"
 "Additional options for specific features:\n"
@@ -160,6 +161,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	args_info->encrypt_flag = 0; \
 	args_info->encryptproxy_flag = 0; \
 	args_info->encryptremproxy_flag = 0; \
+	args_info->no_ssl3_flag = 0; \
 	args_info->proctitle_arg = NULL; \
 	args_info->enforcetls1_flag = 0; \
 	args_info->host_arg = NULL; \
@@ -206,12 +208,13 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 			{ "encrypt",		0, NULL, 'e' },
 			{ "encrypt-proxy",	0, NULL, 'E' },
 			{ "encrypt-remproxy",0,NULL, 'X' },
+			{ "no-ssl3",		0, NULL, 'T' },
 			{ NULL,				0, NULL, 0 }
 		};
 
-		c = getopt_long (argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:nvNeEXqLo:", long_options, &option_index);
+		c = getopt_long (argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:nvNeEXqLo:T", long_options, &option_index);
 #else
-		c = getopt( argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:nvNeEXqLo:" );
+		c = getopt( argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:nvNeEXqLo:T" );
 #endif
 
 		if (c == -1)
@@ -390,6 +393,11 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 					message("SSL local to remote proxy enabled\n");
 				break;
 
+			case 'T':   /* Turn off SSLv3 */
+				args_info->no_ssl3_flag = !(args_info->no_ssl3_flag);
+				if( args_info->verbose_flag )
+					message("SSLv3 disabled\n");
+				break;
 
 			case 'd':	/* Destination host to built the tunnel to.  */
 				if (args_info->dest_given) {

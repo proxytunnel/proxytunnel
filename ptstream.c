@@ -149,6 +149,7 @@ int stream_enable_ssl(PTSTREAM *pts) {
 	SSL *ssl;
 	SSL_CTX *ctx;
 	long res = 1;
+	long ssl_options = 0;
 	
 	/* Initialise the connection */
 	SSLeay_add_ssl_algorithms();
@@ -160,6 +161,10 @@ int stream_enable_ssl(PTSTREAM *pts) {
 	SSL_load_error_strings();
 
 	ctx = SSL_CTX_new (meth);
+	if (args_info.no_ssl3_flag) {
+		ssl_options |= SSL_OP_NO_SSLv3;
+	}
+	SSL_CTX_set_options (ctx, ssl_options);
 	ssl = SSL_new (ctx);
 	
 	SSL_set_rfd (ssl, stream_get_incoming_fd(pts));
