@@ -27,6 +27,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/stat.h>
 
 #include "proxytunnel.h"
 
@@ -241,6 +242,9 @@ int stream_enable_ssl(PTSTREAM *pts, const char *proxy_arg) {
 	long ssl_options = 0;
 
 	X509* cert = NULL;
+	int status;
+	struct stat st_buf;
+	const char *ca_file = NULL;
 	const char *ca_dir = "/etc/ssl/certs/"; /* Default cert directory if none given */
 	long vresult;
 	char *peer_host = NULL;
@@ -263,8 +267,20 @@ int stream_enable_ssl(PTSTREAM *pts, const char *proxy_arg) {
 	SSL_CTX_set_options (ctx, ssl_options);
 
 	if ( !args_info.no_check_cert_flag ) {
-		if (!SSL_CTX_load_verify_locations(ctx, NULL, ca_dir)) {
-			message("Error loading certificates from %s\n", ca_dir);
+		if ( args_info.cacert_given ) {
+			if ((status = stat(args_info.cacert_arg, &st_buf)) != 0) {
+				message("Error reading certificate path %s\n", args_info.cacert_arg);
+				goto fail;
+			}
+			if (S_ISDIR(st_buf.st_mode)) {
+				ca_dir = args_info.cacert_arg;
+			} else {
+				ca_dir = NULL;
+				ca_file = args_info.cacert_arg;
+			}
+		}
+		if (!SSL_CTX_load_verify_locations(ctx, ca_file, ca_dir)) {
+			message("Error loading certificate(s) from %s\n", args_info.cacert_arg);
 			goto fail;
 		}
 	}

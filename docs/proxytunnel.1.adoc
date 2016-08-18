@@ -58,6 +58,11 @@ also be used for other proxy-traversing purposes like proxy bouncing.
     is checked against the server certificate's subject alternative names if
     any are present, or common name if there are no subject alternative names.
 
+*-C*, *--cacert*=_filename/directory_::
+    Specify a CA certificate file (or directory containing CA certificate(s))
+    to trust when verifying a server SSL certificate. If a directory is provided,
+    it must be prepared with OpenSSL's c_rehash tool. (default: /etc/ssl/certs)
+
 *-F*, *--passfile*=_filename_::
     Use _filename_ for reading username and password for HTTPS proxy
     authentication, the file uses the same format as .wgetrc and can be shared
