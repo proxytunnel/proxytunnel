@@ -515,6 +515,11 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 		}
 		snprintf( proxy_arg_fmt, sizeof(proxy_arg_fmt), "%%%zu[^:]:%%5u", proxy_arg_len - 1 );
 		r = sscanf( args_info->proxy_arg, proxy_arg_fmt, phost, &pport );
+		if ( r != 2 ) {
+			/* try bracket-enclosed IPv6 literal */
+			snprintf( proxy_arg_fmt, sizeof(proxy_arg_fmt), "[%%%zu[^]]]:%%5u", proxy_arg_len - 1 );
+			r = sscanf( args_info->proxy_arg, proxy_arg_fmt, phost, &pport );
+		}
 		if ( r == 2 ) {
 			args_info->proxyhost_arg = phost;
 			args_info->proxyport_arg = pport;
