@@ -8,14 +8,11 @@
 
 
 ### SSL proxy support
-- Lobby for the Apache project to allow CONNECT over SSL (much like GET,
-  PUT and HEAD is supported over SSL)
-  see: http://issues.apache.org/bugzilla/show_bug.cgi?id=29744
+- Starting with Apache 2.4 using CONNECT over SSL is supported !!
+  See: http://issues.apache.org/bugzilla/show_bug.cgi?id=29744
 
 
 ### Code cleanup
-- Fix permissions in subversion tree (some files are wrongly executable)
-
 - Find some hardcore C experts to help us improve the code quality
 
 - Improve the error output, make it consistent throughout the program
