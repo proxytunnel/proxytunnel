@@ -1,4 +1,7 @@
 language: c
+compiler:
+  - clang
+  - gcc
 addons:
   apt:
     packages:
@@ -8,3 +11,4 @@ install:
   - make clean
 script:
   - make
+  - make docs
