@@ -32,8 +32,14 @@ void closeall();
 void do_daemon();
 void initsetproctitle(int argc, char *argv[]);
 void setproctitle(const char *fmt, ...);
+
+#if defined(__APPLE__) && defined(__MACH__)
+/* Don't include strlcat and strlcpy since they are provided as macros on OSX */
+#else
 size_t strlcat(char *dst, const char *src, size_t siz);
 size_t strlcpy(char *dst, const char *src, size_t siz);
+#endif
+
 size_t strzcat(char *dst, char *format, ...);
 int main( int argc, char *argv[] );
 char * readpassphrase(const char *, char *, size_t, int);
