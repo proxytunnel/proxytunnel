@@ -19,12 +19,15 @@
 
 /* ptstream.c */
 
+#include <arpa/inet.h>
+#include <openssl/x509v3.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/stat.h>
 
 #include "proxytunnel.h"
 
@@ -142,14 +145,112 @@ int stream_copy(PTSTREAM *pts_from, PTSTREAM *pts_to) {
 }
 
 
+/* Check the certificate host name against the expected host name */
+/* Return 1 if peer hostname is valid, any other value indicates failure */
+int check_cert_valid_host(const char *cert_host, const char *peer_host) {
+	if (cert_host == NULL || peer_host == NULL) {
+		return 0;
+	}
+	if (cert_host[0] == '*') {
+		if (strncmp(cert_host, "*.", 2) != 0) {
+			/* Invalid wildcard hostname */
+			return 0;
+		}
+		/* Skip "*." */
+		cert_host += 2;
+		/* Wildcards can only match the first subdomain component */
+		while (*peer_host++ != '.' && *peer_host != '\0')
+			;;
+	}
+	if (strlen(cert_host) == 0 || strlen(peer_host) == 0) {
+		return 0;
+	}
+	return strcmp(cert_host, peer_host) == 0;
+}
+
+
+int check_cert_valid_ip6(const unsigned char *cert_ip_data, const int cert_ip_len, const struct in6_addr *addr6) {
+	int i;
+	for (i = 0; i < cert_ip_len; i++) {
+		if (cert_ip_data[i] != addr6->s6_addr[i]) {
+			return 0;
+		}
+	}
+	return 1;
+}
+
+
+int check_cert_valid_ip(const unsigned char *cert_ip_data, const int cert_ip_len, const struct in_addr *addr) {
+	int i;
+	for (i = 0; i < cert_ip_len; i++) {
+		if (cert_ip_data[i] != ((addr->s_addr >> (i * 8)) & 0xFF)) {
+			return 0;
+		}
+	}
+	return 1;
+}
+
+
+int check_cert_names(X509 *cert, char *peer_host) {
+	char peer_cn[256];
+	const GENERAL_NAME *gn;
+	STACK_OF(GENERAL_NAME) *gen_names;
+	struct in_addr addr;
+	struct in6_addr addr6;
+	int peer_host_is_ipv4 = 0, peer_host_is_ipv6 = 0;
+	int i, san_count;
+
+	gen_names = X509_get_ext_d2i(cert, NID_subject_alt_name, NULL, NULL);
+	san_count = sk_GENERAL_NAME_num(gen_names);
+	if (san_count > 0) {
+		peer_host_is_ipv4 = (inet_pton(AF_INET, peer_host, &addr) == 1);
+		peer_host_is_ipv6 = (peer_host_is_ipv4 ? 0 : inet_pton(AF_INET6, peer_host, &addr6) == 1);
+		for (i = 0; i < san_count; i++) {
+			gn = sk_GENERAL_NAME_value(gen_names, i);
+			if (gn->type == GEN_DNS && !(peer_host_is_ipv4 || peer_host_is_ipv6)) {
+				if (check_cert_valid_host((char*)ASN1_STRING_data(gn->d.ia5), peer_host)) {
+					return 1;
+				}
+			} else if (gn->type == GEN_IPADD) {
+				if (gn->d.ip->length == 4 && peer_host_is_ipv4) {
+					if (check_cert_valid_ip(gn->d.ip->data, gn->d.ip->length, &addr)) {
+						return 1;
+					}
+				} else if (gn->d.ip->length == 16 && peer_host_is_ipv6) {
+					if (check_cert_valid_ip6(gn->d.ip->data, gn->d.ip->length, &addr6)) {
+						return 1;
+					}
+				}
+			}
+		}
+		message("Host name %s does not match certificate subject alternative names\n", peer_host);
+	} else {
+		X509_NAME_get_text_by_NID(X509_get_subject_name(cert), NID_commonName, peer_cn, sizeof(peer_cn));
+		message("Host name %s does not match certificate common name %s or any subject alternative names\n", peer_host, peer_cn);
+		return check_cert_valid_host(peer_cn, peer_host);
+	}
+	return 0;
+}
+
 /* Initiate an SSL handshake on this stream and encrypt all subsequent data */
-int stream_enable_ssl(PTSTREAM *pts) {
+int stream_enable_ssl(PTSTREAM *pts, const char *proxy_arg) {
 #ifdef USE_SSL
 	const SSL_METHOD *meth;
 	SSL *ssl;
 	SSL_CTX *ctx;
 	long res = 1;
-	
+	long ssl_options = 0;
+
+	X509* cert = NULL;
+	int status;
+	struct stat st_buf;
+	const char *ca_file = NULL;
+	const char *ca_dir = "/etc/ssl/certs/"; /* Default cert directory if none given */
+	long vresult;
+	char *peer_host = NULL;
+	char proxy_arg_fmt[32];
+	size_t proxy_arg_len;
+
 	/* Initialise the connection */
 	SSLeay_add_ssl_algorithms();
 	if (args_info.enforcetls1_flag) {
@@ -160,6 +261,30 @@ int stream_enable_ssl(PTSTREAM *pts) {
 	SSL_load_error_strings();
 
 	ctx = SSL_CTX_new (meth);
+	if (args_info.no_ssl3_flag) {
+		ssl_options |= SSL_OP_NO_SSLv3;
+	}
+	SSL_CTX_set_options (ctx, ssl_options);
+
+	if ( !args_info.no_check_cert_flag ) {
+		if ( args_info.cacert_given ) {
+			if ((status = stat(args_info.cacert_arg, &st_buf)) != 0) {
+				message("Error reading certificate path %s\n", args_info.cacert_arg);
+				goto fail;
+			}
+			if (S_ISDIR(st_buf.st_mode)) {
+				ca_dir = args_info.cacert_arg;
+			} else {
+				ca_dir = NULL;
+				ca_file = args_info.cacert_arg;
+			}
+		}
+		if (!SSL_CTX_load_verify_locations(ctx, ca_file, ca_dir)) {
+			message("Error loading certificate(s) from %s\n", args_info.cacert_arg);
+			goto fail;
+		}
+	}
+
 	ssl = SSL_new (ctx);
 	
 	SSL_set_rfd (ssl, stream_get_incoming_fd(pts));
@@ -177,6 +302,42 @@ int stream_enable_ssl(PTSTREAM *pts) {
 	
 	SSL_connect (ssl);
 
+	if ( !args_info.no_check_cert_flag ) {
+		/* Make sure peer presented a certificate */
+		cert = SSL_get_peer_certificate(ssl);
+		if (cert == NULL) {
+			message("No certificate presented\n");
+			goto fail;
+		}
+
+		/* Check that the certificate is valid */
+		vresult = SSL_get_verify_result(ssl);
+		if (vresult != X509_V_OK) {
+			message("Certificate verification failed (%s)\n",
+					X509_verify_cert_error_string(vresult));
+			goto fail;
+		}
+
+		/* Determine the host name we are connecting to */
+		proxy_arg_len = strlen(proxy_arg);
+		if ((peer_host = malloc(proxy_arg_len + 1)) == NULL) {
+			message("Out of memory\n");
+			goto fail;
+		}
+		snprintf( proxy_arg_fmt, sizeof(proxy_arg_fmt), proxy_arg[0] == '[' ? "[%%%zu[^]]]" : "%%%zu[^:]", proxy_arg_len - 1 );
+		if ( sscanf( proxy_arg, proxy_arg_fmt, peer_host ) != 1 ) {
+			goto fail;
+		}
+
+		/* Verify the certificate name matches the host we are connecting to */
+		if (!check_cert_names(cert, peer_host)) {
+			goto fail;
+		}
+
+		free(peer_host);
+		X509_free(cert);
+	}
+
 	/* Store ssl and ctx parameters */
 	pts->ssl = ssl;
 	pts->ctx = ctx;
@@ -185,6 +346,17 @@ int stream_enable_ssl(PTSTREAM *pts) {
 #endif /* USE_SSL */
 
 	return 1;
+
+fail:
+#ifdef USE_SSL
+	if (cert != NULL) {
+		X509_free(cert);
+	}
+	if (peer_host != NULL) {
+		free(peer_host);
+	}
+#endif /* USE_SSL */
+	exit(1);
 }
 
 

@@ -66,45 +66,44 @@ void signal_handler( int signal ) {
  * the socket that is connected to the proxy
  */
 int tunnel_connect() {
-	struct sockaddr_in sa;
-	struct hostent *he;
+	struct addrinfo hints = {
+		.ai_family = AF_UNSPEC,
+		.ai_socktype = SOCK_STREAM,
+		.ai_flags = AI_ADDRCONFIG | AI_NUMERICSERV,
+		.ai_protocol = 0
+	};
+	struct addrinfo * result, * rp;
+	int rc;
+	char service[6];
 	int sd;
 
-	/* Create the socket */
-	if( ( sd = socket( AF_INET, SOCK_STREAM, 0 ) ) < 0 ) {
-		my_perror("Can not create socket");
+	rc = snprintf( service, sizeof(service), "%d", args_info.proxyport_arg );
+	if( ( rc < 0 ) || ( rc >= sizeof(service) ) ) {
+		/* this should never happen */
+		message( "snprintf() failed" );
 		exit(1);
 	}
-
-	/* Lookup the IP address of the proxy */
-	if( ! ( he = gethostbyname( args_info.proxyhost_arg ) ) ) {
-// FIXME:	my_perror("Local proxy %s could not be resolved", args_info.proxyhost_arg);
-		my_perror("Local proxy could not be resolved." );
+	rc = getaddrinfo( args_info.proxyhost_arg, service, &hints, &result );
+	if( rc != 0 ) {
+		message( "getaddrinfo() failed to resolve local proxy: %s\n",
+			gai_strerror( rc ) );
 		exit(1);
 	}
- 
-	char ip[16];
-	snprintf(ip, 16, "%d.%d.%d.%d", he->h_addr[0] & 255, he->h_addr[1] & 255, he->h_addr[2] & 255, he->h_addr[3] & 255);
-	if( args_info.verbose_flag && strcmp(args_info.proxyhost_arg, ip)) {
-		message( "Local proxy %s resolves to %d.%d.%d.%d\n",
-			args_info.proxyhost_arg,
-			he->h_addr[0] & 255,
-			he->h_addr[1] & 255,
-			he->h_addr[2] & 255,
-			he->h_addr[3] & 255 );
+	for (rp = result; rp != NULL; rp = rp->ai_next) {
+		sd = socket( rp->ai_family, rp->ai_socktype, rp->ai_protocol );
+		if( sd < 0 ) {
+			continue;
+		}
+		if( connect( sd, rp->ai_addr, rp->ai_addrlen ) == 0 ) {
+			break;
+		}
+		close(sd);
 	}
-
-	/* Set up the structure to connect to the proxy port of the proxy host */
-	memset( &sa, '\0', sizeof( sa ) );
-	sa.sin_family = AF_INET;
-	memcpy( &sa.sin_addr.s_addr, he->h_addr, 4);
-	sa.sin_port = htons( args_info.proxyport_arg );
-
-	/* Connect the socket */
-	if( connect( sd, (struct sockaddr*) &sa, sizeof( sa ) ) < 0 ) {
-		my_perror("connect() failed");
+	if( rp == NULL ) {
+		my_perror( "failed to connect to local proxy" );
 		exit(1);
 	}
+	freeaddrinfo(result);
 
 	/* Increase interactivity of tunnel, patch by Ingo Molnar */
 	int flag = 1;
@@ -266,7 +265,7 @@ void do_daemon()
 #ifdef USE_SSL
 			/* If --encrypt-proxy is specified, connect to the proxy using SSL */
 			if ( args_info.encryptproxy_flag )
-				stream_enable_ssl(stunnel);
+				stream_enable_ssl(stunnel, args_info.proxy_arg);
 #endif /* USE_SSL */
 
 			/* Open the tunnel */
@@ -275,7 +274,7 @@ void do_daemon()
 #ifdef USE_SSL
 			/* If --encrypt is specified, wrap all traffic after the proxy handoff in SSL */
 			if( args_info.encrypt_flag )
-				stream_enable_ssl(stunnel);
+				stream_enable_ssl(stunnel, args_info.dest_arg);
 #endif /* USE_SSL */
 
 #ifdef SETPROCTITLE
@@ -388,7 +387,7 @@ int main( int argc, char *argv[] ) {
 		/* If --encrypt-proxy is specified, connect to the proxy using SSL */
 #ifdef USE_SSL
 		if ( args_info.encryptproxy_flag )
-			stream_enable_ssl(stunnel);
+			stream_enable_ssl(stunnel, args_info.proxy_arg);
 #endif /* USE_SSL */
 
 		/* Open the tunnel */
@@ -397,7 +396,7 @@ int main( int argc, char *argv[] ) {
 		/* If --encrypt is specified, wrap all traffic after the proxy handoff in SSL */
 #ifdef USE_SSL
 		if( args_info.encrypt_flag )
-			stream_enable_ssl(stunnel);
+			stream_enable_ssl(stunnel, args_info.dest_arg);
 #endif /* USE_SSL */
 
 #ifdef SETPROCTITLE

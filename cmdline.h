@@ -47,9 +47,12 @@ struct gengetopt_args_info {
 	int encrypt_flag;		/* Turn on SSL encryption (default=off). */
 	int encryptproxy_flag;	/* Turn on client to proxy SSL encryption (def=off).*/
 	int encryptremproxy_flag;  /* Turn on local to remote proxy SSL encryption (def=off).*/
+	int no_ssl3_flag;		/* Turn off SSLv3 (default=on) */
 	char *proctitle_arg;	/* Override process title (default=off). */
 	int enforcetls1_flag;    /* Override default and enforce TLSv1 */
 	char *host_arg;         /* Optional Host Header */
+	int no_check_cert_flag;	/* Turn off server SSL certificate verification (default=on) */
+	char *cacert_arg; 		/* Trusted CA certificate (or directory) for server SSL certificate verification */
 	int help_given;			/* Whether help was given. */
 	int version_given;		/* Whether version was given. */
 	int user_given;			/* Whether user was given. */
@@ -75,6 +78,7 @@ struct gengetopt_args_info {
 	int proctitle_given;	/* Whether to override process title */
 	int enforcetls1_given;   /* Wheter to enforce TLSv1 */
 	int host_given;         /* Wheter we override the Host Header */
+	int cacert_given;		/* Whether cacert was given */
 };
 
 int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *args_info );
