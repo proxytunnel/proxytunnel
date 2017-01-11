@@ -24,7 +24,7 @@ option it specifies it's command-line options.
 $ ./proxytunnel --help
 proxytunnel 1.9.0 (rev 224) Copyright 2001-2008 Proxytunnel Project
 Usage: proxytunnel [OPTIONS]...
-Build generic tunnels trough HTTPS proxy's, supports HTTP authorization
+Build generic tunnels through HTTPS proxy's, supports HTTP authorization
 
 Standard options:
  -i, --inetd               Run from inetd (default=off)
