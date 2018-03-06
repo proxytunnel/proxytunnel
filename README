@@ -3,8 +3,7 @@ proxytunnel
 -----------
 
 Author:		Jos Visser <josv@osp.nl>, Mark Janssen <maniac@maniac.nl>
-Date: 		Mon Mar  3 22:49:43 CET 2008
-Version:	1.9.0
+Version:	1.9.1
 
 Hi all,
 
@@ -22,27 +21,32 @@ Proxytunnel is very easy to use, when running proxytunnel with the help
 option it specifies it's command-line options.
 
 $ ./proxytunnel --help
-proxytunnel 1.9.0 (rev 224) Copyright 2001-2008 Proxytunnel Project
+proxytunnel 1.9.1 Copyright 2001-2018 Proxytunnel Project
 Usage: proxytunnel [OPTIONS]...
-Build generic tunnels through HTTPS proxies, supports HTTP authorization
+Build generic tunnels through HTTPS proxies using HTTP authentication
 
 Standard options:
- -i, --inetd               Run from inetd (default=off)
+ -i, --inetd               Run from inetd (default: off)
  -a, --standalone=INT      Run as standalone daemon on specified port
  -p, --proxy=STRING        Local proxy host:port combination
  -r, --remproxy=STRING     Remote proxy host:port combination (using 2 proxies)
  -d, --dest=STRING         Destination host:port combination
  -e, --encrypt             SSL encrypt data between local proxy and destination
  -E, --encrypt-proxy       SSL encrypt data between client and local proxy
- -X, --encrypt-remproxy    Encrypt between 1st and 2nd proxy using SSL
+ -X, --encrypt-remproxy    SSL encrypt data between local and remote proxy
+ -L                        (legacy) enforce TLSv1 connection
+ -T, --no-ssl3             Do not connect using SSLv3
 
 Additional options for specific features:
+ -z, --no-check-certficate Don't verify server SSL certificate
+ -C, --cacert=STRING       Path to trusted CA certificate or directory
  -F, --passfile=STRING     File with credentials for proxy authentication
  -P, --proxyauth=STRING    Proxy auth credentials user:pass combination
- -R, --remproxyauth=STRING Remote proxy auth credentials user:pass combination
+ -R, --remproxyauth=STRING Remote proxy auth credentials user:pass combination 
  -N, --ntlm                Use NTLM based authentication
  -t, --domain=STRING       NTLM domain (default: autodetect)
  -H, --header=STRING       Add additional HTTP headers to send to proxy
+ -o STRING                 send custom Host Header
  -x, --proctitle=STRING    Use a different process title
 
 Miscellaneous options:
@@ -50,7 +54,6 @@ Miscellaneous options:
  -q, --quiet               Suppress messages
  -h, --help                Print help and exit
  -V, --version             Print version and exit
-
 
 To use this program with OpenSSH to connect to a host somewhere, create
 a $HOME/.ssh/config file with the following content:
