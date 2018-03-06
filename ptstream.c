@@ -290,14 +290,25 @@ int stream_enable_ssl(PTSTREAM *pts, const char *proxy_arg) {
 	SSL_set_rfd (ssl, stream_get_incoming_fd(pts));
 	SSL_set_wfd (ssl, stream_get_outgoing_fd(pts));	
 
+	/* Determine the host name we are connecting to */
+	proxy_arg_len = strlen(proxy_arg);
+	if ((peer_host = malloc(proxy_arg_len + 1)) == NULL) {
+		message("Out of memory\n");
+		goto fail;
+	}
+	snprintf( proxy_arg_fmt, sizeof(proxy_arg_fmt), proxy_arg[0] == '[' ? "[%%%zu[^]]]" : "%%%zu[^:]", proxy_arg_len - 1 );
+	if ( sscanf( proxy_arg, proxy_arg_fmt, peer_host ) != 1 ) {
+		goto fail;
+	}
+
 	/* SNI support */
 	if ( args_info.verbose_flag ) {
-           message( "Set SNI hostname to %s\n", args_info.proxyhost_arg );
-    }
-	res = SSL_set_tlsext_host_name(ssl,args_info.proxyhost_arg);
+		message( "Set SNI hostname to %s\n", peer_host);
+	}
+	res = SSL_set_tlsext_host_name(ssl, peer_host);
 	if (res < 0) {
-	   message( "TLS SNI error, giving up: SSL_set_tlsext_host_name returned error message:\n  %u\n", res );
-	   exit( 1 );
+		message( "TLS SNI error, giving up: SSL_set_tlsext_host_name returned error message:\n  %u\n", res );
+		exit( 1 );
 	}
 	
 	SSL_connect (ssl);
@@ -315,17 +326,6 @@ int stream_enable_ssl(PTSTREAM *pts, const char *proxy_arg) {
 		if (vresult != X509_V_OK) {
 			message("Certificate verification failed (%s)\n",
 					X509_verify_cert_error_string(vresult));
-			goto fail;
-		}
-
-		/* Determine the host name we are connecting to */
-		proxy_arg_len = strlen(proxy_arg);
-		if ((peer_host = malloc(proxy_arg_len + 1)) == NULL) {
-			message("Out of memory\n");
-			goto fail;
-		}
-		snprintf( proxy_arg_fmt, sizeof(proxy_arg_fmt), proxy_arg[0] == '[' ? "[%%%zu[^]]]" : "%%%zu[^:]", proxy_arg_len - 1 );
-		if ( sscanf( proxy_arg, proxy_arg_fmt, peer_host ) != 1 ) {
 			goto fail;
 		}
 
