@@ -3,7 +3,6 @@ proxytunnel
 -----------
 
 Author:		Jos Visser <josv@osp.nl>, Mark Janssen <maniac@maniac.nl>
-Version:	1.9.1
 
 Hi all,
 
@@ -21,7 +20,7 @@ Proxytunnel is very easy to use, when running proxytunnel with the help
 option it specifies it's command-line options.
 
 $ ./proxytunnel --help
-proxytunnel 1.9.1 Copyright 2001-2018 Proxytunnel Project
+proxytunnel 1.9.9 Copyright 2001-2018 Proxytunnel Project
 Usage: proxytunnel [OPTIONS]...
 Build generic tunnels through HTTPS proxies using HTTP authentication
 
