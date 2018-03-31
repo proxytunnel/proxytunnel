@@ -5,16 +5,8 @@
 name = proxytunnel
 version = $(shell awk 'BEGIN { FS="\"" } /^\#define VERSION / { print $$2 }' config.h)
 
-ifneq ($(wildcard .svn),)
-revision = $(shell svnversion | awk 'BEGIN { RS=":" } { next } END { print $$1 }')
-else
-revision = $(shell echo '$$Revision$$' | sed -e 's/\$$Revision: \([0-9]\+\) \$$$$/\1/')
-endif
-
 CC ?= cc
 CFLAGS ?= -Wall -O2 -ggdb
-
-OPTFLAGS = -DREVISION=\"$(revision)\"
 
 # Comment on non-gnu systems
 OPTFLAGS += -DHAVE_GETOPT_LONG
