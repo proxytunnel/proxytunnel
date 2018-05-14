@@ -87,7 +87,8 @@ clean:
 	$(MAKE) -C docs clean
 
 install:
-	install -Dp -m0755 $(name) $(DESTDIR)$(bindir)/$(name)
+	install -d $(DESTDIR)$(bindir)
+	install -p -m555 $(name) $(DESTDIR)$(bindir)
 	$(MAKE) -C docs install
 
 .c.o:

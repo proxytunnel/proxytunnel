@@ -8,7 +8,8 @@ htmltargets = $(patsubst %.adoc, %.html, $(adoctargets))
 docs: proxytunnel.1 $(htmltargets)
 
 install: proxytunnel.1
-	install -Dp -m0644 proxytunnel.1 $(DESTDIR)$(mandir)/man1/proxytunnel.1
+	install -d $(DESTDIR)$(mandir)/man1
+	install -p proxytunnel.1 $(DESTDIR)$(mandir)/man1
 
 clean:
 	rm -f proxytunnel.1 *.html *.xml
