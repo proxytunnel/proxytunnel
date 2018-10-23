@@ -96,6 +96,16 @@ void print_line_prefix(char *buf, char *prefix) {
 //	message( "%s: '%s\n", prefix, buf );
 }
 
+const char * VERB_CONNECT="CONNECT";
+const char * VERB_GET="GET";
+
+char const *const get_proxy_verb() {
+	if (args_info.no_connect_flag == 1)
+		return VERB_GET;
+	else
+		return VERB_CONNECT;
+}
+
 /*
  * Execute the basic proxy protocol of CONNECT and response, until the
  * last line of the response has been read. The tunnel is then open.
@@ -105,11 +115,11 @@ void proxy_protocol(PTSTREAM *pts) {
 	if (args_info.remproxy_given ) {
 		if( args_info.verbose_flag )
 			message( "\nTunneling to %s (remote proxy)\n", args_info.remproxy_arg );
-		sprintf( buf, "CONNECT %s HTTP/1.1\r\nHost: %s\r\n", args_info.remproxy_arg, args_info.host_arg ? args_info.host_arg : args_info.remproxy_arg );
+		sprintf( buf, "%s %s HTTP/1.1\r\nHost: %s\r\n", get_proxy_verb(), args_info.remproxy_arg, args_info.host_arg ? args_info.host_arg : args_info.remproxy_arg );
 	} else {
 		if( args_info.verbose_flag )
 			message( "\nTunneling to %s (destination)\n", args_info.dest_arg );
-		sprintf( buf, "CONNECT %s HTTP/1.1\r\nHost: %s\r\n", args_info.dest_arg, args_info.host_arg ? args_info.host_arg : args_info.proxyhost_arg );
+		sprintf( buf, "%s %s HTTP/1.1\r\nHost: %s\r\n", get_proxy_verb(), args_info.dest_arg, args_info.host_arg ? args_info.host_arg : args_info.proxyhost_arg );
 	}
 	
 	if ( args_info.user_given && args_info.pass_given ) {
@@ -163,7 +173,7 @@ void proxy_protocol(PTSTREAM *pts) {
 
 		if( args_info.verbose_flag )
 			message( "\nTunneling to %s (destination)\n", args_info.dest_arg );
-		sprintf( buf, "CONNECT %s HTTP/1.1\r\nHost: %s\r\n", args_info.dest_arg, args_info.host_arg ? args_info.host_arg : args_info.dest_arg);
+		sprintf( buf, "%s %s HTTP/1.1\r\nHost: %s\r\n", get_proxy_verb(), args_info.dest_arg, args_info.host_arg ? args_info.host_arg : args_info.dest_arg);
 
 		if ( args_info.remuser_given && args_info.rempass_given )
 			strzcat( buf, "Proxy-Authorization: Basic %s\r\n", basicauth(args_info.remuser_arg, args_info.rempass_arg ));

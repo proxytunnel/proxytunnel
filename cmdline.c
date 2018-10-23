@@ -61,6 +61,7 @@ void cmdline_parser_print_help (void) {
 " -X, --encrypt-remproxy    SSL encrypt data between local and remote proxy\n"
 " -L                        (legacy) enforce TLSv1 connection\n"
 " -T, --no-ssl3             Do not connect using SSLv3\n"
+" -g, --no-connect          Use PROXY GET instead of PROXY CONNECT\n"
 #endif
 "\n"
 "Additional options for specific features:\n"
@@ -167,6 +168,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	args_info->encryptproxy_flag = 0; \
 	args_info->encryptremproxy_flag = 0; \
 	args_info->no_ssl3_flag = 0; \
+	args_info->no_connect_flag = 0;	 \
 	args_info->proctitle_arg = NULL; \
 	args_info->enforcetls1_flag = 0; \
 	args_info->host_arg = NULL; \
@@ -216,14 +218,15 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 			{ "encrypt-proxy",	0, NULL, 'E' },
 			{ "encrypt-remproxy",0,NULL, 'X' },
 			{ "no-ssl3",		0, NULL, 'T' },
+			{ "no-connect", 0, NULL, 'g' },			
 			{ "no-check-certificate",0,NULL,'z' },
 			{ "cacert",         1, NULL, 'C' },
 			{ NULL,				0, NULL, 0 }
 		};
 
-		c = getopt_long (argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:nvNeEXqLo:TzC:", long_options, &option_index);
+		c = getopt_long (argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:nvgNeEXqLo:TzC:", long_options, &option_index);
 #else
-		c = getopt( argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:nvNeEXqLo:TzC:" );
+		c = getopt( argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:nvgNeEXqLo:TzC:" );
 #endif
 
 		if (c == -1)
@@ -287,6 +290,11 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 				message("Enforcing TLSv1");
 				args_info->enforcetls1_flag = 1;
 				break;
+				
+		  case 'g':
+				args_info->no_connect_flag = 1;
+				message("Using PROXY GET instead of PROXY CONNECT\n");
+				break;				
 
 			case 'o':
 				args_info->host_given = 1;
