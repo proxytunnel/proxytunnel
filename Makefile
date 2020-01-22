@@ -63,6 +63,7 @@ OBJ = proxytunnel.o	\
 	readpassphrase.o	\
 	messages.o	\
 	cmdline.o	\
+	globals.o	\
 	ntlm.o		\
 	ptstream.o
 

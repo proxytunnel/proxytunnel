@@ -26,8 +26,8 @@ void build_ntlm2_response();
 
 extern int ntlm_challenge;
 
-char ntlm_type1_buf[160];
-char ntlm_type3_buf[4096];
+extern char ntlm_type1_buf[160];
+extern char ntlm_type3_buf[4096];
 
 
 // Below are the flag definitions.

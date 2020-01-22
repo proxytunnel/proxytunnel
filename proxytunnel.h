@@ -46,21 +46,21 @@ char * readpassphrase(const char *, char *, size_t, int);
 char * getpass_x(const char *format, ...);
 
 /* Globals */
-int read_fd;                    /* The file descriptor to read from */
-int write_fd;                   /* The file destriptor to write to */
-char *program_name;             /* Guess what? */
-int i_am_daemon;                /* Also... */
+extern int read_fd;                    /* The file descriptor to read from */
+extern int write_fd;                   /* The file descriptor to write to */
+extern char *program_name;             /* Guess what? */
+extern int i_am_daemon;                /* Also... */
 
-PTSTREAM *stunnel;	/* stream representing the socket from us to proxy */
-PTSTREAM *std;		/* stream representing stdin/stdout */
+extern PTSTREAM *stunnel;	/* stream representing the socket from us to proxy */
+extern PTSTREAM *std;		/* stream representing stdin/stdout */
 
 /*
  * All the command line options
  */
-struct gengetopt_args_info args_info;
+extern struct gengetopt_args_info args_info;
 
 #define SIZE 65536
-char buf[SIZE];         /* Data transfer buffer */
+extern char buf[SIZE];         /* Data transfer buffer */
 
 /*
  * Small MAX macro
