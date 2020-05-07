@@ -1,3 +1,9 @@
+Changes to proxytunnel 1.10.20200507 -- Thu 07 May 2020 05:13:01 PM CEST
+
+- Applied 3 patches from debian's package
+- Changed version number to 1.10.YYYYMMDD format
+- Official location has been github for a while now
+
 Changes to proxytunnel after 1.9.1 -- Tue Mar 22 16:02:40 CET 2011
 
 - Switch to HTTP/1.1 commands, so we can tunnel over JoikuSpot's which
