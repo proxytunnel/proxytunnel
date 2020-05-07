@@ -149,6 +149,11 @@ void proxy_protocol(PTSTREAM *pts) {
 //	if( args_info.verbose_flag )
 //		message( "Data received from local proxy:\n");
 
+	if( args_info.wa_bug_29744_flag && !args_info.encryptremproxy_flag && pts->ssl ) {
+		message( "Switching to non-SSL communication (local proxy)\n");
+		pts->ssl = 0;
+	}
+
 	/* Read the first line of the response and analyze it */
 	analyze_HTTP(pts);
 
@@ -190,6 +195,11 @@ void proxy_protocol(PTSTREAM *pts) {
 	
 //		if( args_info.verbose_flag )
 //			message( "Received from remote proxy:\n");
+
+		if( args_info.wa_bug_29744_flag && pts->ssl ) {
+			message( "Switching to non-SSL communication (remote proxy)\n");
+			pts->ssl = 0;
+		}
 
 		/* Read the first line of the response and analyze it */
 		analyze_HTTP(pts);

@@ -59,6 +59,11 @@ void cmdline_parser_print_help (void) {
 " -e, --encrypt             SSL encrypt data between local proxy and destination\n"
 " -E, --encrypt-proxy       SSL encrypt data between client and local proxy\n"
 " -X, --encrypt-remproxy    SSL encrypt data between local and remote proxy\n"
+" -W, --wa-bug-29744        Workaround ASF Bugzilla 29744: if SSL is active stop\n"
+"                           using it after CONNECT (might not work on all setups; see\n"
+"                           /usr/share/doc/proxytunnel/README.Debian.gz)\n"
+" -B, --buggy-encrypt-proxy Equivalent to -E -W, provided for backwards\n"
+"                           compatibility\n"
 " -L                        (legacy) enforce TLSv1 connection\n"
 " -T, --no-ssl3             Do not connect using SSLv3\n"
 #endif
@@ -138,6 +143,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	args_info->encrypt_given = 0;
 	args_info->encryptproxy_given = 0;
 	args_info->encryptremproxy_given = 0;
+	args_info->wa_bug_29744_given = 0;
 	args_info->proctitle_given = 0;
 	args_info->enforcetls1_given = 0;
 	args_info->host_given = 0;
@@ -166,6 +172,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	args_info->encrypt_flag = 0; \
 	args_info->encryptproxy_flag = 0; \
 	args_info->encryptremproxy_flag = 0; \
+	args_info->wa_bug_29744_flag = 0; \
 	args_info->no_ssl3_flag = 0; \
 	args_info->proctitle_arg = NULL; \
 	args_info->enforcetls1_flag = 0; \
@@ -215,15 +222,17 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 			{ "encrypt",		0, NULL, 'e' },
 			{ "encrypt-proxy",	0, NULL, 'E' },
 			{ "encrypt-remproxy",0,NULL, 'X' },
+			{ "wa-bug-29744",	0, NULL, 'W' },
+			{ "buggy-encrypt-proxy",	0, NULL, 'B' },
 			{ "no-ssl3",		0, NULL, 'T' },
 			{ "no-check-certificate",0,NULL,'z' },
 			{ "cacert",         1, NULL, 'C' },
 			{ NULL,				0, NULL, 0 }
 		};
 
-		c = getopt_long (argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:nvNeEXqLo:TzC:", long_options, &option_index);
+		c = getopt_long (argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:nvNeEXWBqLo:TzC:", long_options, &option_index);
 #else
-		c = getopt( argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:nvNeEXqLo:TzC:" );
+		c = getopt( argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:nvNeEXWBqLo:TzC:" );
 #endif
 
 		if (c == -1)
@@ -246,6 +255,19 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 				args_info->encryptproxy_flag = !(args_info->encryptproxy_flag);
 				if( args_info->verbose_flag )
 					message("SSL client to proxy enabled\n");
+				break;
+
+			case 'W':	/* if SSL is active stop it after CONNECT */
+				args_info->wa_bug_29744_flag = !(args_info->wa_bug_29744_flag);
+				if( args_info->verbose_flag )
+					message("If SSL is active stop it after CONNECT\n");
+				break;
+
+			case 'B':	/* do -E -W */
+				args_info->wa_bug_29744_flag = !(args_info->wa_bug_29744_flag);
+				args_info->encryptproxy_flag = !(args_info->encryptproxy_flag);
+				if( args_info->verbose_flag )
+					message("SSL client to proxy enabled, only until CONNECT\n");
 				break;
 #endif
 

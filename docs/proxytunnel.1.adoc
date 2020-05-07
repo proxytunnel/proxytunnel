@@ -46,6 +46,14 @@ also be used for other proxy-traversing purposes like proxy bouncing.
 *-X*, *--encrypt-remproxy*::
     SSL encrypt data between local and remote (secondary) proxy
 
+*-W*, *--wa-bug-29744*::
+    If SSL is in use (by *-e*, *-E*, *-X* options), stop using it
+    immediately after the CONNECT exchange to workaround apache server
+    bugs.  (This might not work on all setups; see
+    /usr/share/doc/proxytunnel/README.Debian.gz for more details.)
+
+*-B*, *--buggy-encrypt-proxy*::
+    Equivalent to *-E -W*.  (Provided for backwards compatibility.)
 
 == ADDITIONAL OPTIONS
 

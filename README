@@ -33,6 +33,11 @@ Standard options:
  -e, --encrypt             SSL encrypt data between local proxy and destination
  -E, --encrypt-proxy       SSL encrypt data between client and local proxy
  -X, --encrypt-remproxy    SSL encrypt data between local and remote proxy
+ -W, --wa-bug-29744        workaround ASF Bugzilla 29744, if SSL is active stop
+                           using it after CONNECT (might not work on all setups;
+                           see /usr/share/doc/proxytunnel/README.Debian.gz)
+ -B, --buggy-encrypt-proxy Equivalent to -E -W, provided for backwards
+                           compatibility
  -L                        (legacy) enforce TLSv1 connection
  -T, --no-ssl3             Do not connect using SSLv3
 
