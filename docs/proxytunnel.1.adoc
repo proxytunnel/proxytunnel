@@ -54,7 +54,7 @@ also be used for other proxy-traversing purposes like proxy bouncing.
 
 *-z*, *--no-check-certificate*::
     Do not verify server SSL certificate when establishing an SSL connection.
-    By default, the server SSL certficate is verified and the target host name
+    By default, the server SSL certificate is verified and the target host name
     is checked against the server certificate's subject alternative names if
     any are present, or common name if there are no subject alternative names.
 
@@ -74,7 +74,7 @@ also be used for other proxy-traversing purposes like proxy bouncing.
     local HTTPS proxy, the username and password can also be specified in
     the *PROXYUSER* and *PROXYPASS* environment variables to hide them from
     other users.
-    If the _password_ is ommited and no *PROXYPASS* environment variable is
+    If the _password_ is omitted and no *PROXYPASS* environment variable is
     set, proxytunnel will prompt for a password
 
 *-R*, *--remproxyauth*=_username_:_password_::
@@ -82,7 +82,7 @@ also be used for other proxy-traversing purposes like proxy bouncing.
     remote (secondary) HTTPS proxy, the username and password can also be
     specified in the *REMPROXYUSER* and *REMPROXYPASS* environment variables
     to hide them from other users.
-    If the _password_ is ommited and no *REMPROXYPASS* environment variable is
+    If the _password_ is omitted and no *REMPROXYPASS* environment variable is
     set, proxytunnel will prompt for a password
 
 *-N*, *--ntlm*::
