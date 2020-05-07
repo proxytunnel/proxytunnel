@@ -98,21 +98,35 @@ int stream_read(PTSTREAM *pts, void *buf, size_t len) {
 int stream_write(PTSTREAM *pts, void *buf, size_t len) {
 	/* Write the specified number of bytes from the buffer */
 	int bytes_written;
+	int total_bytes_written = 0;
 
-	if (!pts->ssl) {
-		/* For a non-SSL stream... */
-		bytes_written = write(pts->outgoing_fd, buf, len);
-	} else {
+	while (total_bytes_written < len) {
+		if (!pts->ssl) {
+			/* For a non-SSL stream... */
+			bytes_written = write(pts->outgoing_fd,
+					      buf + total_bytes_written,
+					      len - total_bytes_written);
+		} else {
 #ifdef USE_SSL
-		/* For an SSL stream... */
-		bytes_written = SSL_write(pts->ssl, buf, len);
+			/* For an SSL stream... */
+			bytes_written = SSL_write(pts->ssl,
+						  buf + total_bytes_written,
+						  len - total_bytes_written);
 #else
-		/* No SSL support, so must use a non-SSL stream */
-		bytes_written = write(pts->outgoing_fd, buf, len);
+			/* No SSL support, so must use a non-SSL stream */
+			bytes_written = write(pts->outgoing_fd,
+					      buf + total_bytes_written,
+					      len - total_bytes_written);
 #endif /* USE_SSL */
+		}
+
+		if (bytes_written <= 0) {
+			break;
+		}
+		total_bytes_written += bytes_written;
 	}
 
-	return bytes_written;
+	return total_bytes_written;
 }
 
 
