@@ -60,6 +60,7 @@ OBJ = proxytunnel.o	\
 	io.o		\
 	http.o		\
 	basicauth.o	\
+	globals.o	\
 	readpassphrase.o	\
 	messages.o	\
 	cmdline.o	\
