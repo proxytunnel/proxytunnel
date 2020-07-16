@@ -1,6 +1,7 @@
------------
-proxytunnel
------------
+
+[![Build Status](https://travis-ci.org/mcarbonneaux/proxytunnel.svg?branch=master)](https://travis-ci.org/mcarbonneaux/proxytunnel)
+
+# Proxytunnel
 
 Author:		Jos Visser <josv@osp.nl>, Mark Janssen <maniac@maniac.nl>
 
@@ -13,12 +14,14 @@ as an extension to SSH, to be able to SSH to my box at home. In
 this file, I will describe the use with SSH. If you want to use it
 with some other application, feel free, and let me know!
 
+# Build docs is [her](INSTALL.md) 
 
-Usage:
+# Usage (man page is [her](docs/proxytunnel.1.adoc)):
 
 Proxytunnel is very easy to use, when running proxytunnel with the help
 option it specifies it's command-line options.
 
+```
 $ ./proxytunnel --help
 proxytunnel 1.9.9 Copyright 2001-2018 Proxytunnel Project
 Usage: proxytunnel [OPTIONS]...
@@ -58,23 +61,28 @@ Miscellaneous options:
  -q, --quiet               Suppress messages
  -h, --help                Print help and exit
  -V, --version             Print version and exit
+```
 
 To use this program with OpenSSH to connect to a host somewhere, create
 a $HOME/.ssh/config file with the following content:
 
+```
 Host foobar
 	ProtocolKeepAlives 30
 	ProxyCommand /path/to/proxytunnel -p proxy:8080 -P username
 -d mybox.athome.nl:443
+```
 
 With:
 
+```
 - foobar		The symbolic name of the host you want to connect to
 - proxy         	The host name of the proxy you want to connect through
 - 8080			The port number where the proxy software listens to
 - username		Your proxy userid (password will be prompted)
 - mybox.athome.nl	The hostname of the box you want to connect to (ultimately)
 - 443			The port number of the SSH daemon on mybox.athome.nl
+```
 
 If your proxy doesn't require the username and password for using it,
 you can skip these options. If you don't provide the password on the
@@ -111,27 +119,32 @@ connect to a process that understands SSL itself.
 
 When all this is in place, execute an "ssh foobar" and you're in business!
 
-Environment Variables
-=====================
+# Environment Variables
 
 Proxytunnel can make use of the following environment variables:
+
+```
 PROXYUSER		Username for the proxy-authentication
 PROXYPASS		Password for the proxy-authentication
-REMPROXYUSER	Username for remote proxy-authentication
-REMPROXYPASS	Password for remote proxy-authentication
+REMPROXYUSER		Username for remote proxy-authentication
+REMPROXYPASS		Password for remote proxy-authentication
 HTTP_PROXY		Primary proxy host and port information
-				Format: HTTP_PROXY=http://<host>:<port>/
+			Format: HTTP_PROXY=http://<host>:<port>/
+```
 
-Authentication File
-===================
+# Authentication File
 
 Proxytunnel can read authentication data from a file (-F/--passfile)
+
 The format for this file is:
+```
 <field> = <value>
 <field> = <value>
 etc
+```
 
 One entry per line, 1 space before and after the equal sign.
+
 The accepted fields are:
  * proxy_user
  * proxy_passwd
