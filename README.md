@@ -14,9 +14,9 @@ as an extension to SSH, to be able to SSH to my box at home. In
 this file, I will describe the use with SSH. If you want to use it
 with some other application, feel free, and let me know!
 
-# Build docs is [her](INSTALL.md) 
+# Build docs is [here](INSTALL.md) 
 
-# Usage (man page is [her](docs/proxytunnel.1.adoc)):
+# Usage (man page is [here](docs/proxytunnel.1.adoc)):
 
 Proxytunnel is very easy to use, when running proxytunnel with the help
 option it specifies it's command-line options.
