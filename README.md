@@ -1,5 +1,5 @@
 
-[![Build Status](https://travis-ci.org/mcarbonneaux/proxytunnel.svg?branch=master)](https://travis-ci.org/mcarbonneaux/proxytunnel)
+[![Build Status](https://travis-ci.org/proxytunnel/proxytunnel.svg?branch=master)](https://travis-ci.org/proxytunnel/proxytunnel)
 
 # Proxytunnel
 
