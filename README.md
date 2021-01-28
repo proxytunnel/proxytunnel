@@ -28,39 +28,39 @@ Usage: proxytunnel [OPTIONS]...
 Build generic tunnels through HTTPS proxies using HTTP authentication
 
 Standard options:
- -i, --inetd               Run from inetd (default: off)
- -a, --standalone=INT      Run as standalone daemon on specified port
- -p, --proxy=STRING        Local proxy host:port combination
- -r, --remproxy=STRING     Remote proxy host:port combination (using 2 proxies)
- -d, --dest=STRING         Destination host:port combination
- -e, --encrypt             SSL encrypt data between local proxy and destination
- -E, --encrypt-proxy       SSL encrypt data between client and local proxy
- -X, --encrypt-remproxy    SSL encrypt data between local and remote proxy
- -W, --wa-bug-29744        workaround ASF Bugzilla 29744, if SSL is active stop
-                           using it after CONNECT (might not work on all setups;
-                           see /usr/share/doc/proxytunnel/README.Debian.gz)
- -B, --buggy-encrypt-proxy Equivalent to -E -W, provided for backwards
-                           compatibility
- -L                        (legacy) enforce TLSv1 connection
- -T, --no-ssl3             Do not connect using SSLv3
+ -i, --inetd                Run from inetd (default: off)
+ -a, --standalone=INT       Run as standalone daemon on specified port
+ -p, --proxy=STRING         Local proxy host:port combination
+ -r, --remproxy=STRING      Remote proxy host:port combination (using 2 proxies)
+ -d, --dest=STRING          Destination host:port combination
+ -e, --encrypt              SSL encrypt data between local proxy and destination
+ -E, --encrypt-proxy        SSL encrypt data between client and local proxy
+ -X, --encrypt-remproxy     SSL encrypt data between local and remote proxy
+ -W, --wa-bug-29744         workaround ASF Bugzilla 29744, if SSL is active stop
+                            using it after CONNECT (might not work on all setups;
+                            see /usr/share/doc/proxytunnel/README.Debian.gz)
+ -B, --buggy-encrypt-proxy  Equivalent to -E -W, provided for backwards
+                            compatibility
+ -L                         (legacy) enforce TLSv1 connection
+ -T, --no-ssl3              Do not connect using SSLv3
 
 Additional options for specific features:
- -z, --no-check-certficate Don't verify server SSL certificate
- -C, --cacert=STRING       Path to trusted CA certificate or directory
- -F, --passfile=STRING     File with credentials for proxy authentication
- -P, --proxyauth=STRING    Proxy auth credentials user:pass combination
- -R, --remproxyauth=STRING Remote proxy auth credentials user:pass combination 
- -N, --ntlm                Use NTLM based authentication
- -t, --domain=STRING       NTLM domain (default: autodetect)
- -H, --header=STRING       Add additional HTTP headers to send to proxy
- -o STRING                 send custom Host Header
- -x, --proctitle=STRING    Use a different process title
+ -z, --no-check-certificate Don't verify server SSL certificate
+ -C, --cacert=STRING        Path to trusted CA certificate or directory
+ -F, --passfile=STRING      File with credentials for proxy authentication
+ -P, --proxyauth=STRING     Proxy auth credentials user:pass combination
+ -R, --remproxyauth=STRING  Remote proxy auth credentials user:pass combination
+ -N, --ntlm                 Use NTLM based authentication
+ -t, --domain=STRING        NTLM domain (default: autodetect)
+ -H, --header=STRING        Add additional HTTP headers to send to proxy
+ -o STRING                  send custom Host Header
+ -x, --proctitle=STRING     Use a different process title
 
 Miscellaneous options:
- -v, --verbose             Turn on verbosity
- -q, --quiet               Suppress messages
- -h, --help                Print help and exit
- -V, --version             Print version and exit
+ -v, --verbose              Turn on verbosity
+ -q, --quiet                Suppress messages
+ -h, --help                 Print help and exit
+ -V, --version              Print version and exit
 ```
 
 To use this program with OpenSSH to connect to a host somewhere, create
@@ -77,7 +77,7 @@ With:
 
 ```
 - foobar		The symbolic name of the host you want to connect to
-- proxy         	The host name of the proxy you want to connect through
+- proxy			The host name of the proxy you want to connect through
 - 8080			The port number where the proxy software listens to
 - username		Your proxy userid (password will be prompted)
 - mybox.athome.nl	The hostname of the box you want to connect to (ultimately)
