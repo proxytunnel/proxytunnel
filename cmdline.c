@@ -591,10 +591,10 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 		char *puser = NULL;
 		char *ppass = NULL;
 
-		puser = malloc( 24+1 );
-		ppass = malloc( 24+1 );
+		puser = malloc( 80+1 );
+		ppass = malloc( 80+1 );
 
-		r = sscanf( args_info->proxyauth_arg, "%24[^:]:%24s", puser, ppass );
+		r = sscanf( args_info->proxyauth_arg, "%80[^:]:%80s", puser, ppass );
 		if ( r == 2 ) {
 			args_info->user_arg = puser;
 			args_info->pass_arg = ppass;
@@ -614,10 +614,10 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 		char *ruser = NULL;
 		char *rpass = NULL;
 
-		ruser = malloc( 24+1 );
-		rpass = malloc( 24+1 );
+		ruser = malloc( 80+1 );
+		rpass = malloc( 80+1 );
 
-		r = sscanf( args_info->remproxyauth_arg, "%24[^:]:%24s", ruser, rpass );
+		r = sscanf( args_info->remproxyauth_arg, "%80[^:]:%80s", ruser, rpass );
 		if ( r == 2 ) {
 			args_info->remuser_arg = ruser;
 			args_info->rempass_arg = rpass;

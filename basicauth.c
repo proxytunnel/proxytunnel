@@ -32,7 +32,7 @@
  * is stored in basicauth.
  */
 char *basicauth(char *user, char *pass) {
-	char *b64str = malloc(80);
+	char *b64str = malloc(160);
 
 	int len = strlen( user ) + strlen( pass ) + 2;
 	char *p = (char *) malloc( len );
