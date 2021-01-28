@@ -17,9 +17,6 @@ OPTFLAGS += -DUSE_SSL
 # Most systems
 OPTFLAGS += -DSETPROCTITLE -DSPT_TYPE=2
 
-# Comment if you don't have this flag
-OPTFLAGS += -DSO_REUSEPORT
-
 # System dependant blocks... if your system is listed below, uncomment
 # the relevant lines
 
@@ -81,7 +78,7 @@ docs:
 	$(MAKE) -C docs
 
 proxytunnel: $(OBJ)
-	$(CC) -o $(name) $(CFLAGS) $(OPTFLAGS) $(OBJ) $(LDFLAGS)
+	$(CC) -o $(name) $(CPPFLAGS) $(CFLAGS) $(OPTFLAGS) $(OBJ) $(LDFLAGS)
 
 clean:
 	@rm -f $(name) $(OBJ)
@@ -93,7 +90,7 @@ install:
 	$(MAKE) -C docs install
 
 .c.o:
-	$(CC) $(CFLAGS) $(OPTFLAGS) -c -o $@ $<
+	$(CC) $(CPPFLAGS) $(CFLAGS) $(OPTFLAGS) -c -o $@ $<
 
 dist: clean docs
 	sed -i -e 's/^Version:.*$$/Version: $(version)/' contrib/proxytunnel.spec
