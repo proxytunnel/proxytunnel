@@ -309,6 +309,10 @@ int stream_enable_ssl(PTSTREAM *pts, const char *proxy_arg) {
 	}
 
 	ssl = SSL_new (ctx);
+    if ( ssl == NULL ) {
+        message("SSL_new failed\n");
+        goto fail;
+    }
 	
 	SSL_set_rfd (ssl, stream_get_incoming_fd(pts));
 	SSL_set_wfd (ssl, stream_get_outgoing_fd(pts));	
@@ -334,7 +338,10 @@ int stream_enable_ssl(PTSTREAM *pts, const char *proxy_arg) {
 		exit( 1 );
 	}
 	
-	SSL_connect (ssl);
+	if ( SSL_connect (ssl) <= 0) {
+        message( "SSL_connect failed\n");
+        goto fail;
+    }
 
 	if ( !args_info.no_check_cert_flag ) {
 		/* Make sure peer presented a certificate */
