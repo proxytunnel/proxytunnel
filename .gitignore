@@ -2,3 +2,5 @@
 *.exec
 proxytunnel.exe
 proxytunnel
+passfile
+test.sh

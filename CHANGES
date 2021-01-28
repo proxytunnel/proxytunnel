@@ -3,6 +3,7 @@ Changed to proxytunnel 1.10.20210128 -- Thu 28 Jan 2021 10:23:24 PM CET
 - Changed version to 1.10.20210128
 - Applied 2 more debian patches by Julian Gilbey <jdg@debian.org>
 - Error handling on SSL_new / SSL_connect
+- Allow for longer username/passwords fields (was 24 chars)
 
 Changes to proxytunnel 1.10.20200507 -- Thu 07 May 2020 05:13:01 PM CEST
 
