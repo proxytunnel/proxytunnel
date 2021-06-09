@@ -1,4 +1,9 @@
-Changed to proxytunnel 1.10.20210128 -- Thu 28 Jan 2021 10:23:24 PM CET
+Changes to proxytunnel 1.10.20210609 -- Wed Jun  9 11:55:54 CEST 2021
+
+- No functional changes
+- Builds have been migrated to travis-ci.com (from .org)
+
+Changes to proxytunnel 1.10.20210128 -- Thu 28 Jan 2021 10:23:24 PM CET
 
 - Changed version to 1.10.20210128
 - Applied 2 more debian patches by Julian Gilbey <jdg@debian.org>
