@@ -263,13 +263,16 @@ int stream_enable_ssl(PTSTREAM *pts, const char *proxy_arg) {
 	X509* cert = NULL;
 	int status;
 	struct stat st_buf;
-#ifndef LOCAL_OPENSSL11
+#ifndef DEFAULT_CA_FILE
 	const char *ca_file = NULL;
+#else
+	const char *ca_file = DEFAULT_CA_FILE; /* Default cert file from in Makefile */
+#endif /* !DEFAULT_CA_FILE */
+#ifndef DEFAULT_CA_DIR
 	const char *ca_dir = "/etc/ssl/certs/"; /* Default cert directory if none given */
 #else
-	const char *ca_file = "/usr/local/etc/openssl@1.1/cacert.pem";
-	const char *ca_dir = NULL;
-#endif /* !LOCAL_OPENSSL11 */
+	const char *ca_dir = DEFAULT_CA_DIR;  /* Default cert directory from Makefile */
+#endif /* !DEFAULT_CA_DIR */
 	long vresult;
 	char *peer_host = NULL;
 	char proxy_arg_fmt[32];
