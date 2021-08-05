@@ -69,7 +69,8 @@ also be used for other proxy-traversing purposes like proxy bouncing.
 *-C*, *--cacert*=_filename/directory_::
     Specify a CA certificate file (or directory containing CA certificate(s))
     to trust when verifying a server SSL certificate. If a directory is provided,
-    it must be prepared with OpenSSL's c_rehash tool. (default: /etc/ssl/certs)
+    it must be prepared with OpenSSL's c_rehash tool. (default, unless changed at
+    compile time using DEFAULT_CA_FILE or DEFAULT_CA_DIR options: /etc/ssl/certs)
 
 *-F*, *--passfile*=_filename_::
     Use _filename_ for reading username and password for HTTPS proxy

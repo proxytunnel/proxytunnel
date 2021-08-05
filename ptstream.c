@@ -266,7 +266,7 @@ int stream_enable_ssl(PTSTREAM *pts, const char *proxy_arg) {
 #ifndef DEFAULT_CA_FILE
 	const char *ca_file = NULL;
 #else
-	const char *ca_file = DEFAULT_CA_FILE; /* Default cert file from in Makefile */
+	const char *ca_file = DEFAULT_CA_FILE; /* Default cert file from Makefile */
 #endif /* !DEFAULT_CA_FILE */
 #ifndef DEFAULT_CA_DIR
 	const char *ca_dir = "/etc/ssl/certs/"; /* Default cert directory if none given */
