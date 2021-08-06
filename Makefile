@@ -38,7 +38,7 @@ OPTFLAGS += -DDARWIN
 # DARWIN, continued, if compiling for macOS with Homebrew
 CFLAGS += -I$(prefix)/opt/openssl/include
 LDFLAGS += -L$(prefix)/opt/openssl/lib
-OPTFLAGS += -DDEFAULT_CA_FILE=$(shell echo "'$$(gls --quoting-style=c "$(cacert_file)")'")
+OPTFLAGS += -DDEFAULT_CA_FILE='$(subst ','"'"',$(subst \,\\,$(shell gls --quoting-style=c "$(cacert_file)")))'
 OPTFLAGS += -DDEFAULT_CA_DIR=NULL
 
 # CYGWIN
