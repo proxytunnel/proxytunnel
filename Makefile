@@ -10,10 +10,6 @@ bindir = $(prefix)/bin
 datadir = $(prefix)/share
 mandir = $(datadir)/man
 
-openssl_bin = $(prefix)/opt/openssl/bin/openssl
-cacert_dir = $(shell "$(openssl_bin)" version -d | cut -d'"' -f2)
-cacert_file = $(cacert_dir)/cacert.pem
-
 CC ?= cc
 CFLAGS ?= -Wall -O2 -ggdb
 
@@ -36,6 +32,10 @@ OPTFLAGS += -DSETPROCTITLE -DSPT_TYPE=2
 OPTFLAGS += -DDARWIN
 
 # DARWIN, continued, if compiling for macOS with Homebrew
+openssl_bin = $(prefix)/opt/openssl/bin/openssl
+cacert_dir = $(shell "$(openssl_bin)" version -d | cut -d'"' -f2)
+cacert_file = $(cacert_dir)/cacert.pem
+
 CFLAGS += -I$(prefix)/opt/openssl/include
 LDFLAGS += -L$(prefix)/opt/openssl/lib
 OPTFLAGS += -DDEFAULT_CA_FILE='$(subst ','"'"',$(subst \,\\,$(shell gls --quoting-style=c "$(cacert_file)")))'
