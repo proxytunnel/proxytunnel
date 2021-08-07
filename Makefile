@@ -33,7 +33,7 @@ OPTFLAGS += -DDARWIN
 
 # DARWIN, continued, if compiling for macOS with Homebrew
 openssl_bin = $(prefix)/opt/openssl/bin/openssl
-cacert_dir = $(shell "$(openssl_bin)" version -d | cut -d'"' -f2)
+cacert_dir = $(shell "$(openssl_bin)" version -d | sed -E 's/^[^"]+"|"$$//g')
 cacert_file = $(cacert_dir)/cacert.pem
 
 CFLAGS += -I$(prefix)/opt/openssl/include
