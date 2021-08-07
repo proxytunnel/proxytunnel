@@ -5,7 +5,7 @@
 name = proxytunnel
 version = $(shell awk 'BEGIN { FS="\"" } /^\#define VERSION / { print $$2 }' config.h)
 
-prefix = $(shell brew --prefix)
+prefix = /usr/local
 bindir = $(prefix)/bin
 datadir = $(prefix)/share
 mandir = $(datadir)/man
