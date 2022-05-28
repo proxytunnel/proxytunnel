@@ -581,7 +581,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 			args_info->proxyhost_given = 1;
 			args_info->proxyport_given = 1;
 		} else {
-			message( "parse_cmdline: could not find your proxy hostname/ip (%s)\n", args_info->proxy_arg );
+            message( "parse_cmdline: specified proxy hostname/ip:port (%s) does not fit expected pattern\n", args_info->proxy_arg );
 			missing_required_options++;
 		}
 	}
