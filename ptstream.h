@@ -21,6 +21,7 @@
 
 #ifdef USE_SSL
 #include <openssl/crypto.h>
+#include <openssl/err.h>
 #include <openssl/x509.h>
 #include <openssl/pem.h>
 #include <openssl/ssl.h>
