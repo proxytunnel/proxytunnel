@@ -1,5 +1,7 @@
 
 [![Build Status](https://travis-ci.org/proxytunnel/proxytunnel.svg?branch=master)](https://travis-ci.org/proxytunnel/proxytunnel)
+[![Maintainers Wanted](https://img.shields.io/badge/maintainers-wanted-red.svg)](https://github.com/pickhardt/maintainers-wanted)
+
 
 # Proxytunnel
 
