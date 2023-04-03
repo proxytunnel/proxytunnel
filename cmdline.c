@@ -163,7 +163,8 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	args_info->dest_arg = NULL; \
 	args_info->remproxy_arg = NULL; \
 	args_info->remproxyauth_arg = NULL; \
-	args_info->header_arg[0] = '\0'; \
+	free(args_info->header_arg); \
+	args_info->header_arg = NULL; \
 	args_info->verbose_flag = 0; \
 	args_info->ntlm_flag = 0; \
 	args_info->inetd_flag = 0; \
@@ -190,6 +191,12 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	opterr = 1;
 	optopt = '?';
 #endif
+
+	/*
+	 * Size of the extra headers buffer, so we can
+	 * keep track of how memory to allocate
+	 */
+	size_t header_arg_size = 0;
 
 	while (1) {
 #ifdef HAVE_GETOPT_LONG
@@ -442,7 +449,30 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 
 			case 'H':	/* Extra headers to send to HTTPS proxy. */
 				args_info->header_given++;
-				strzcat( args_info->header_arg, "%s\r\n", optarg);
+				/*
+				 * Each header will have a linefeed(2 chars) appended to it
+				 * So we allocate enough space for the header and the line feed.
+				 * For the first header we'll also need to allocate one char for
+				 * the null terminator
+				*/
+				size_t header_size = strlen(optarg) + (header_arg_size == 0 ? 3 : 2);
+				char *new_headers;
+				if ( (new_headers = realloc(args_info->header_arg, header_arg_size + header_size)) == NULL ) {
+					message("Out of memory\n");
+					clear_args();
+					exit(1);
+				}
+				args_info->header_arg = new_headers;
+				/*
+				 * strzcat expects a string so initialize as
+				 * an empty string before passing in the args to
+				 * be appended
+				 */
+				if (header_arg_size == 0) {
+					args_info->header_arg[0] = '\0';
+				}
+				strzcat(args_info->header_arg, "%s\r\n", optarg);
+				header_arg_size += header_size;
 				break;
 
 			case 'v':	/* Turn on verbosity.  */

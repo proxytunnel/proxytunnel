@@ -23,8 +23,6 @@
 #ifndef _cmdline_h
 #define _cmdline_h
 
-#define MAX_HEADER_SIZE 1024
-
 struct gengetopt_args_info {
 	char *user_arg;			/* Username to send to HTTPS proxy for auth. */
 	char *pass_arg;			/* Password to send to HTTPS proxy for auth. */
@@ -36,7 +34,7 @@ struct gengetopt_args_info {
 	char *proxyhost_arg;	/* HTTPS Proxy host to connect to. */
 	int proxyport_arg;		/* HTTPS Proxy host portnumber to connect to. */
 	char *dest_arg;			/* Destination host to built the tunnel to. */
-	char header_arg[MAX_HEADER_SIZE];	/* Extra headers to send to proxy */
+	char *header_arg;		/* Extra headers to send to proxy */
 	char *remproxy_arg;		/* Remote proxy to tunnel to. */
 	char *remproxyauth_arg;	/* Remote proxy auth. */
 	int verbose_flag;		/* Turn on verbosity (default=off). */
