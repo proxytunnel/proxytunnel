@@ -71,19 +71,24 @@ a $HOME/.ssh/config file with the following content:
 ```
 Host foobar
 	ProtocolKeepAlives 30
-	ProxyCommand /path/to/proxytunnel -p proxy:8080 -P username
--d mybox.athome.nl:443
+	ProxyCommand /path/to/proxytunnel -E -p proxy:8080 -P username -d mybox.athome.nl:443
 ```
 
 With:
 
 ```
 - foobar		The symbolic name of the host you want to connect to
+- -E			Option to use encryption to communicate to the proxy (use https)
 - proxy			The host name of the proxy you want to connect through
 - 8080			The port number where the proxy software listens to
 - username		Your proxy userid (password will be prompted)
 - mybox.athome.nl	The hostname of the box you want to connect to (ultimately)
 - 443			The port number of the SSH daemon on mybox.athome.nl
+```
+
+Optional arguments:
+```
+- -z			Don't verify server SSL certificate (for example in case of self-signed certificate)
 ```
 
 If your proxy doesn't require the username and password for using it,
