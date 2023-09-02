@@ -73,6 +73,8 @@ void cmdline_parser_print_help (void) {
 " -z, --no-check-certificate Don't verify server SSL certificate\n"
 " -C, --cacert=STRING        Path to trusted CA certificate or directory\n"
 #endif
+" -4, --ipv4                 Enforce IPv4 connection to local proxy\n"
+" -6, --ipv6                 Enforce IPv6 connection to local proxy\n"
 " -F, --passfile=STRING      File with credentials for proxy authentication\n"
 " -P, --proxyauth=STRING     Proxy auth credentials user:pass combination\n"
 " -R, --remproxyauth=STRING  Remote proxy auth credentials user:pass combination\n"
@@ -179,6 +181,8 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	args_info->host_arg = NULL; \
 	args_info->no_check_cert_flag = 0; \
 	args_info->cacert_arg = NULL; \
+	args_info->enforceipv4_flag = 0; \
+	args_info->enforceipv6_flag = 0; \
 }
 
 	clear_args();
@@ -227,12 +231,14 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 			{ "no-ssl3",		0, NULL, 'T' },
 			{ "no-check-certificate",0,NULL,'z' },
 			{ "cacert",         1, NULL, 'C' },
+			{ "ipv4",           0, NULL, '4' },
+			{ "ipv6",           0, NULL, '6' },
 			{ NULL,				0, NULL, 0 }
 		};
 
-		c = getopt_long (argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:nvNeEXWBqLo:TzC:", long_options, &option_index);
+		c = getopt_long (argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:nvNeEXWBqLo:TzC:46", long_options, &option_index);
 #else
-		c = getopt( argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:nvNeEXWBqLo:TzC:" );
+		c = getopt( argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:nvNeEXWBqLo:TzC:46" );
 #endif
 
 		if (c == -1)
@@ -476,6 +482,28 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 				}
 				args_info->cacert_given = 1;
 				args_info->cacert_arg = gengetopt_strdup (optarg);
+				break;
+
+			case '4':   /* Enforce IPv4 */
+				if ( args_info->enforceipv6_flag ) {
+					fprintf( stderr, "%s: `--ipv4' (`-4') conflicts with `--ipv6' (`-6')\n", PACKAGE );
+					clear_args();
+					exit(1);
+				}
+				args_info->enforceipv4_flag = 1;
+				if( args_info->verbose_flag )
+					message("IPv4 enforced\n");
+				break;
+
+			case '6':   /* Enforce IPv6 */
+				if ( args_info->enforceipv4_flag ) {
+					fprintf( stderr, "%s: `--ipv6' (`-6') conflicts with `--ipv4' (`-4')\n", PACKAGE );
+					clear_args();
+					exit(1);
+				}
+				args_info->enforceipv6_flag = 1;
+				if( args_info->verbose_flag )
+					message("IPv6 enforced\n");
 				break;
 
 			case 0:	/* Long option with no short option */
