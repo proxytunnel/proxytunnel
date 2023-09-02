@@ -1,3 +1,7 @@
+Changes to proxytunnel 1.11-- Sun Sep  3 12:04:27 AM CEST 2023
+
+- Patch from https://github.com/68420948 to add -4 and -6 options
+
 Changes to proxytunnel 1.10.20220528 -- Sat 28 May 2022 03:54:20 PM CEST
 
 - Patch from https://github.com/ZjYwMj fixes https://github.com/proxytunnel/proxytunnel/issues/57
