@@ -72,6 +72,12 @@ also be used for other proxy-traversing purposes like proxy bouncing.
     it must be prepared with OpenSSL's c_rehash tool. (default, unless changed at
     compile time using DEFAULT_CA_FILE or DEFAULT_CA_DIR options: /etc/ssl/certs)
 
+*-4*, *--ipv4*::
+    Enforce the use of IPv4 when connecting to the local proxy.
+
+*-6*, *--ipv6*::
+    Enforce the use of IPv6 when connecting to the local proxy.
+
 *-F*, *--passfile*=_filename_::
     Use _filename_ for reading username and password for HTTPS proxy
     authentication, the file uses the same format as .wgetrc and can be shared

@@ -53,6 +53,8 @@ struct gengetopt_args_info {
 	int enforcetls1_flag;    /* Override default and enforce TLSv1 */
 	char *host_arg;         /* Optional Host Header */
 	int no_check_cert_flag;	/* Turn off server SSL certificate verification (default=on) */
+	int enforceipv4_flag;   /* Enforce IPv4 (default=off). */
+	int enforceipv6_flag;   /* Enforce IPv6 (default=off). */
 	char *cacert_arg; 		/* Trusted CA certificate (or directory) for server SSL certificate verification */
 	int help_given;			/* Whether help was given. */
 	int version_given;		/* Whether version was given. */

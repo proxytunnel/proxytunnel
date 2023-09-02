@@ -77,6 +77,10 @@ int tunnel_connect() {
 	char service[6];
 	int sd;
 
+	if ( args_info.enforceipv4_flag )
+		hints.ai_family = AF_INET;
+	else if ( args_info.enforceipv6_flag )
+		hints.ai_family = AF_INET6;
 	rc = snprintf( service, sizeof(service), "%d", args_info.proxyport_arg );
 	if( ( rc < 0 ) || ( rc >= sizeof(service) ) ) {
 		/* this should never happen */
