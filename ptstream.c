@@ -341,11 +341,10 @@ int stream_enable_ssl(PTSTREAM *pts, const char *proxy_arg) {
 		message( "Set SNI hostname to %s\n", peer_host);
 	}
 	res = SSL_set_tlsext_host_name(ssl, peer_host);
-	if (res != SSL_TLSEXT_ERR_OK) {
-		unsigned long ssl_err = (res == SSL_TLSEXT_ERR_ALERT_WARNING ? SSL_TLSEXT_ERR_ALERT_WARNING : ERR_get_error());
-		message( "SSL_set_tlsext_host_name returned: %lu (0x%lx). "
-		         "TLS SNI error, giving up\n", ssl_err, ssl_err );
-		exit( 1 );
+	if ( res != 1 ) {
+		message( "SSL_set_tlsext_host_name() failed for host name '%s'. "
+		         "TLS SNI error, giving up\n", peer_host);
+		goto fail;
 	}
 	
 	if ( SSL_connect (ssl) <= 0) {
