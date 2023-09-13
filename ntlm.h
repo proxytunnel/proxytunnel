@@ -18,6 +18,9 @@
  */
 
 /* ntlm.h */
+
+#include <stdint.h>
+
 void build_type1();
 int parse_type2(unsigned char *buf);
 void build_type3_response();
@@ -55,53 +58,53 @@ extern char ntlm_type3_buf[4096];
 
 
 typedef struct {
-	unsigned short	length;
-	unsigned short	space;
-	unsigned long	offset;
+	uint16_t	length;
+	uint16_t	space;
+	uint32_t	offset;
 } security_buf_t;
 
 typedef struct {
-	unsigned char	signature[8];
-	unsigned long	message_type;
-	unsigned long	flags;
+	uint8_t	signature[8];
+	uint32_t	message_type;
+	uint32_t	flags;
 	security_buf_t	domain;
 	security_buf_t	workstation;
 } ntlm_type1;
 
 typedef struct {
-	unsigned char	signature[8];
-	unsigned long	message_type;
+	uint8_t	signature[8];
+	uint32_t	message_type;
 	security_buf_t	target_name;
-	unsigned long	flags;
-	unsigned char	challenge[8];
-	unsigned long	context1;
-	unsigned long	context2;
+	uint32_t	flags;
+	uint8_t	challenge[8];
+	uint32_t	context1;
+	uint32_t	context2;
 	security_buf_t	target_info;
-	unsigned char	data_start;
+	uint8_t	data_start;
 } ntlm_type2;
 
 typedef struct {
-	unsigned char	signature[8];
-	unsigned long	message_type;
+	uint8_t	signature[8];
+	uint32_t	message_type;
 	security_buf_t	LM_response;
 	security_buf_t	NTLM_response;
 	security_buf_t	domain;
 	security_buf_t	user;
 	security_buf_t	workstation;
-	unsigned char	session[8];
-	unsigned long	flags;
-	unsigned char	pad[8];
+	uint8_t	session[8];
+	uint32_t	flags;
+	uint8_t	pad[8];
 
 } ntlm_type3;
 
 typedef struct {
-	unsigned char	digest[16];
-	unsigned long	signature;
-	unsigned long	reserved;
-	unsigned long long	timestamp;
-	unsigned char	client_challenge[8];
-	unsigned long	unknown;
-	unsigned long	data_start;
+	uint8_t	digest[16];
+	uint32_t	signature;
+	uint32_t	reserved;
+	uint64_t	timestamp;
+	uint8_t	client_challenge[8];
+	uint32_t	unknown;
+	uint32_t	data_start;
 } blob;
 
 // vim:noexpandtab:ts=4

@@ -54,7 +54,7 @@ int bloblen;
 unsigned char *t_info;
 int t_info_len;
 
-unsigned long flags;
+uint32_t flags;
 
 unsigned char lm2digest[LM2_DIGEST_LEN];
 
