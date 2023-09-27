@@ -18,6 +18,8 @@
  */
 
 #define VERSION "1.11"
+#define VERSION_YEAR "2023"
+#define VERSION_DATE "2023-09-03"
 #define PACKAGE "proxytunnel"
 #define PURPOSE "Build generic tunnels through HTTPS proxies"
 #define AUTHORS "Jos Visser (Muppet) <josv@osp.nl>, Mark Janssen (Maniac) <maniac@maniac.nl>"
