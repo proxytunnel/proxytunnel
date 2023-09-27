@@ -24,14 +24,14 @@ also be used for other proxy-traversing purposes like proxy bouncing.
 *-a*, *--standalone*=_port_::
     Run as standalone daemon on specified _port_
 
-*-p*, *--proxy*=_host_:_port_::
+*-p*, *--proxy*=_host_++:++_port_::
     Use _host_ and _port_ as the local proxy to connect to, if not specified
     the *HTTP_PROXY* environment variable, if set, will be used instead
 
-*-r*, *--remproxy*=_host_:_port_::
+*-r*, *--remproxy*=_host_++:++_port_::
     Use _host_ and _port_ as the remote (secondary) proxy to connect to
 
-*-d*, *--dest*=_host_:_port_::
+*-d*, *--dest*=_host_++:++_port_::
     Use _host_ and _port_ as the destination for the tunnel, you can also
     specify them as the argument to the proxytunnel command
 
@@ -82,7 +82,7 @@ also be used for other proxy-traversing purposes like proxy bouncing.
     with wget. Use this option, or environment variables to hide the password
     from other users
 
-*-P*, *--proxyauth*=_username_:_password_::
+*-P*, *--proxyauth*=_username_++:++_password_::
     Use _username_ and _password_ as credentials to authenticate against a
     local HTTPS proxy, the username and password can also be specified in
     the *PROXYUSER* and *PROXYPASS* environment variables to hide them from
@@ -90,7 +90,7 @@ also be used for other proxy-traversing purposes like proxy bouncing.
     If the _password_ is omitted and no *PROXYPASS* environment variable is
     set, proxytunnel will prompt for a password
 
-*-R*, *--remproxyauth*=_username_:_password_::
+*-R*, *--remproxyauth*=_username_++:++_password_::
     Use _username_ and _password_ as credentials to authenticate against a
     remote (secondary) HTTPS proxy, the username and password can also be
     specified in the *REMPROXYUSER* and *REMPROXYPASS* environment variables
@@ -127,7 +127,7 @@ also be used for other proxy-traversing purposes like proxy bouncing.
 
 
 == ARGUMENTS
-_host_:_port_ is the destination hostname and port number combination
+_host_++:++_port_ is the destination hostname and port number combination
 
 NOTE: Specifying the destination as arguments is exactly the same as
 specifying them using the *-d* or *--dest* option.
