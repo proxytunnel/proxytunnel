@@ -44,16 +44,19 @@ also be used for other proxy-traversing purposes like proxy bouncing.
 *-X*, *--encrypt-remproxy*::
     SSL encrypt data between local and remote (secondary) proxy
 
+== ADDITIONAL OPTIONS
+
 *-W*, *--wa-bug-29744*::
-    If SSL is in use (by *-e*, *-E*, *-X* options), stop using it
-    immediately after the CONNECT exchange to workaround apache server
-    bugs.  (This might not work on all setups; see
+    Workaround ASF Bugzilla 29744: If SSL is in use (by *-e*, *-E*, *-X*
+    options), stop using it immediately after the CONNECT exchange to
+    workaround apache server bugs. (This might not work on all setups; see
     /usr/share/doc/proxytunnel/README.Debian.gz for more details.)
 
 *-B*, *--buggy-encrypt-proxy*::
     Equivalent to *-E -W*.  (Provided for backwards compatibility.)
 
-== ADDITIONAL OPTIONS
+*-L*::
+    Enforce TLSv1 connection (legacy)
 
 *-T*, *--no-ssl3*::
     Prevent the use of SSLv3 in encrypted connections (default: enabled)
@@ -99,13 +102,16 @@ also be used for other proxy-traversing purposes like proxy bouncing.
     set, proxytunnel will prompt for a password
 
 *-N*, *--ntlm*::
-    Use NTLM basd authentication
+    Use NTLM based authentication
 
 *-t*, *--domain*=_STRING_::
     Specify NTLM domain (default: autodetect)
 
 *-H*, *--header*=_STRING_::
     Add additional HTTP headers to send to proxy
+
+*-o* _STRING_::
+    Send a customer Host Header
 
 *-x*, *--proctitle*=_STRING_::
     Use a different process title
@@ -170,7 +176,7 @@ Host system.athome.nl
 
 NOTE: The +ServerAliveInterval+ directive makes sure that idle connections are
 not being dropped by intermediate firewalls that remove active sessions
-aggresively. If you see your connection dropping out, try to lower the value
+aggressively. If you see your connection dropping out, try to lower the value
 even more.
 
 To use the dynamic (SOCKS) portforwarding capability of the SSH client, you

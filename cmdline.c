@@ -51,7 +51,7 @@ void cmdline_parser_print_help (void) {
 // FIXME: "   -c, --config=FILE        Read config options from file\n"
 " -i, --inetd                Run from inetd (default: off)\n"
 " -a, --standalone=INT       Run as standalone daemon on specified port\n"
-// FIXME: " -f, --nobackground         Don't for tok background in standalone mode\n"
+// FIXME: " -f, --nobackground         Don't fork to background in standalone mode\n"
 " -p, --proxy=STRING         Local proxy host:port combination\n"
 " -r, --remproxy=STRING      Remote proxy host:port combination (using 2 proxies)\n"
 " -d, --dest=STRING          Destination host:port combination\n"
@@ -59,17 +59,17 @@ void cmdline_parser_print_help (void) {
 " -e, --encrypt              SSL encrypt data between local proxy and destination\n"
 " -E, --encrypt-proxy        SSL encrypt data between client and local proxy\n"
 " -X, --encrypt-remproxy     SSL encrypt data between local and remote proxy\n"
+#endif
+"\n"
+"Additional options for specific features:\n"
+#ifdef USE_SSL
 " -W, --wa-bug-29744         Workaround ASF Bugzilla 29744: if SSL is active stop\n"
 "                            using it after CONNECT (might not work on all setups; see\n"
 "                            /usr/share/doc/proxytunnel/README.Debian.gz)\n"
 " -B, --buggy-encrypt-proxy  Equivalent to -E -W, provided for backwards\n"
 "                            compatibility\n"
-" -L                         (legacy) enforce TLSv1 connection\n"
+" -L                         Enforce TLSv1 connection (legacy)\n"
 " -T, --no-ssl3              Do not connect using SSLv3\n"
-#endif
-"\n"
-"Additional options for specific features:\n"
-#ifdef USE_SSL
 " -z, --no-check-certificate Don't verify server SSL certificate\n"
 " -C, --cacert=STRING        Path to trusted CA certificate or directory\n"
 #endif
@@ -85,7 +85,7 @@ void cmdline_parser_print_help (void) {
 " -N, --ntlm                 Use NTLM based authentication\n"
 " -t, --domain=STRING        NTLM domain (default: autodetect)\n"
 " -H, --header=STRING        Add additional HTTP headers to send to proxy\n"
-" -o STRING                  send custom Host Header\n"
+" -o STRING                  Send custom Host Header\n"
 #ifdef SETPROCTITLE
 " -x, --proctitle=STRING     Use a different process title\n"
 #endif
@@ -312,7 +312,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 
 			case 'L':
 				args_info->enforcetls1_given = 1;
-				message("Enforcing TLSv1");
+				message("Enforcing TLSv1\n");
 				args_info->enforcetls1_flag = 1;
 				break;
 
