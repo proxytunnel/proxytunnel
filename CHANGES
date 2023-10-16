@@ -1,10 +1,23 @@
-Changes to proxytunnel 1.11-- Sun Sep  3 12:04:27 AM CEST 2023
+Changes to proxytunnel 1.11.1 -- Mon Oct 16 20:01:04 CEST 2023
+
+- Remediate the faulty patch for issue #57, thanks to https://github.com/e9hack
+  and https://github.com/yurivict for raising issues #59 and #69
+- Fix NTLM based authentication on 64bit machines, thanks to
+  https://github.com/e9hack for raising issue #60
+- Harmonize output of option --help and content of the manual page
+- Correct formatting errors and typos in the manual page
+- Make config.c central for setting version related information in the manual
+  page and the application
+- Return to version number format major.minor.patch 
+
+Changes to proxytunnel 1.11 -- Sun Sep  3 12:04:27 AM CEST 2023
 
 - Patch from https://github.com/68420948 to add -4 and -6 options
 
 Changes to proxytunnel 1.10.20220528 -- Sat 28 May 2022 03:54:20 PM CEST
 
-- Patch from https://github.com/ZjYwMj fixes https://github.com/proxytunnel/proxytunnel/issues/57
+- Patch from https://github.com/ZjYwMj fixes
+  https://github.com/proxytunnel/proxytunnel/issues/57
 
 Changes to proxytunnel 1.10.20210609 -- Wed Jun  9 11:55:54 CEST 2021
 
