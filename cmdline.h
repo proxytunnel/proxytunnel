@@ -23,6 +23,8 @@
 #ifndef _cmdline_h
 #define _cmdline_h
 
+#include <netinet/in.h>
+
 #define MAX_HEADER_SIZE 1024
 
 struct gengetopt_args_info {
@@ -44,6 +46,7 @@ struct gengetopt_args_info {
 	int inetd_flag;			/* Turn on inetd (default=off). */
 	int quiet_flag;			/* Turn on quiet mode (default=off). */
 	int standalone_arg;		/* Turn on stdalone (-a) on port */
+	struct in_addr hostip_arg; /* Host IP to listen on (-I) */
 	int encrypt_flag;		/* Turn on SSL encryption (default=off). */
 	int encryptproxy_flag;	/* Turn on client to proxy SSL encryption (def=off).*/
 	int encryptremproxy_flag;  /* Turn on local to remote proxy SSL encryption (def=off).*/

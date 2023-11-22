@@ -27,7 +27,6 @@
 #include <netinet/tcp.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
-#include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <signal.h>
@@ -187,7 +186,7 @@ void do_daemon()
 
 	memset( &sa_serv, '\0', sizeof( sa_serv ) );
 	sa_serv.sin_family = AF_INET;
-	sa_serv.sin_addr.s_addr = htonl(INADDR_ANY);
+	sa_serv.sin_addr.s_addr = args_info.hostip_arg.s_addr;
 	sa_serv.sin_port = htons( args_info.standalone_arg );
 
 	if ( bind( listen_sd, (struct sockaddr * )&sa_serv, sizeof( struct sockaddr ) ) < 0) {

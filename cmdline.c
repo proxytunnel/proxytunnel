@@ -23,7 +23,10 @@
 #include <ctype.h>
 #include <errno.h>
 #include <sys/types.h>
+#include <sys/socket.h>
 #include <sys/stat.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 #include <unistd.h>
 #include "config.h"
 #include "proxytunnel.h"
@@ -50,6 +53,7 @@ void cmdline_parser_print_help (void) {
 "Standard options:\n"
 // FIXME: "   -c, --config=FILE        Read config options from file\n"
 " -i, --inetd                Run from inetd (default: off)\n"
+" -I, --hostip=IP            Run as standalone daemon on the specified IP address (default: 0.0.0.0)\n"
 " -a, --standalone=INT       Run as standalone daemon on specified port\n"
 // FIXME: " -f, --nobackground         Don't fork to background in standalone mode\n"
 " -p, --proxy=STRING         Local proxy host:port combination\n"
@@ -171,6 +175,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	args_info->inetd_flag = 0; \
 	args_info->quiet_flag = 0; \
 	args_info->standalone_arg = 0; \
+	args_info->hostip_arg.s_addr = INADDR_ANY; \
 	args_info->encrypt_flag = 0; \
 	args_info->encryptproxy_flag = 0; \
 	args_info->encryptremproxy_flag = 0; \
@@ -222,6 +227,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 			{ "ntlm",			0, NULL, 'N' },
 			{ "inetd",			0, NULL, 'i' },
 			{ "standalone", 	1, NULL, 'a' },
+			{ "hostip",		 	1, NULL, 'I' },
 			{ "quiet",			0, NULL, 'q' },
 			{ "encrypt",		0, NULL, 'e' },
 			{ "encrypt-proxy",	0, NULL, 'E' },
@@ -236,9 +242,9 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 			{ NULL,				0, NULL, 0 }
 		};
 
-		c = getopt_long (argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:nvNeEXWBqLo:TzC:46", long_options, &option_index);
+		c = getopt_long (argc, argv, "hViI:a:u:s:t:F:p:P:r:R:d:H:x:nvNeEXWBqLo:TzC:46", long_options, &option_index);
 #else
-		c = getopt( argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:nvNeEXWBqLo:TzC:46" );
+		c = getopt( argc, argv, "hViI:a:u:s:t:F:p:P:r:R:d:H:x:nvNeEXWBqLo:TzC:46" );
 #endif
 
 		if (c == -1)
@@ -294,6 +300,19 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 				}
 				if ( ( args_info->standalone_arg = atoi( optarg ) ) < 1 ) {
 					fprintf( stderr, "%s: Illegal port value for `--standalone' (`-a')\n", PACKAGE);
+					clear_args();
+					exit(1);
+				}
+				break;
+
+			case 'I':       /* Run as standalone daemon, provide IP address */
+				if ( args_info->inetd_flag ) {
+					fprintf( stderr, "%s: `--hostip' (`-I') conflicts with `--inetd' (`-i')\n", PACKAGE );
+					clear_args();
+					exit(1);
+				}
+				if ( inet_pton(AF_INET, optarg, &args_info->hostip_arg) <= 0 ) {
+					fprintf( stderr, "%s: Illegal IP address value for `--hostip' (`-I')\n", PACKAGE);
 					clear_args();
 					exit(1);
 				}
