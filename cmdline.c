@@ -216,7 +216,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 			{ "remproxyauth",	1, NULL, 'R' },
 			{ "proctitle",		1, NULL, 'x' },
 			{ "host",           1, NULL, 'o' },
-			{ "tlsenforce",     1, NULL, 'L' },
+			{ "tlsenforce",     0, NULL, 'L' },
 			{ "header",			1, NULL, 'H' },
 			{ "verbose",		0, NULL, 'v' },
 			{ "ntlm",			0, NULL, 'N' },
