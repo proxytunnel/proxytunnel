@@ -326,11 +326,15 @@ int stream_enable_ssl(PTSTREAM *pts, const char *proxy_arg) {
 	SSL_set_wfd (ssl, stream_get_outgoing_fd(pts));	
 
 	/* Determine the host name we are connecting to */
-	proxy_arg_len = strlen(proxy_arg);
-	peer_host = alloca(proxy_arg_len + 1);
-	snprintf( proxy_arg_fmt, sizeof(proxy_arg_fmt), proxy_arg[0] == '[' ? "[%%%zu[^]]]" : "%%%zu[^:]", proxy_arg_len - 1 );
-	if ( sscanf( proxy_arg, proxy_arg_fmt, peer_host ) != 1 ) {
-		goto fail;
+	if (args_info.host_given )
+		peer_host = args_info.host_arg;
+	else {
+		proxy_arg_len = strlen(proxy_arg);
+		peer_host = alloca(proxy_arg_len + 1);
+		snprintf( proxy_arg_fmt, sizeof(proxy_arg_fmt), proxy_arg[0] == '[' ? "[%%%zu[^]]]" : "%%%zu[^:]", proxy_arg_len - 1 );
+		if ( sscanf( proxy_arg, proxy_arg_fmt, peer_host ) != 1 ) {
+			goto fail;
+		}
 	}
 
 	/* SNI support */
