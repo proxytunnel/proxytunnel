@@ -327,10 +327,7 @@ int stream_enable_ssl(PTSTREAM *pts, const char *proxy_arg) {
 
 	/* Determine the host name we are connecting to */
 	proxy_arg_len = strlen(proxy_arg);
-	if ((peer_host = malloc(proxy_arg_len + 1)) == NULL) {
-		message("Out of memory\n");
-		goto fail;
-	}
+	peer_host = alloca(proxy_arg_len + 1);
 	snprintf( proxy_arg_fmt, sizeof(proxy_arg_fmt), proxy_arg[0] == '[' ? "[%%%zu[^]]]" : "%%%zu[^:]", proxy_arg_len - 1 );
 	if ( sscanf( proxy_arg, proxy_arg_fmt, peer_host ) != 1 ) {
 		goto fail;
@@ -373,7 +370,6 @@ int stream_enable_ssl(PTSTREAM *pts, const char *proxy_arg) {
 			goto fail;
 		}
 
-		free(peer_host);
 		X509_free(cert);
 	}
 
@@ -390,9 +386,6 @@ fail:
 #ifdef USE_SSL
 	if (cert != NULL) {
 		X509_free(cert);
-	}
-	if (peer_host != NULL) {
-		free(peer_host);
 	}
 #endif /* USE_SSL */
 	exit(1);
