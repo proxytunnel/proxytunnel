@@ -35,7 +35,7 @@ char *basicauth(char *user, char *pass) {
 	char *b64str = malloc(160);
 
 	int len = strlen( user ) + strlen( pass ) + 2;
-	char *p = (char *) malloc( len );
+	char *p = (char *) alloca( len );
 
 	/* Set up the cookie in clear text */
 	sprintf( p, "%s:%s", user, pass );
@@ -49,8 +49,6 @@ char *basicauth(char *user, char *pass) {
 //	if( args_info.verbose_flag ) {
 //		message( "Proxy basic auth of %s is %s\n", p, basicauth );
 //	}
-
-	free( p );
 
 	return b64str;
 }

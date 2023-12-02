@@ -62,11 +62,7 @@ void build_type1() {
 	ntlm_type1 *type1;
 	int len = sizeof(ntlm_type1) + sizeof(unsigned char) * TYPE1_DATA_SEG;
 
-	type1 = (ntlm_type1 *)malloc(len);
-	if (!type1) {
-		message("Fatal Error in build type1, Malloc failed\n");
-		exit(-1);
-	}
+	type1 = (ntlm_type1 *)alloca(len);
 
 	memset(type1, 0, len);
 	type1->signature[0] = 'N';
@@ -83,7 +79,6 @@ void build_type1() {
 
 	base64((unsigned char *)ntlm_type1_buf, (unsigned char *)type1, len);
 
-	free(type1);
 	return;
 }
 
@@ -181,11 +176,7 @@ void build_type3_response() {
 
 	len = sizeof(ntlm_type3) + sizeof(unsigned char) * (LM2_DIGEST_LEN + bloblen + (strlen(domain) + strlen(args_info.user_arg) + strlen(workstation)) * sp);
 
-	type3 = (ntlm_type3 *)malloc(len);
-	if (!type3) {
-		message("Fatal Error in build type3, Malloc failed\n");
-		exit(-1);
-	}
+	type3 = (ntlm_type3 *)alloca(len);
 	t3 = (unsigned char *) type3;
 
 	memset(type3, 0, len);
@@ -231,7 +222,6 @@ void build_type3_response() {
 
 	base64((unsigned char *)ntlm_type3_buf, (unsigned char *)type3, len);
 
-	free(type3);
 	return;
 }
 
@@ -339,12 +329,8 @@ void build_ntlm2_response() {
 	}
 
 	userdomlen = sizeof(unsigned char) * (strlen(args_info.user_arg) + strlen(domain)) * 2;
-	userdom = (unsigned char *)malloc(userdomlen);
+	userdom = (unsigned char *)alloca(userdomlen);
 	memset(userdom, 0, userdomlen);
-	if (!userdom) {
-		message("Fatal Error in build_ntlm2_response, Malloc failed\n");
-		exit(-1);
-	}
 
 	userdomlen = 0;
 	for (i = 0; i < strlen(args_info.user_arg); i++) {
@@ -377,8 +363,6 @@ void build_ntlm2_response() {
 	}
 
 	hmac_md5(userdom, userdomlen, passdigest, 16, userdomdigest);
-
-	free(userdom);
 
 	if( args_info.verbose_flag ) {
 		message("HMAC_MD5 of userdom keyed with MD4 pass is: ");
