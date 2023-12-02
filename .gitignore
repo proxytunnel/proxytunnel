@@ -4,3 +4,5 @@ proxytunnel.exe
 proxytunnel
 passfile
 test.sh
+docs/*.html
+docs/*.1
