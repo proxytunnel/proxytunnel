@@ -55,7 +55,7 @@ also be used for other proxy-traversing purposes like proxy bouncing.
 *-B*, *--buggy-encrypt-proxy*::
     Equivalent to *-E -W*.  (Provided for backwards compatibility.)
 
-*-L*::
+*-L*, *--tlsenforce*::
     Enforce TLSv1 connection (legacy)
 
 *-T*, *--no-ssl3*::
@@ -110,7 +110,7 @@ also be used for other proxy-traversing purposes like proxy bouncing.
 *-H*, *--header*=_STRING_::
     Add additional HTTP headers to send to proxy
 
-*-o* _STRING_::
+*-o*, *--host*=_STRING_::
     Send a customer Host Header
 
 *-x*, *--proctitle*=_STRING_::

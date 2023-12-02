@@ -68,7 +68,7 @@ void cmdline_parser_print_help (void) {
 "                            /usr/share/doc/proxytunnel/README.Debian.gz)\n"
 " -B, --buggy-encrypt-proxy  Equivalent to -E -W, provided for backwards\n"
 "                            compatibility\n"
-" -L                         Enforce TLSv1 connection (legacy)\n"
+" -L, --tlsenforce           Enforce TLSv1 connection (legacy)\n"
 " -T, --no-ssl3              Do not connect using SSLv3\n"
 " -z, --no-check-certificate Don't verify server SSL certificate\n"
 " -C, --cacert=STRING        Path to trusted CA certificate or directory\n"
@@ -85,7 +85,7 @@ void cmdline_parser_print_help (void) {
 " -N, --ntlm                 Use NTLM based authentication\n"
 " -t, --domain=STRING        NTLM domain (default: autodetect)\n"
 " -H, --header=STRING        Add additional HTTP headers to send to proxy\n"
-" -o STRING                  Send custom Host Header\n"
+" -o, --host=STRING          Send custom Host Header\n"
 #ifdef SETPROCTITLE
 " -x, --proctitle=STRING     Use a different process title\n"
 #endif
