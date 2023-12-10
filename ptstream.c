@@ -274,9 +274,10 @@ int stream_enable_ssl(PTSTREAM *pts, const char *proxy_arg) {
 	const char *ca_dir = DEFAULT_CA_DIR;  /* Default cert directory from Makefile */
 #endif /* !DEFAULT_CA_DIR */
 	long vresult;
+	const char *peer_arg = NULL;
+	size_t peer_arg_len;
+	char peer_arg_fmt[32];
 	char *peer_host = NULL;
-	char proxy_arg_fmt[32];
-	size_t proxy_arg_len;
 
 	/* Initialise the connection */
 	SSLeay_add_ssl_algorithms();
@@ -326,15 +327,12 @@ int stream_enable_ssl(PTSTREAM *pts, const char *proxy_arg) {
 	SSL_set_wfd (ssl, stream_get_outgoing_fd(pts));	
 
 	/* Determine the host name we are connecting to */
-	if (args_info.host_given )
-		peer_host = args_info.host_arg;
-	else {
-		proxy_arg_len = strlen(proxy_arg);
-		peer_host = alloca(proxy_arg_len + 1);
-		snprintf( proxy_arg_fmt, sizeof(proxy_arg_fmt), proxy_arg[0] == '[' ? "[%%%zu[^]]]" : "%%%zu[^:]", proxy_arg_len - 1 );
-		if ( sscanf( proxy_arg, proxy_arg_fmt, peer_host ) != 1 ) {
-			goto fail;
-		}
+	peer_arg = args_info.host_given ? args_info.host_arg : proxy_arg;
+	peer_arg_len = strlen(peer_arg);
+	peer_host = alloca(peer_arg_len + 1);
+	snprintf( peer_arg_fmt, sizeof(peer_arg_fmt), peer_arg[0] == '[' ? "[%%%zu[^]]]" : "%%%zu[^:]", peer_arg_len);
+	if ( sscanf( peer_arg, peer_arg_fmt, peer_host ) != 1 ) {
+		goto fail;
 	}
 
 	/* SNI support */
