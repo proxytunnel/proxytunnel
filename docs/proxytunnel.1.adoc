@@ -101,6 +101,24 @@ also be used for other proxy-traversing purposes like proxy bouncing.
     If the _password_ is omitted and no *REMPROXYPASS* environment variable is
     set, proxytunnel will prompt for a password
 
+*-c*, *--cert*=_filename_::
+	Provide the name of the	file containing the client SSL certificate to
+	authenticate by client certificate against a local proxy, remote proxy or
+	the destination. The file must be in PEM format.
+	On top of this it may contain one or more intermediary certificates missing
+	at the servers's end, effectively forming a certificate chain.
+	Requires specification of *-k*, *--key* in addition.
+	Ignored if neither  *-e*, *--encrypt** nor  *-E*, *--encrypt-proxy* nor
+	*-X*, *--encrypt-remproxy* is given.
+
+*-k*, *--key*=_filename_::
+	Provide the name of the	file containing the client SSL key to authenticate
+	by client certificate against a local proxy, remote proxy or the
+	destination. The file must be in PEM format.
+	Requires specification of *-c*, *--cert* in addition.
+	Ignored if neither  *-e*, *--encrypt** nor  *-E*, *--encrypt-proxy* nor
+	*-X*, *--encrypt-remproxy* is given.
+
 *-N*, *--ntlm*::
     Use NTLM based authentication
 
@@ -110,8 +128,8 @@ also be used for other proxy-traversing purposes like proxy bouncing.
 *-H*, *--header*=_STRING_::
     Add additional HTTP headers to send to proxy
 
-*-o*, *--host*=_STRING_::
-    Send a custom Host Header
+*-o*, *--host*=_fully_qualified_domain_name_::
+    Send a custom Host Header. Also used as SNI with SSL connections.
 
 *-x*, *--proctitle*=_STRING_::
     Use a different process title

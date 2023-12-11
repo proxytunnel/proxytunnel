@@ -78,6 +78,10 @@ void cmdline_parser_print_help (void) {
 " -F, --passfile=STRING      File with credentials for proxy authentication\n"
 " -P, --proxyauth=STRING     Proxy auth credentials user:pass combination\n"
 " -R, --remproxyauth=STRING  Remote proxy auth credentials user:pass combination\n"
+#ifdef USE_SSL
+" -c, --cert=FILENAME        client SSL certificate (chain)\n"
+" -k, --key=FILENAME         client SSL key\n"
+#endif
 // " -u, --user=STRING       Username for proxy authentication\n"
 // " -s, --pass=STRING       Password for proxy authentication\n"
 // " -U, --uservar=STRING    Environment variable that holds username\n"
@@ -145,6 +149,8 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	args_info->encrypt_given = 0;
 	args_info->encryptproxy_given = 0;
 	args_info->encryptremproxy_given = 0;
+	args_info->clientcert_given = 0;
+	args_info->clientkey_given = 0;
 	args_info->wa_bug_29744_given = 0;
 	args_info->proctitle_given = 0;
 	args_info->enforcetls1_given = 0;
@@ -174,6 +180,8 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	args_info->encrypt_flag = 0; \
 	args_info->encryptproxy_flag = 0; \
 	args_info->encryptremproxy_flag = 0; \
+	args_info->clientcert_arg = NULL; \
+	args_info->clientkey_arg = NULL; \
 	args_info->wa_bug_29744_flag = 0; \
 	args_info->no_ssl3_flag = 0; \
 	args_info->proctitle_arg = NULL; \
@@ -226,6 +234,8 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 			{ "encrypt",		0, NULL, 'e' },
 			{ "encrypt-proxy",	0, NULL, 'E' },
 			{ "encrypt-remproxy",0,NULL, 'X' },
+			{ "cert",			1, NULL, 'c' },
+			{ "key",			1, NULL, 'k' },
 			{ "wa-bug-29744",	0, NULL, 'W' },
 			{ "buggy-encrypt-proxy",	0, NULL, 'B' },
 			{ "no-ssl3",		0, NULL, 'T' },
@@ -236,9 +246,9 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 			{ NULL,				0, NULL, 0 }
 		};
 
-		c = getopt_long (argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:nvNeEXWBqLo:TzC:46", long_options, &option_index);
+		c = getopt_long (argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:c:k:vNeEXWBqLo:TzC:46", long_options, &option_index);
 #else
-		c = getopt( argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:nvNeEXWBqLo:TzC:46" );
+		c = getopt( argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:c:k:vNeEXWBqLo:TzC:46" );
 #endif
 
 		if (c == -1)
@@ -261,6 +271,26 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 				args_info->encryptproxy_flag = !(args_info->encryptproxy_flag);
 				if( args_info->verbose_flag )
 					message("SSL client to proxy enabled\n");
+				break;
+
+			case 'c': /* client SSL certificate (chain) */
+				if (args_info->clientcert_given) {
+					fprintf (stderr, "%s: '--cert' ('-c') option given more than once\n", PACKAGE);
+					clear_args ();
+					exit(1);
+				}
+				args_info->clientcert_given = 1;
+				args_info->clientcert_arg = gengetopt_strdup (optarg);
+				break;
+
+			case 'k': /* client SSL key */
+				if (args_info->clientkey_given) {
+					fprintf (stderr, "%s: '--key' ('-k') option given more than once\n", PACKAGE);
+					clear_args ();
+					exit(1);
+				}
+				args_info->clientkey_given = 1;
+				args_info->clientkey_arg = gengetopt_strdup (optarg);
 				break;
 
 			case 'W':	/* if SSL is active stop it after CONNECT */
@@ -318,7 +348,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 
 			case 'o':
 				args_info->host_given = 1;
-				message("Host-header override enabled\n");
+				message("Host-header/SNI override enabled\n");
 				args_info->host_arg = gengetopt_strdup (optarg);
 				break;
 
@@ -582,6 +612,12 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 		clear_args ();
 //		cmdline_parser_print_help ();
 		message( "No proxy or destination given, exiting\nUse '--help' flag for usage info\n" );
+		exit(1);
+	}
+
+	if ( args_info->clientcert_given ^ args_info->clientkey_given ) {
+		clear_args ();
+		message( "Both of '--cert' ('-c') and '--key' ('-k') must be specified\n" );
 		exit(1);
 	}
 

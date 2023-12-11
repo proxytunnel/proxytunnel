@@ -317,6 +317,18 @@ int stream_enable_ssl(PTSTREAM *pts, const char *proxy_arg) {
 		}
 	}
 
+	/* If given, load client certificate (chain) and key */
+	if ( args_info.clientcert_given && args_info.clientkey_given ) {
+		if ( 1 != SSL_CTX_use_certificate_chain_file(ctx, args_info.clientcert_arg) ) {
+			message("Error loading client certificate (chain) from %s\n", args_info.clientcert_arg);
+			goto fail;
+		}
+		if ( 1 != SSL_CTX_use_PrivateKey_file(ctx, args_info.clientkey_arg, SSL_FILETYPE_PEM) ) {
+			message("Error loading client key from %s, or key does not match certificate\n", args_info.clientkey_arg);
+			goto fail;
+		}
+	}
+
 	ssl = SSL_new (ctx);
     if ( ssl == NULL ) {
         message("SSL_new failed\n");
