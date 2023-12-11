@@ -578,7 +578,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	if ( args_info->remuser_arg == NULL ) {
 		if ( (tmp = getenv("REMPROXYUSER")) != NULL ) {
 			args_info->remuser_given = 1;
-			args_info->user_arg = gengetopt_strdup (tmp);
+			args_info->remuser_arg = gengetopt_strdup (tmp);
 			if( args_info->verbose_flag )
 				message( "Found remote user '%s' in env variable REMPROXYPASS.\n", args_info->remuser_arg);
 		}
@@ -586,7 +586,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	if ( args_info->rempass_arg == NULL ) {
 		if ( (tmp = getenv("REMPROXYPASS")) != NULL ) {
 			args_info->rempass_given = 1;
-			args_info->user_arg = gengetopt_strdup (tmp);
+			args_info->rempass_arg = gengetopt_strdup (tmp);
 			if( args_info->verbose_flag )
 				message( "Found remote password in env variable REMPROXYPASS.\n" );
 		}
