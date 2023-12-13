@@ -19,6 +19,7 @@
 
 /* ptstream.h */
 
+#include <stddef.h>
 #ifdef USE_SSL
 #include <openssl/crypto.h>
 #include <openssl/x509.h>
