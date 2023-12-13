@@ -69,7 +69,7 @@ void cmdline_parser_print_help (void) {
 " -B, --buggy-encrypt-proxy  Equivalent to -E -W, provided for backwards\n"
 "                            compatibility\n"
 " -L, --tlsenforce           Enforce TLSv1 connection (legacy)\n"
-" -T, --no-ssl3              Do not connect using SSLv3\n"
+" -T, --no-ssl3              Do not connect using SSLv3 (legacy)\n"
 " -z, --no-check-certificate Don't verify server SSL certificate\n"
 " -C, --cacert=STRING        Path to trusted CA certificate or directory\n"
 #endif
@@ -89,7 +89,11 @@ void cmdline_parser_print_help (void) {
 " -N, --ntlm                 Use NTLM based authentication\n"
 " -t, --domain=STRING        NTLM domain (default: autodetect)\n"
 " -H, --header=STRING        Add additional HTTP headers to send to proxy\n"
+#ifdef USE_SSL
+" -o, --host=STRING          Send custom Host Header/SNI\n"
+#else
 " -o, --host=STRING          Send custom Host Header\n"
+#endif
 #ifdef SETPROCTITLE
 " -x, --proctitle=STRING     Use a different process title\n"
 #endif
