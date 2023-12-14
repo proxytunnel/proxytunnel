@@ -6,7 +6,7 @@ proxytunnel - program to tunnel a connection through a standard HTTPS proxy
 
 
 == SYNOPSIS
-*proxytunnel* _[OPTION]_...
+*proxytunnel* [_OPTION…_] [_host_++:++_port_]
 
 
 == DESCRIPTION
@@ -19,47 +19,47 @@ also be used for other proxy-traversing purposes like proxy bouncing.
 == OPTIONS
 
 *-i*, *--inetd*::
-    Run from inetd (default: off)
+    Run from inetd (default: off).
 
 *-a*, *--standalone*=_port_::
-    Run as standalone daemon on specified _port_
+    Run as standalone daemon on specified _port_.
 
 *-p*, *--proxy*=_host_++:++_port_::
     Use _host_ and _port_ as the local proxy to connect to, if not specified
-    the *HTTP_PROXY* environment variable, if set, will be used instead
+    the *HTTP_PROXY* environment variable, if set, will be used instead.
 
 *-r*, *--remproxy*=_host_++:++_port_::
-    Use _host_ and _port_ as the remote (secondary) proxy to connect to
+    Use _host_ and _port_ as the remote (secondary) proxy to connect to.
 
 *-d*, *--dest*=_host_++:++_port_::
     Use _host_ and _port_ as the destination for the tunnel, you can also
-    specify them as the argument to the proxytunnel command
+    specify them as the argument to the proxytunnel command.
 
 *-e*, *--encrypt*::
-    SSL encrypt data between local proxy and destination
+    SSL encrypt data between local proxy and destination.
 
 *-E*, *--encrypt-proxy*::
-    SSL encrypt data between client and local proxy
+    SSL encrypt data between client and local proxy.
 
 *-X*, *--encrypt-remproxy*::
-    SSL encrypt data between local and remote (secondary) proxy
+    SSL encrypt data between local and remote (secondary) proxy.
 
 == ADDITIONAL OPTIONS
 
 *-W*, *--wa-bug-29744*::
     Workaround ASF Bugzilla 29744: If SSL is in use (by *-e*, *-E*, *-X*
     options), stop using it immediately after the CONNECT exchange to
-    workaround apache server bugs. (This might not work on all setups; see
-    /usr/share/doc/proxytunnel/README.Debian.gz for more details.)
+    workaround apache server bugs (This might not work on all setups; see
+    /usr/share/doc/proxytunnel/README.Debian.gz for more details).
 
 *-B*, *--buggy-encrypt-proxy*::
-    Equivalent to *-E -W*.  (Provided for backwards compatibility.)
+    Equivalent to *-E -W* (Provided for backwards compatibility).
 
 *-L*, *--tlsenforce*::
-    Enforce TLSv1 connection (legacy)
+    Enforce TLSv1 connection (legacy).
 
 *-T*, *--no-ssl3*::
-    Prevent the use of SSLv3 in encrypted connections (default: enabled)
+    Prevent the use of SSLv3 in encrypted connections (default: enabled).
 
 *-z*, *--no-check-certificate*::
     Do not verify server SSL certificate when establishing an SSL connection.
@@ -70,8 +70,8 @@ also be used for other proxy-traversing purposes like proxy bouncing.
 *-C*, *--cacert*=_filename/directory_::
     Specify a CA certificate file (or directory containing CA certificate(s))
     to trust when verifying a server SSL certificate. If a directory is provided,
-    it must be prepared with OpenSSL's c_rehash tool. (default, unless changed at
-    compile time using DEFAULT_CA_FILE or DEFAULT_CA_DIR options: /etc/ssl/certs)
+    it must be prepared with OpenSSL's c_rehash tool (default, unless changed at
+    compile time using DEFAULT_CA_FILE or DEFAULT_CA_DIR options: /etc/ssl/certs).
 
 *-4*, *--ipv4*::
     Enforce the use of IPv4 when connecting to the local proxy.
@@ -83,7 +83,7 @@ also be used for other proxy-traversing purposes like proxy bouncing.
     Use _filename_ for reading username and password for HTTPS proxy
     authentication, the file uses the same format as .wgetrc and can be shared
     with wget. Use this option, or environment variables to hide the password
-    from other users
+    from other users.
 
 *-P*, *--proxyauth*=_username_++:++_password_::
     Use _username_ and _password_ as credentials to authenticate against a
@@ -91,7 +91,7 @@ also be used for other proxy-traversing purposes like proxy bouncing.
     the *PROXYUSER* and *PROXYPASS* environment variables to hide them from
     other users.
     If the _password_ is omitted and no *PROXYPASS* environment variable is
-    set, proxytunnel will prompt for a password
+    set, proxytunnel will prompt for a password.
 
 *-R*, *--remproxyauth*=_username_++:++_password_::
     Use _username_ and _password_ as credentials to authenticate against a
@@ -99,7 +99,7 @@ also be used for other proxy-traversing purposes like proxy bouncing.
     specified in the *REMPROXYUSER* and *REMPROXYPASS* environment variables
     to hide them from other users.
     If the _password_ is omitted and no *REMPROXYPASS* environment variable is
-    set, proxytunnel will prompt for a password
+    set, proxytunnel will prompt for a password.
 
 *-c*, *--cert*=_filename_::
 	Provide the name of the	file containing the client SSL certificate to
@@ -120,38 +120,38 @@ also be used for other proxy-traversing purposes like proxy bouncing.
 	*-X*, *--encrypt-remproxy* is given.
 
 *-N*, *--ntlm*::
-    Use NTLM based authentication
+    Use NTLM based authentication.
 
 *-t*, *--domain*=_STRING_::
-    Specify NTLM domain (default: autodetect)
+    Specify NTLM domain (default: autodetect).
 
 *-H*, *--header*=_STRING_::
-    Add additional HTTP headers to send to proxy
+    Add additional HTTP headers to send to proxy.
 
-*-o*, *--host*=_fully_qualified_domain_name_::
-    Send a custom Host Header. Also used as SNI with SSL connections.
+*-o*, *--host*=_host_++[:++_port_]::
+    Send a custom Host header. With SSL connections _host_ is also sent as SNI.
 
 *-x*, *--proctitle*=_STRING_::
-    Use a different process title
+    Use a different process title.
 
 
 == MISCELLANEOUS OPTIONS
 
 *-v*, *--verbose*::
-    Turn on verbosity
+    Turn on verbosity.
 
 *-q*, *--quiet*::
-    Suppress messages
+    Suppress messages.
 
 *-h*, *--help*::
-    Print help and exit
+    Print help and exit.
 
 *-V*, *--version*::
-    Print version and exit
+    Print version and exit.
 
 
 == ARGUMENTS
-_host_++:++_port_ is the destination hostname and port number combination
+_host_++:++_port_ is the destination hostname and port number combination.
 
 NOTE: Specifying the destination as arguments is exactly the same as
 specifying them using the *-d* or *--dest* option.
@@ -221,27 +221,27 @@ variables:
 
 *HTTP_PROXY*::
     If this environment variable is set, proxytunnel will use it as the
-    _local proxy_ if *-p* or *--proxy* is not provided
+    _local proxy_ if *-p* or *--proxy* is not provided.
 
 *PROXYUSER*::
     If this environment variable is set, proxytunnel will use it as the
     _username_ for proxy authentication, unless specified using the *-P* or
-    *--proxyauth* option
+    *--proxyauth* option.
 
 *PROXYPASS*::
     If this environment variable is set, proxytunnel will use it as the
     _password_ for proxy authentication, unless specified using the *-P* or
-    *--proxyauth* option
+    *--proxyauth* option.
 
 *REMPROXYUSER*::
     If this environment variable is set, proxytunnel will use it as the
     _username_ for remote (secondary) proxy authentication, unless specified
-    using the *-R* or *--remproxyauth* option
+    using the *-R* or *--remproxyauth* option.
 
 *REMPROXYPASS*::
     If this environment variable is set, proxytunnel will use it as the
     _password_ for remote (secondary) proxy authentication, unless specified
-    using the *-R* or *--remproxyauth* option
+    using the *-R* or *--remproxyauth* option.
 
 
 == SEE ALSO
