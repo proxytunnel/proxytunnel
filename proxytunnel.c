@@ -33,7 +33,6 @@
 #include <signal.h>
 #include <syslog.h>
 #include <stdarg.h>
-#include <stdlib.h>
 
 #include "proxytunnel.h"
 #include "io.h"
