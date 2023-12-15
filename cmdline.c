@@ -64,9 +64,9 @@ void cmdline_parser_print_help (void) {
 "\n"
 "Additional options for specific features:\n"
 #ifdef USE_SSL
-" -W, --wa-bug-29744         Workaround ASF Bugzilla 29744: if SSL is active stop\n"
-"                            using it after CONNECT (might not work on all setups; see\n"
-"                            /usr/share/doc/proxytunnel/README.Debian.gz)\n"
+" -W, --wa-bug-29744         Workaround ASF Bugzilla 29744: if SSL is active\n"
+"                            stop using it after CONNECT (might not work on all\n"
+"                            setups)\n"
 " -B, --buggy-encrypt-proxy  Equivalent to -E -W, provided for backwards\n"
 "                            compatibility\n"
 " -L, --tlsenforce           Enforce TLSv1 connection (legacy)\n"
