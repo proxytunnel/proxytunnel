@@ -187,7 +187,20 @@ void do_daemon()
 	memset( &sa_serv, '\0', sizeof( sa_serv ) );
 	sa_serv.sin6_family = AF_INET6;
 	sa_serv.sin6_addr = in6addr_any;
-	sa_serv.sin6_port = htons( args_info.standalone_arg );
+	sa_serv.sin6_port = htons( args_info.standalone_port );
+
+	/* In case a standalone address was specified ... */
+	if ( args_info.standalone_addr_given ) {
+		/* ... try to set it as an IPv6 address ... */
+		if ( inet_pton(AF_INET6, args_info.standalone_addr, &sa_serv.sin6_addr) < 1 ) {
+			/* ... if this failed, try to set it as an IPv4-mapped address */
+			snprintf(buf, sizeof(buf), "::FFFF:%s", args_info.standalone_addr);
+			if ( inet_pton(AF_INET6, buf, &sa_serv.sin6_addr) < 1 ) {
+				my_perror("Setting server socket IP address failed, possibly malformed");
+				exit(1);
+			}
+		}
+	}
 
 	if ( bind( listen_sd, (struct sockaddr *)&sa_serv, sizeof(sa_serv) ) < 0) {
 		my_perror("Server socket bind failed");

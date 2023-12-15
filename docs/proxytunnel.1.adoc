@@ -21,8 +21,10 @@ also be used for other proxy-traversing purposes like proxy bouncing.
 *-i*, *--inetd*::
     Run from inetd (default: off).
 
-*-a*, *--standalone*=_port_::
-    Run as standalone daemon on specified _port_.
+*-a*, *--standalone*=++[++_address_++:]++_port_::
+    Run as standalone daemon on specified _address_ and _port_. _address_ may
+	be a IPv4 address or a bracket-enclosed IPv6 address. Listens on any
+	address if _address_ is not given.
 
 *-p*, *--proxy*=_host_++:++_port_::
     Use _host_ and _port_ as the local proxy to connect to, if not specified

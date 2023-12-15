@@ -50,7 +50,8 @@ void cmdline_parser_print_help (void) {
 "Standard options:\n"
 // FIXME: "   -c, --config=FILE        Read config options from file\n"
 " -i, --inetd                Run from inetd (default: off)\n"
-" -a, --standalone=INT       Run as standalone daemon on specified port\n"
+" -a, --standalone=STRING    Run as standalone daemon on specified port or\n"
+"                            address:port combination\n"
 // FIXME: " -f, --nobackground         Don't fork to background in standalone mode\n"
 " -p, --proxy=STRING         Local proxy host:port combination\n"
 " -r, --remproxy=STRING      Remote proxy host:port combination (using 2 proxies)\n"
@@ -145,9 +146,10 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	args_info->remproxy_given = 0;
 	args_info->remproxyauth_given = 0;
 	args_info->verbose_given = 0;
+	args_info->quiet_given = 0;
 	args_info->ntlm_given = 0;
 	args_info->inetd_given = 0;
-	args_info->quiet_given = 0;
+	args_info->standalone_given = 0;
 	args_info->header_given = 0;
 	args_info->domain_given = 0;
 	args_info->encrypt_given = 0;
@@ -177,10 +179,12 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	args_info->remproxyauth_arg = NULL; \
 	args_info->header_arg[0] = '\0'; \
 	args_info->verbose_flag = 0; \
+	args_info->quiet_flag = 0; \
 	args_info->ntlm_flag = 0; \
 	args_info->inetd_flag = 0; \
-	args_info->quiet_flag = 0; \
-	args_info->standalone_arg = 0; \
+	args_info->standalone_arg = NULL; \
+	args_info->standalone_addr = NULL; \
+	args_info->standalone_port = 0; \
 	args_info->encrypt_flag = 0; \
 	args_info->encryptproxy_flag = 0; \
 	args_info->encryptremproxy_flag = 0; \
@@ -321,16 +325,18 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 				break;
 
 			case 'a':       /* Run as standalone daemon */
+				if (args_info->standalone_given) {
+					fprintf (stderr, "%s: '--standalone' ('-a') option given more than once\n", PACKAGE);
+					clear_args ();
+					exit(1);
+				}
 				if ( args_info->inetd_flag ) {
 					fprintf( stderr, "%s: `--standalone' (`-a') conflicts with `--inetd' (`-i')\n", PACKAGE );
 					clear_args();
 					exit(1);
 				}
-				if ( ( args_info->standalone_arg = atoi( optarg ) ) < 1 ) {
-					fprintf( stderr, "%s: Illegal port value for `--standalone' (`-a')\n", PACKAGE);
-					clear_args();
-					exit(1);
-				}
+				args_info->standalone_given = 1;
+				args_info->standalone_arg = gengetopt_strdup (optarg);
 				break;
 
 			case 'V':	/* Print version and exit.  */
@@ -625,6 +631,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 		exit(1);
 	}
 
+	/* Parse -p/--proxy information */
 	if (args_info->proxy_given ) {
 		char proxy_arg_fmt[32];
 		size_t proxy_arg_len;
@@ -649,7 +656,40 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 			args_info->proxyhost_given = 1;
 			args_info->proxyport_given = 1;
 		} else {
-            message( "parse_cmdline: specified proxy hostname/ip:port (%s) does not fit expected pattern\n", args_info->proxy_arg );
+            message( "parse_cmdline: specified proxy (%s) does not fit the expected pattern hostname/ip:port\n", args_info->proxy_arg );
+			missing_required_options++;
+		}
+	}
+
+	/* Parse -a/--standalone information */
+	if ( args_info->standalone_given ) {
+		char standalone_arg_fmt[32];
+		size_t standalone_arg_len;
+		char * aaddr;
+		int aport;
+
+		standalone_arg_len = strlen( args_info->standalone_arg );
+		if ( (aaddr = malloc( standalone_arg_len + 1 )) == NULL ) {
+			message( "Out of memory\n" );
+			exit(1);
+		}
+		/* try IPv4 literal and port */
+		snprintf( standalone_arg_fmt, sizeof(standalone_arg_fmt), "%%%zu[0-9.]:%%5u", standalone_arg_len - 1 );
+		r = sscanf( args_info->standalone_arg, standalone_arg_fmt, aaddr, &aport );
+		if ( r != 2 ) {
+			/* try bracket-enclosed IPv6 literal and port */
+			snprintf( standalone_arg_fmt, sizeof(standalone_arg_fmt), "[%%%zu[0-9A-Fa-f:]]:%%5u", standalone_arg_len - 1 );
+			r = sscanf( args_info->standalone_arg, standalone_arg_fmt, aaddr, &aport );
+		}
+		if ( r == 2 ) {
+			args_info->standalone_addr = aaddr;
+			args_info->standalone_port = aport;
+			args_info->standalone_addr_given = 1;
+		/* try port only */
+		} else if ( sscanf( args_info->standalone_arg, "%5u", &aport ) ) {
+			args_info->standalone_port = aport;
+		} else {
+            message( "parse_cmdline: specified standalone argument (%s) does not fit the expected pattern [ip:]port\n", args_info->standalone_arg );
 			missing_required_options++;
 		}
 	}
@@ -699,6 +739,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 			missing_required_options++;
 		}
 	}
+
 	if ( missing_required_options )
 		exit(1);
 

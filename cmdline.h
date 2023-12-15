@@ -40,10 +40,12 @@ struct gengetopt_args_info {
 	char *remproxy_arg;		/* Remote proxy to tunnel to. */
 	char *remproxyauth_arg;	/* Remote proxy auth. */
 	int verbose_flag;		/* Turn on verbosity (default=off). */
+	int quiet_flag;			/* Turn on quiet mode (default=off). */
 	int ntlm_flag;			/* Turn on ntlm  (default=off). */
 	int inetd_flag;			/* Turn on inetd (default=off). */
-	int quiet_flag;			/* Turn on quiet mode (default=off). */
-	int standalone_arg;		/* Turn on stdalone (-a) on port */
+	char *standalone_arg;	/* Turn on standalone (-a) on [addr:]port */
+	char *standalone_addr;
+	int standalone_port;
 	int encrypt_flag;		/* Turn on SSL encryption (default=off). */
 	int encryptproxy_flag;	/* Turn on client to proxy SSL encryption (def=off).*/
 	int encryptremproxy_flag;  /* Turn on local to remote proxy SSL encryption (def=off).*/
@@ -73,9 +75,11 @@ struct gengetopt_args_info {
 	int remproxy_given;		/* Whether remproxy was given. */
 	int remproxyauth_given;	/* Whether remproxy was given. */
 	int verbose_given;		/* Whether verbose was given. */
+	int quiet_given;		/* Whether quiet mode was given. */
 	int ntlm_given;			/* Whether ntlm was given. */
 	int inetd_given;		/* Whether inetd was given. */
-	int quiet_given;		/* Whether quiet mode was given. */
+	int standalone_given;	/* Whether standalone was given */
+	int standalone_addr_given;	/* Whether standalone address was given */
 	int header_given;		/* Whether extra headers are given */
 	int encrypt_given;		/* Whether encrypt was given */
 	int encryptproxy_given;	/* Whether encrypt was given */
