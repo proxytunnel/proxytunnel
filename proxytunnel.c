@@ -164,7 +164,7 @@ void do_daemon()
 {
 	int listen_sd;
 	int one = 1;
-	struct sockaddr_in sa_serv;
+	struct sockaddr_in6 sa_serv;
 	struct sockaddr_in sa_cli;
 	socklen_t client_len;
 	int pid = 0;
@@ -175,7 +175,7 @@ void do_daemon()
 	/* Socket descriptor */
 	int sd;
 
-	if ( ( listen_sd = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP ) ) < 0 ) {
+	if ( ( listen_sd = socket( AF_INET6, SOCK_STREAM, IPPROTO_TCP ) ) < 0 ) {
 		my_perror( "Server socket creation failed" );
 		exit(1);
 	}
@@ -186,11 +186,11 @@ void do_daemon()
 	setsockopt(listen_sd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
 
 	memset( &sa_serv, '\0', sizeof( sa_serv ) );
-	sa_serv.sin_family = AF_INET;
-	sa_serv.sin_addr.s_addr = htonl(INADDR_ANY);
-	sa_serv.sin_port = htons( args_info.standalone_arg );
+	sa_serv.sin6_family = AF_INET6;
+	sa_serv.sin6_addr = in6addr_any;
+	sa_serv.sin6_port = htons( args_info.standalone_arg );
 
-	if ( bind( listen_sd, (struct sockaddr * )&sa_serv, sizeof( struct sockaddr ) ) < 0) {
+	if ( bind( listen_sd, (struct sockaddr *)&sa_serv, sizeof(sa_serv) ) < 0) {
 		my_perror("Server socket bind failed");
 		exit(1);
 	}
