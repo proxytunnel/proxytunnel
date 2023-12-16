@@ -45,6 +45,7 @@ struct gengetopt_args_info {
 	int inetd_flag;			/* Turn on inetd (default=off). */
 	char *standalone_arg;	/* Turn on standalone (-a) on [addr:]port */
 	char *standalone_addr;
+	char *standalone_iface;
 	int standalone_port;
 	int encrypt_flag;		/* Turn on SSL encryption (default=off). */
 	int encryptproxy_flag;	/* Turn on client to proxy SSL encryption (def=off).*/
@@ -80,6 +81,7 @@ struct gengetopt_args_info {
 	int inetd_given;		/* Whether inetd was given. */
 	int standalone_given;	/* Whether standalone was given */
 	int standalone_addr_given;	/* Whether standalone address was given */
+	int standalone_iface_given;	/* Whether standalone interface was given */
 	int header_given;		/* Whether extra headers are given */
 	int encrypt_given;		/* Whether encrypt was given */
 	int encryptproxy_given;	/* Whether encrypt was given */

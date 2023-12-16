@@ -150,6 +150,8 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	args_info->ntlm_given = 0;
 	args_info->inetd_given = 0;
 	args_info->standalone_given = 0;
+	args_info->standalone_addr_given = 0;
+	args_info->standalone_iface_given = 0;
 	args_info->header_given = 0;
 	args_info->domain_given = 0;
 	args_info->encrypt_given = 0;
@@ -184,6 +186,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	args_info->inetd_flag = 0; \
 	args_info->standalone_arg = NULL; \
 	args_info->standalone_addr = NULL; \
+	args_info->standalone_iface = NULL; \
 	args_info->standalone_port = 0; \
 	args_info->encrypt_flag = 0; \
 	args_info->encryptproxy_flag = 0; \
@@ -665,11 +668,16 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	if ( args_info->standalone_given ) {
 		char standalone_arg_fmt[32];
 		size_t standalone_arg_len;
-		char * aaddr;
+		char *aaddr;
+		char *aiface;
 		int aport;
 
 		standalone_arg_len = strlen( args_info->standalone_arg );
 		if ( (aaddr = malloc( standalone_arg_len + 1 )) == NULL ) {
+			message( "Out of memory\n" );
+			exit(1);
+		}
+		if ( (aiface = malloc( standalone_arg_len + 1 )) == NULL ) {
 			message( "Out of memory\n" );
 			exit(1);
 		}
@@ -681,6 +689,17 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 			snprintf( standalone_arg_fmt, sizeof(standalone_arg_fmt), "[%%%zu[0-9A-Fa-f:]]:%%5u", standalone_arg_len - 1 );
 			r = sscanf( args_info->standalone_arg, standalone_arg_fmt, aaddr, &aport );
 		}
+		if ( r != 2 ) {
+			/* try bracket-enclosed IPv6 literal, interface and port */
+			snprintf( standalone_arg_fmt, sizeof(standalone_arg_fmt), "[%%%zu[0-9A-Fa-f:]%%%%%%%zu[^]]]:%%5u", standalone_arg_len - 1, standalone_arg_len - 1 );
+			if ( sscanf( args_info->standalone_arg, standalone_arg_fmt, aaddr, aiface, &aport ) == 3 )
+				r = 3;
+		}
+		if ( r == 3 ) {
+			args_info->standalone_iface = aiface;
+			args_info->standalone_iface_given = 1;
+			r--;
+		}
 		if ( r == 2 ) {
 			args_info->standalone_addr = aaddr;
 			args_info->standalone_port = aport;
@@ -689,7 +708,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 		} else if ( sscanf( args_info->standalone_arg, "%5u", &aport ) ) {
 			args_info->standalone_port = aport;
 		} else {
-            message( "parse_cmdline: specified standalone argument (%s) does not fit the expected pattern [ip:]port\n", args_info->standalone_arg );
+            message( "parse_cmdline: specified standalone argument (%s) does not fit one of the expected patterns: port, ipv4:port, [ipv6]:port, [ipv6%%interface]:port\n", args_info->standalone_arg );
 			missing_required_options++;
 		}
 	}

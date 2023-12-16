@@ -29,6 +29,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <net/if.h>
 #include <netdb.h>
 #include <signal.h>
 #include <syslog.h>
@@ -188,6 +189,15 @@ void do_daemon()
 	sa_serv.sin6_family = AF_INET6;
 	sa_serv.sin6_addr = in6addr_any;
 	sa_serv.sin6_port = htons( args_info.standalone_port );
+
+	/* In case a standalone interface was specified ... */
+	if ( args_info.standalone_iface_given ) {
+		/* ... try to get and set the interface's index */
+		if ( !(sa_serv.sin6_scope_id = if_nametoindex(args_info.standalone_iface)) ) {
+			my_perror("Setting server socket interface failed, possibly mis-spelled");
+			exit(1);
+		}
+	}
 
 	/* In case a standalone address was specified ... */
 	if ( args_info.standalone_addr_given ) {
