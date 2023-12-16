@@ -95,8 +95,7 @@ If your proxy doesn't require the username and password for using it,
 you can skip these options. If you don't provide the password on the
 command-line (which is recommended) you will be prompted for it by
 proxytunnel. If you are on a trusted system you can also put the
-password in an environment variable, and tell proxytunnel where to
-find it with '-S'.
+password in the environment variable PROXYPASS.
 
 If you want to run proxytunnel from inetd add the '--inetd' option.
 
