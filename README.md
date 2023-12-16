@@ -113,8 +113,7 @@ auto-detection doesn't work for you (which is usually doesn't)
 If you want to have the first proxy connect to another http proxy (like
 one you can control, specify -r proxy2:port. The first proxy will then
 connect to this remote proxy, which will be asked to connect to the 
-requested destination. Note that authentication doesn't (yet) work on
-this remote proxy. For more information regarding this feature, check
+requested destination. For more information regarding this feature, check
 out http://dag.wieers.com/howto/ssh-http-tunneling/
 
 If your proxy is more advanced, and does protocol inspection it will
