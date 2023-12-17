@@ -108,7 +108,7 @@ also be used for other proxy-traversing purposes like proxy bouncing.
     set, proxytunnel will prompt for a password.
 
 *-c*, *--cert*=_filename_::
-	Provide the name of the	file containing the client SSL certificate to
+	Provide the name of the	file containing the SSL client certificate to
 	authenticate by client certificate against local proxy, remote proxy or
 	destination. The file must be in PEM format.
 	On top of this it may contain one or more intermediary certificates missing
@@ -118,7 +118,7 @@ also be used for other proxy-traversing purposes like proxy bouncing.
 	*-X*, *--encrypt-remproxy* is given.
 
 *-k*, *--key*=_filename_::
-	Provide the name of the	file containing the client SSL key to authenticate
+	Provide the name of the	file containing the SSL client key to authenticate
 	by client certificate against local proxy, remote proxy or destination. The
 	file must be in PEM format.
 	Requires specification of *-c*, *--cert* in addition.
