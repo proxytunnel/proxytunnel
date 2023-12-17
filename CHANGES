@@ -1,5 +1,21 @@
+Changes to proxytunnel 1.12.0 -- Sun Dec 17 19:51:57 CET 2023
+
+[ Sven Geuer, https://github.com/68420948 ]
+- New: Support authentication by SSL client certificate on SSL encrypted
+  tunnels, thanks to https://github.com/yayo for providing an initial patch
+  with issue #76, closes also issue #51.
+- New: Listen also for IPv6 connections in standalone mode.
+- New: Extend -a/--standalone option to allow for binding to a specified IPv4
+  or IPv6 address, thanks to https://github.com/saper for providing an initial
+  implementation with PR #77.
+- Honor -o/--host on determining the SNI host name.
+- Fix loading REMPROXYUSER/REMPROXYPASS from the environment.
+- Update manual page, correct errors, fix typos.
+- Minor corrections to README.md
+
 Changes to proxytunnel 1.11.1 -- Mon Oct 16 20:01:04 CEST 2023
 
+[ Sven Geuer, https://github.com/68420948 ]
 - Remediate the faulty patch for issue #57, thanks to https://github.com/e9hack
   and https://github.com/yurivict for raising issues #59 and #69
 - Fix NTLM based authentication on 64bit machines, thanks to
