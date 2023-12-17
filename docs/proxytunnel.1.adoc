@@ -23,8 +23,13 @@ also be used for other proxy-traversing purposes like proxy bouncing.
 
 *-a*, *--standalone*=++[++_address_++:]++_port_::
     Run as standalone daemon on specified _address_ and _port_. _address_ may
-	be a IPv4 address or a bracket-enclosed IPv6 address. Listens on any
-	address if _address_ is not given.
+    be a IPv4 address, a bracket-enclosed IPv6 address or a bracket-enclosed
+    combination of IPv6 address, \'%' and interface name. The latter format is
+    only required with link-local IPv6 addresses. The daemon listens on any
+    address if _address_ is not given.
+    *Examples*:::
+    	22, 123.45.67.89:22, [2001:db8::123:4567:89ab:cdef]:22, 
+    	[2001:db8::123:4567:89ab:cdef%eth0]:22
 
 *-p*, *--proxy*=_host_++:++_port_::
     Use _host_ and _port_ as the local proxy to connect to, if not specified
