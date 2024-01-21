@@ -230,6 +230,21 @@ void get_sa_serv(struct sockaddr **sa_serv_pp, socklen_t *sa_serv_len_p)
 	return;
 }
 
+/* Log pid and IP address of client */
+void log_client(int pid, struct sockaddr_storage *ss_client_p)
+{
+	char buf[40];
+
+	inet_ntop(ss_client_p->ss_family,
+			ss_client_p->ss_family == AF_INET ?
+				(void *)&(((struct sockaddr_in *)ss_client_p)->sin_addr) :
+				(void *)&(((struct sockaddr_in6 *)ss_client_p)->sin6_addr),
+			buf,
+			sizeof(buf));
+	message( "Started tunnel pid=%d for connection from %s", pid, buf );
+	return;
+}
+
 /* Run as a standalone daemon */
 void do_daemon()
 {
@@ -237,12 +252,10 @@ void do_daemon()
 	int one = 1;
 	struct sockaddr *sa_serv_p;
 	socklen_t sa_serv_len;
-	struct sockaddr_in sa_cli;
+	struct sockaddr_storage sa_cli;
 	socklen_t client_len;
 	int pid = 0;
 	int sd_client;
-	char buf[80];
-	unsigned char addr[4];
 
 	/* Socket descriptor */
 	int sd;
@@ -311,6 +324,10 @@ void do_daemon()
 		 * we'll do it by default, can't hurt
 		 *
 		 * -- Maniac
+		 *
+		 * 2024/01/21: Not sure what makes up the workaround
+		 *
+		 * -- Sven
 		 */
 
 		client_len = sizeof( sa_cli );
@@ -365,9 +382,7 @@ void do_daemon()
 			exit( 0 );
 		}
 
-		memcpy( &addr, &sa_cli.sin_addr.s_addr, 4 );
-		snprintf( (char *) buf, 16, "%u.%u.%u.%u", addr[0], addr[1], addr[2], addr[3] );
-		message( "Started tunnel pid=%d for connection from %s", pid, buf );
+		log_client(pid, &sa_cli);
 		close( sd_client );
 	}
 }
