@@ -343,6 +343,9 @@ void do_daemon()
 		if ( ( pid = fork() ) < 0 ) {
 			my_perror( "Cannot fork worker" );
 		} else if ( pid == 0 ) {
+			/* As worker, we do not need to listen for new connections */
+			close(listen_sd);
+
 			read_fd = write_fd = sd_client;
 
 			/* Create a stdin/out stream */
