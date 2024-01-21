@@ -159,12 +159,84 @@ void closeall() {
 	}
 }
 
+/* Get the filled in sockaddr structure to the standalone daemon */
+void get_sa_serv(struct sockaddr **sa_serv_pp, socklen_t *sa_serv_len_p)
+{
+	static union {
+		struct sockaddr_in v4;
+		struct sockaddr_in6 v6;
+	} sa_serv;
+	int set_addr_result = 1;
+
+	memset( &sa_serv, '\0', sizeof( sa_serv ) );
+
+    /* In case a standalone address has been specified ... */
+    if ( args_info.standalone_addr_given ) {
+		/* ... and it looks like a IPv6 address ... */
+		if ( strchr( args_info.standalone_addr, ':' ) ){
+			/* ... set IPv6 address family and port, ... */
+			sa_serv.v6.sin6_family = AF_INET6;
+			sa_serv.v6.sin6_port = htons( args_info.standalone_port );
+			/* ... in case a standalone interface has been specified ... */
+			if ( args_info.standalone_iface_given ) {
+				/* ... try to get and set the interface's index */
+				if ( !(sa_serv.v6.sin6_scope_id = if_nametoindex(args_info.standalone_iface)) ) {
+					set_addr_result = -2;
+				}
+			}
+			/* If no error happened regarding the interface ... */
+			if ( set_addr_result != -2 ) {
+				/* ... try to set the presumed IPv6 address. */
+				set_addr_result =
+					inet_pton(AF_INET6,
+						args_info.standalone_addr,
+						&sa_serv.v6.sin6_addr);
+			}
+		/* ... otherwise (if it does not look like a IPv6 address) ... */
+		} else {
+			/* ... set IPv4 address family and port, ... */
+			sa_serv.v4.sin_family = AF_INET;
+			sa_serv.v4.sin_port = htons( args_info.standalone_port );
+			/* ... try to set the presumed IPv4 address. */
+			set_addr_result =
+				inet_pton(AF_INET,
+					args_info.standalone_addr,
+					&sa_serv.v4.sin_addr);
+		}
+	/* In case no standalone address has been specified ... */
+	} else {
+		/* ... set IPv6 family, port and any address */
+		sa_serv.v6.sin6_family = AF_INET6;
+		sa_serv.v6.sin6_port = htons( args_info.standalone_port );
+		sa_serv.v6.sin6_addr = in6addr_any;
+	}
+
+	/* Bail out on errors */
+	switch (set_addr_result) {
+		case 0:
+			my_perror("Setting server socket IP address failed, possibly malformed");
+			exit(1);
+		case -1:
+			my_perror("Setting server socket address family failed.");
+			exit(1);
+		case -2:
+			my_perror("Setting server socket interface failed, possibly mis-spelled");
+			exit(1);
+	}
+
+	/* Return pointer to sockaddr struct and its size */
+	*sa_serv_pp = (struct sockaddr *)&sa_serv;
+	*sa_serv_len_p = sizeof( sa_serv );
+	return;
+}
+
 /* Run as a standalone daemon */
 void do_daemon()
 {
 	int listen_sd;
 	int one = 1;
-	struct sockaddr_in6 sa_serv;
+	struct sockaddr *sa_serv_p;
+	socklen_t sa_serv_len;
 	struct sockaddr_in sa_cli;
 	socklen_t client_len;
 	int pid = 0;
@@ -175,7 +247,9 @@ void do_daemon()
 	/* Socket descriptor */
 	int sd;
 
-	if ( ( listen_sd = socket( AF_INET6, SOCK_STREAM, IPPROTO_TCP ) ) < 0 ) {
+	get_sa_serv(&sa_serv_p, &sa_serv_len);
+
+	if ( ( listen_sd = socket( sa_serv_p->sa_family, SOCK_STREAM, IPPROTO_TCP ) ) < 0 ) {
 		my_perror( "Server socket creation failed" );
 		exit(1);
 	}
@@ -185,34 +259,7 @@ void do_daemon()
 #endif /* SO_REUSEPORT */
 	setsockopt(listen_sd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
 
-	memset( &sa_serv, '\0', sizeof( sa_serv ) );
-	sa_serv.sin6_family = AF_INET6;
-	sa_serv.sin6_addr = in6addr_any;
-	sa_serv.sin6_port = htons( args_info.standalone_port );
-
-	/* In case a standalone interface was specified ... */
-	if ( args_info.standalone_iface_given ) {
-		/* ... try to get and set the interface's index */
-		if ( !(sa_serv.sin6_scope_id = if_nametoindex(args_info.standalone_iface)) ) {
-			my_perror("Setting server socket interface failed, possibly mis-spelled");
-			exit(1);
-		}
-	}
-
-	/* In case a standalone address was specified ... */
-	if ( args_info.standalone_addr_given ) {
-		/* ... try to set it as an IPv6 address ... */
-		if ( inet_pton(AF_INET6, args_info.standalone_addr, &sa_serv.sin6_addr) < 1 ) {
-			/* ... if this failed, try to set it as an IPv4-mapped address */
-			snprintf(buf, sizeof(buf), "::FFFF:%s", args_info.standalone_addr);
-			if ( inet_pton(AF_INET6, buf, &sa_serv.sin6_addr) < 1 ) {
-				my_perror("Setting server socket IP address failed, possibly malformed");
-				exit(1);
-			}
-		}
-	}
-
-	if ( bind( listen_sd, (struct sockaddr *)&sa_serv, sizeof(sa_serv) ) < 0) {
+	if ( bind( listen_sd, sa_serv_p, sa_serv_len ) < 0) {
 		my_perror("Server socket bind failed");
 		exit(1);
 	}
