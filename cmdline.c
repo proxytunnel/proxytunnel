@@ -222,11 +222,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 		static struct option long_options[] = {
 			{ "help",			0, NULL, 'h' },
 			{ "version",		0, NULL, 'V' },
-			{ "user",			1, NULL, 'u' },
-			{ "pass",			1, NULL, 's' },
 			{ "domain",			1, NULL, 't' },
-//			{ "uservar",		1, NULL, 'U' },
-//			{ "passvar",		1, NULL, 'S' },
 			{ "passfile",		1, NULL, 'F' },
 			{ "proxy",			1, NULL, 'p' },
 			{ "proxyauth",		1, NULL, 'P' },
@@ -363,29 +359,6 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 				args_info->host_given = 1;
 				message("Host-header/SNI override enabled\n");
 				args_info->host_arg = gengetopt_strdup (optarg);
-				break;
-
-			case 'u':	/* Username to send to HTTPS proxy for authentication.  */
-				if (args_info->user_given) {
-					fprintf (stderr, "%s: `--user' (`-u'), `--proxyauth' (`-P') or `--passfile' (`-F') option given more than once\n", PACKAGE);
-					clear_args ();
-					exit(1);
-				}
-				args_info->user_given = 1;
-				args_info->user_arg = gengetopt_strdup (optarg);
-				message ("Option -u/--user is deprecated, please use -P/--proxyauth user:pass\n");
-				break;
-
-
-			case 's':	/* Password to send to HTTPS proxy for authentication.  */
-				if (args_info->pass_given) {
-					fprintf (stderr, "%s: `--pass' (`-s') or `--passfile' (`-F') option given more than once\n", PACKAGE);
-					clear_args ();
-					exit(1);
-				}
-				args_info->pass_given = 1;
-				args_info->pass_arg = gengetopt_strdup (optarg);
-				message ("Option -s/--pass is deprecated, please use -P/--proxyauth user:pass\n");
 				break;
 
 			case 't':	/* Env Var with NTLM DOMAIN (when overriding).  */
