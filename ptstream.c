@@ -222,7 +222,7 @@ int check_cert_names(X509 *cert, char *peer_host) {
 		for (i = 0; i < san_count; i++) {
 			gn = sk_GENERAL_NAME_value(gen_names, i);
 			if (gn->type == GEN_DNS && !(peer_host_is_ipv4 || peer_host_is_ipv6)) {
-#ifdef OPENSSL11
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L
 				if (check_cert_valid_host((char*)ASN1_STRING_get0_data(gn->d.ia5), peer_host)) {
 #else
 				if (check_cert_valid_host((char*)ASN1_STRING_data(gn->d.ia5), peer_host)) {
@@ -280,7 +280,7 @@ int stream_enable_ssl(PTSTREAM *pts, const char *proxy_arg) {
 
 	/* Initialise the connection */
 	SSLeay_add_ssl_algorithms();
-#ifdef OPENSSL11
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L
 	meth = TLS_client_method();
 #else
 	meth = SSLv23_client_method();
