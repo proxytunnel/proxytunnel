@@ -226,7 +226,6 @@ int check_cert_names(X509 *cert, char *peer_host) {
 				if (check_cert_valid_host((char*)ASN1_STRING_get0_data(gn->d.ia5), peer_host)) {
 #else
 				if (check_cert_valid_host((char*)ASN1_STRING_data(gn->d.ia5), peer_host)) {
-
 #endif
 					return 1;
 				}
@@ -281,21 +280,15 @@ int stream_enable_ssl(PTSTREAM *pts, const char *proxy_arg) {
 
 	/* Initialise the connection */
 	SSLeay_add_ssl_algorithms();
-	if (args_info.enforcetls1_flag) {
 #ifdef OPENSSL11
-		meth = TLS_client_method();
+	meth = TLS_client_method();
 #else
-		meth = TLSv1_client_method();
+	meth = SSLv23_client_method();
 #endif
-	} else {
-		meth = SSLv23_client_method();
-	}
 	SSL_load_error_strings();
 
 	ctx = SSL_CTX_new (meth);
-	if (args_info.no_ssl3_flag) {
-		ssl_options |= SSL_OP_NO_SSLv3;
-	}
+	ssl_options |= SSL_OP_NO_SSLv3;
 	SSL_CTX_set_options (ctx, ssl_options);
 
 	if ( !args_info.no_check_cert_flag ) {

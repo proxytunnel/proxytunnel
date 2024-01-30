@@ -61,12 +61,6 @@ also be used for other proxy-traversing purposes like proxy bouncing.
 *-B*, *--buggy-encrypt-proxy*::
     Equivalent to *-E -W* (Provided for backwards compatibility).
 
-*-L*, *--tlsenforce*::
-    Enforce TLSv1 connection (legacy).
-
-*-T*, *--no-ssl3*::
-    Prevent the use of SSLv3 in encrypted connections (default: enabled).
-
 *-z*, *--no-check-certificate*::
     Do not verify server SSL certificate when establishing an SSL connection.
     By default, the server SSL certificate is verified and the target host name

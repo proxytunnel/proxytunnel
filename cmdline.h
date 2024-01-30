@@ -53,9 +53,9 @@ struct gengetopt_args_info {
 	char *clientcert_arg;	/* client SSL certificate */
 	char *clientkey_arg;	/* client SSL key */
 	int wa_bug_29744_flag;	/* Use SSL encryption only until CONNECT, if at all (def=off).*/
-	int no_ssl3_flag;		/* Turn off SSLv3 (default=on) */
+	/* int no_ssl3_flag;		 Turn off SSLv3 (default=on) */
 	char *proctitle_arg;	/* Override process title (default=off). */
-	int enforcetls1_flag;    /* Override default and enforce TLSv1 */
+	/* int enforcetls1_flag;     Override default and enforce TLSv1 */
 	char *host_arg;         /* Optional Host Header */
 	int no_check_cert_flag;	/* Turn off server SSL certificate verification (default=on) */
 	int enforceipv4_flag;   /* Enforce IPv4 (default=off). */
@@ -90,7 +90,7 @@ struct gengetopt_args_info {
 	int clientkey_given;	/* Whether client SSL key was given */
 	int wa_bug_29744_given;	/* Whether work around was given */
 	int proctitle_given;	/* Whether to override process title */
-	int enforcetls1_given;   /* Wheter to enforce TLSv1 */
+	/* int enforcetls1_given;    Wheter to enforce TLSv1 */
 	int host_given;         /* Wheter we override the Host Header */
 	int cacert_given;		/* Whether cacert was given */
 };
