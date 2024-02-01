@@ -25,37 +25,40 @@ option it specifies it's command-line options.
 
 ```
 $ ./proxytunnel --help
-proxytunnel 1.9.9 Copyright 2001-2018 Proxytunnel Project
+proxytunnel 1.12.1 Copyright 2001-2024 Proxytunnel Project
 Usage: proxytunnel [OPTIONS]...
 Build generic tunnels through HTTPS proxies using HTTP authentication
 
 Standard options:
  -i, --inetd                Run from inetd (default: off)
- -a, --standalone=INT       Run as standalone daemon on specified port
+ -a, --standalone=STRING    Run as standalone daemon on specified port or
+                            address:port combination
  -p, --proxy=STRING         Local proxy host:port combination
  -r, --remproxy=STRING      Remote proxy host:port combination (using 2 proxies)
  -d, --dest=STRING          Destination host:port combination
  -e, --encrypt              SSL encrypt data between local proxy and destination
  -E, --encrypt-proxy        SSL encrypt data between client and local proxy
  -X, --encrypt-remproxy     SSL encrypt data between local and remote proxy
- -W, --wa-bug-29744         workaround ASF Bugzilla 29744, if SSL is active stop
-                            using it after CONNECT (might not work on all setups;
-                            see /usr/share/doc/proxytunnel/README.Debian.gz)
- -B, --buggy-encrypt-proxy  Equivalent to -E -W, provided for backwards
-                            compatibility
- -L                         (legacy) enforce TLSv1 connection
- -T, --no-ssl3              Do not connect using SSLv3
 
 Additional options for specific features:
+ -W, --wa-bug-29744         Workaround ASF Bugzilla 29744: if SSL is active
+                            stop using it after CONNECT (might not work on all
+                            setups)
+ -B, --buggy-encrypt-proxy  Equivalent to -E -W, provided for backwards
+                            compatibility
  -z, --no-check-certificate Don't verify server SSL certificate
  -C, --cacert=STRING        Path to trusted CA certificate or directory
+ -4, --ipv4                 Enforce IPv4 connection to local proxy
+ -6, --ipv6                 Enforce IPv6 connection to local proxy
  -F, --passfile=STRING      File with credentials for proxy authentication
  -P, --proxyauth=STRING     Proxy auth credentials user:pass combination
  -R, --remproxyauth=STRING  Remote proxy auth credentials user:pass combination
+ -c, --cert=FILENAME        client SSL certificate (chain)
+ -k, --key=FILENAME         client SSL key
  -N, --ntlm                 Use NTLM based authentication
  -t, --domain=STRING        NTLM domain (default: autodetect)
  -H, --header=STRING        Add additional HTTP headers to send to proxy
- -o STRING                  send custom Host Header
+ -o, --host=STRING          Send custom Host Header/SNI
  -x, --proctitle=STRING     Use a different process title
 
 Miscellaneous options:
