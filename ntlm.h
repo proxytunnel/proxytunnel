@@ -21,6 +21,7 @@
 
 #include <stdint.h>
 
+void init_ntlm();
 void build_type1();
 int parse_type2(unsigned char *buf);
 void build_type3_response();

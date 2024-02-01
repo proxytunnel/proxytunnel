@@ -28,13 +28,24 @@
 #include "proxytunnel.h"
 #include <ctype.h>
 #include <sys/time.h>
-#include <openssl/md4.h>
-#include <openssl/md5.h>
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+	#include <openssl/provider.h>
+	#include <openssl/evp.h>
+#else
+	#include <openssl/md4.h>
+	#include <openssl/md5.h>
+#endif
 
 #define TYPE1_DATA_SEG 8
 #define TYPE2_BUF_SIZE 2048
 #define DOMAIN_BUFLEN 256
 #define LM2_DIGEST_LEN 24
+
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+const EVP_MD *md4alg;
+const EVP_MD *md5alg;
+EVP_MD_CTX *mdctx;
+#endif
 
 int ntlm_challenge = 0;
 void message( char *s, ... );
@@ -57,6 +68,16 @@ int t_info_len;
 uint32_t flags;
 
 unsigned char lm2digest[LM2_DIGEST_LEN];
+
+void init_ntlm() {
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+	OSSL_PROVIDER_load(NULL, "default");
+	OSSL_PROVIDER_load(NULL, "legacy");
+	md4alg = EVP_md4();
+	md5alg = EVP_md5();
+	mdctx = EVP_MD_CTX_new();
+#endif
+}
 
 void build_type1() {
 	ntlm_type1 *type1;
@@ -237,7 +258,10 @@ unsigned char* key; /* pointer to authentication key */
 int key_len; /* length of authentication key */
 unsigned char digest[16]; /* caller digest to be filled in */
 {
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+#else
 	MD5_CTX context;
+#endif
 	unsigned char k_ipad[65];    /* inner padding - key XORd with ipad */
 	unsigned char k_opad[65];    /* outer padding - key XORd with opad */
 	unsigned char tk[16];
@@ -245,10 +269,15 @@ unsigned char digest[16]; /* caller digest to be filled in */
 
 	/* if key is longer than 64 bytes reset it to key=MD5(key) */
 	if (key_len > 64) {
-		MD5_CTX tctx;
-		MD5_Init( &tctx );
-		MD5_Update( &tctx, key, key_len );
-		MD5_Final( tk, &tctx );
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+		EVP_DigestInit_ex(mdctx, md5alg, NULL);
+		EVP_DigestUpdate(mdctx, key, key_len);
+		EVP_DigestFinal_ex(mdctx, tk, NULL);
+#else
+		MD5_Init(&context);
+		MD5_Update(&context, key, key_len);
+		MD5_Final(tk, &context);
+#endif
 		key = tk;
 		key_len = 16;
 	}
@@ -277,22 +306,39 @@ unsigned char digest[16]; /* caller digest to be filled in */
 	}
 
 	/* perform inner MD5 */
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+	EVP_DigestInit_ex(mdctx, md5alg, NULL);  /* init context for 1st pass */
+	EVP_DigestUpdate(mdctx, k_ipad, 64);     /* start with inner pad */
+	EVP_DigestUpdate(mdctx, text, text_len); /* then text of datagram */
+	EVP_DigestFinal_ex(mdctx, digest, NULL); /* finish up 1st pass */
+#else
 	MD5_Init(&context);                   /* init context for 1st pass */
 	MD5_Update(&context, k_ipad, 64);     /* start with inner pad */
 	MD5_Update(&context, text, text_len); /* then text of datagram */
 	MD5_Final(digest, &context);          /* finish up 1st pass */
+#endif
 
 	/* perform outer MD5 */
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+	EVP_DigestInit_ex(mdctx, md5alg, NULL);  /* init context for 1st pass */
+	EVP_DigestUpdate(mdctx, k_opad, 64);     /* start with inner pad */
+	EVP_DigestUpdate(mdctx, digest, 16);     /* then text of datagram */
+	EVP_DigestFinal_ex(mdctx, digest, NULL); /* finish up 1st pass */
+#else
 	MD5_Init(&context);                   /* init context for 2nd pass */
 	MD5_Update(&context, k_opad, 64);     /* start with outer pad */
 	MD5_Update(&context, digest, 16);     /* then results of 1st hash */
 	MD5_Final(digest, &context);          /* finish up 2nd pass */
+#endif
 }
 
 void build_ntlm2_response() {
 	int i, j;
 	int passlen = 0;
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+#else
 	MD4_CTX passcontext;
+#endif
 	unsigned char passdigest[16];
 	unsigned char *userdom;
 	int userdomlen;
@@ -317,9 +363,15 @@ void build_ntlm2_response() {
 		}
 	}
 
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+	EVP_DigestInit_ex(mdctx, md4alg, NULL);
+	EVP_DigestUpdate(mdctx, unipasswd, passlen);
+	EVP_DigestFinal_ex(mdctx, passdigest, NULL);
+#else
 	MD4_Init (&passcontext);
 	MD4_Update (&passcontext, unipasswd, passlen);
 	MD4_Final (passdigest, &passcontext);
+#endif
 
 	if( args_info.verbose_flag ) {
 		message("NTLM: MD4 of password is: ");

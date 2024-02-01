@@ -420,6 +420,11 @@ int main( int argc, char *argv[] ) {
 
 	signal( SIGHUP, signal_handler );
 
+	/* Initialize the NTLM module, if needed. */
+	if (args_info.ntlm_flag) {
+		init_ntlm();
+	}
+
 	/* If the usename is given, but password is not, prompt for it */
 	if( args_info.user_given && !args_info.pass_given ) {
 		char *cp;
