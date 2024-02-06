@@ -17,9 +17,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
-#define VERSION "1.12.0"
-#define VERSION_YEAR "2023"
-#define VERSION_DATE "2023-12-17"
+#define VERSION "1.12.1"
+#define VERSION_YEAR "2024"
+#define VERSION_DATE "2024-02-06"
 #define PACKAGE "proxytunnel"
 #define PURPOSE "Build generic tunnels through HTTPS proxies"
 #define AUTHORS "Jos Visser (Muppet) <josv@osp.nl>, Mark Janssen (Maniac) <maniac@maniac.nl>"

@@ -1,3 +1,21 @@
+Changes to proxytunnel 1.12.1 -- Tue Feb  6 17:36:38 CET 2024
+
+[ Sven Geuer, https://github.com/68420948 ]
+- -a/--standalone option:
+  - Use an AF_INET socket when binding to a specified IPv4 address. This makes
+    sure IPv4 works regardless of the IPV6_V6ONLY socket option being turned on
+    or off. Thanks to https://github.com/saper for noting the shortcoming.
+  - Fix logging of IPv6 clients.
+  - Close unneeded listening socket in worker.
+- Deprecate -L/--tlsenforce and -T/--no-ssl3. SSLv3 has been disabled in likely
+  all distributions nowadays.
+- Apply OPENSSL_VERSION_NUMBER to compile code matching the libssl version in
+  use. Consequently the file Makefile.ssl11 has been removed.
+- Make sure no deprecated libssl functions are called, depending on the libssl
+  version in use.
+- Replace calls to deprecated functions bzero()/bcopy() by memset()/memcpy().
+- Update README.md to show recent --help output.
+
 Changes to proxytunnel 1.12.0 -- Sun Dec 17 19:51:57 CET 2023
 
 [ Sven Geuer, https://github.com/68420948 ]
