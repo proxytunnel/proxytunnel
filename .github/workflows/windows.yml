@@ -1,0 +1,56 @@
+name: Build for Windows
+
+on:
+  push:
+    branches:
+    - '**'
+    paths-ignore:
+    - 'README.md'
+    - 'LICENSE.txt'
+    - 'RELNOTES'
+    - 'TODO'
+  pull_request:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: msys2/setup-msys2@v2
+      with:
+        msystem: msys
+        install: >-
+          mingw-w64-x86_64-toolchain
+          gcc
+          make
+          openssl
+          openssl-devel
+          zip
+          unzip
+          xmlto
+          asciidoc
+          curl
+          awk
+          bash
+    - name: Build
+      shell: msys2 {0}
+      run: |
+        make
+        make docs
+        ldd proxytunnel.exe | grep msys.*\.dll | awk '{print $3}' | xargs cp -t .
+        zip proxytunnel.zip proxytunnel.exe *.dll docs/proxytunnel.1 docs/*.html
+    - name: Upload CI Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: proxytunnel-${{ github.sha }}-x86_64-windows-msys
+        path: proxytunnel.zip
+    - name: Upload to GitHub Release
+      uses: svenstaro/upload-release-action@v2
+      if: github.event_name == 'release'
+      with:
+        file: proxytunnel.zip
+        asset_name: proxytunnel-${{ github.ref.name }}-x86_64-windows-msys.zip
+        tag: ${{ github.ref }}
+        overwrite: true
