@@ -51,6 +51,6 @@ jobs:
       if: github.event_name == 'release'
       with:
         file: proxytunnel.zip
-        asset_name: proxytunnel-${{ github.ref.name }}-x86_64-windows-msys.zip
+        asset_name: proxytunnel-${{ github.ref_name }}-x86_64-windows-msys.zip
         tag: ${{ github.ref }}
         overwrite: true
