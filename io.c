@@ -57,7 +57,7 @@ int readline(PTSTREAM *pts) {
 
 	if( args_info.verbose_flag ) {
 		/* Copy line of data into dstr without trailing newline */
-		char *dstr = malloc(strlen(buf) + 1);
+		char *dstr = calloc(1, strlen(buf) + 1);
 		strncpy( dstr, buf, strlen(buf));
 		if (strcmp(dstr, ""))
 			message( " <- %s\n", dstr );
