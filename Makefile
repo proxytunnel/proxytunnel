@@ -20,6 +20,13 @@ OPTFLAGS += -DSETPROCTITLE -DSPT_TYPE=2
 # System dependant blocks... if your system is listed below, uncomment
 # the relevant lines
 
+# MSYS
+# The current version of gcc from MSYS defines __MSYS__ and __CYGWIN__.
+# To avoid to change the code, simply define CYGWIN additionally. 
+ifneq ($(filter $(MSYSTEM),MSYS MINGW32 MINGW64 UCRT64),)
+CFLAGS += -DCYGWIN
+endif
+
 # OpenBSD
 #OPTFLAGS += -DHAVE_SYS_PSTAT_H
 

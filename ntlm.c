@@ -29,6 +29,9 @@
 #include <ctype.h>
 #include <sys/time.h>
 #if OPENSSL_VERSION_NUMBER >= 0x30000000L
+	#ifdef CYGWIN
+		#include <unistd.h>
+	#endif
 	#include <openssl/provider.h>
 	#include <openssl/evp.h>
 #else
@@ -71,8 +74,55 @@ unsigned char lm2digest[LM2_DIGEST_LEN];
 
 void init_ntlm() {
 #if OPENSSL_VERSION_NUMBER >= 0x30000000L
-	OSSL_PROVIDER_load(NULL, "default");
-	OSSL_PROVIDER_load(NULL, "legacy");
+	OSSL_PROVIDER *provider;
+	provider = OSSL_PROVIDER_load(NULL, "default");
+	if (!provider) {
+		my_perror("Loading default provider failed");
+		exit(1);
+	}
+	provider = OSSL_PROVIDER_load(NULL, "legacy");
+#ifdef CYGWIN
+	if (!provider) {
+		// available at msys and git for windows
+		// the msys version has an additional dependency on libcrypto-3-x64.dll
+		provider = OSSL_PROVIDER_load(NULL, "/mingw64/lib/ossl-modules/legacy.dll");
+	}
+	if (!provider) {
+		// available at msys (without dependency on libcrypto-3-x64.dll)
+		provider = OSSL_PROVIDER_load(NULL, "/usr/lib/ossl-modules/legacy.dll");
+	}
+	if (!provider) {
+		// default installation path for additional tools
+		provider = OSSL_PROVIDER_load(NULL, "/usr/local/bin/legacy.dll");
+	}
+	if (!provider) {
+		// directory of proxytunnel itself
+		const char *p = strrchr(program_name, '/');
+		if (p) {
+			const int len = p - program_name;
+			char *tmp = (char*)alloca(len + sizeof("/legacy.dll"));
+			memcpy(tmp, program_name, len);
+			strcpy(tmp + len, "/legacy.dll");
+			provider = OSSL_PROVIDER_load(NULL, tmp);
+		}
+	}
+	if (!provider) {
+		// current working directory
+		char *cwd = getcwd(NULL, 0);
+		if (cwd) {
+			const int len = strlen(cwd);
+			char *tmp = (char*)alloca(len + sizeof("/legacy.dll"));
+			memcpy(tmp, cwd, len);
+			free(cwd);
+			strcpy(tmp + len, "/legacy.dll");
+			provider = OSSL_PROVIDER_load(NULL, tmp);
+		}
+	}	
+#endif
+	if (!provider) {
+		my_perror("Loading legacy provider failed");
+		exit(1);
+	}
 	md4alg = EVP_md4();
 	md5alg = EVP_md5();
 	mdctx = EVP_MD_CTX_new();
