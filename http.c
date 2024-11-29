@@ -37,17 +37,16 @@
  * header
  */
 void analyze_HTTP(PTSTREAM *pts) {
-	char *p = strtok( buf, " ");
+	char *p;
 
 	/* Strip html error pages for faulty proxies (Stephane Engel <steph[at]macchiati.org>) */
-	while (strncmp( p, "HTTP/", 5) != 0 ) {
-		if ( readline(pts) ) {
-			p = strtok( buf, " ");
-		} else {
+	do {
+		if (readline(pts) <= 0) {
 			message( "analyze_HTTP: readline failed: Connection closed by remote host\n" );
 			exit(2);
 		}
-	}
+		p = strtok( buf, " \t");
+	} while (strncmp( p, "HTTP/", 5) != 0 );
 
 	if (strcmp( p, "HTTP/1.0" ) != 0 && strcmp( p, "HTTP/1.1" ) != 0) {
 		message( "Unsupported HTTP version number %s\n", p );
@@ -117,6 +116,7 @@ void proxy_protocol(PTSTREAM *pts) {
 		if (args_info.ntlm_flag) {
 			if (ntlm_challenge == 1) {
 				build_type3_response();
+				ntlm_challenge = 2;
 				strzcat( buf, "Proxy-Authorization: NTLM %s\r\n", ntlm_type3_buf );
 			} else if (ntlm_challenge == 0) {
 				strzcat( buf, "Proxy-Authorization: NTLM %s\r\n", ntlm_type1_buf );
@@ -157,7 +157,7 @@ void proxy_protocol(PTSTREAM *pts) {
 	/* Read the first line of the response and analyze it */
 	analyze_HTTP(pts);
 
-	if (args_info.remproxy_given ) {
+	if (ntlm_challenge < 3 && args_info.remproxy_given ) {
 		/* Clean buffer for next analysis */
 		while ( strcmp( buf, "\r\n" ) != 0 )
 			readline(pts);
@@ -209,8 +209,8 @@ void proxy_protocol(PTSTREAM *pts) {
 	 * Then, repeat reading lines of the responses until a blank line
 	 * (which signifies the end of the response) is encountered.
 	 */
-	if (ntlm_challenge == 1) {
-		ntlm_challenge = 2;
+	if (ntlm_challenge == 2) {
+		ntlm_challenge = 3;
 	} else {
 		do {
 			readline(pts);
