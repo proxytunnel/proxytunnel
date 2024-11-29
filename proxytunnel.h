@@ -44,6 +44,9 @@ size_t strzcat(char *dst, char *format, ...);
 int main( int argc, char *argv[] );
 char * readpassphrase(const char *, char *, size_t, int);
 char * getpass_x(const char *format, ...);
+#ifdef USE_WINCREDMAN
+char* getcred_x(const char*, const char*);
+#endif
 
 /* Globals */
 extern int read_fd;                    /* The file descriptor to read from */
