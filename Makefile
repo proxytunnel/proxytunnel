@@ -25,6 +25,9 @@ OPTFLAGS += -DSETPROCTITLE -DSPT_TYPE=2
 # To avoid to change the code, simply define CYGWIN additionally. 
 ifneq ($(filter $(MSYSTEM),MSYS MINGW32 MINGW64 UCRT64),)
 CFLAGS += -DCYGWIN
+OPTFLAGS += -DUSE_WINCREDMAN
+LDFLAGS += -lcredui
+MSYS=1
 endif
 
 # OpenBSD
@@ -76,6 +79,10 @@ OBJ = proxytunnel.o	\
 	globals.o	\
 	ntlm.o		\
 	ptstream.o
+
+ifeq ($(MSYS),1)
+OBJ += readcredential.o
+endif
 
 UNAME = $(shell uname)
 ifneq ($(UNAME),Darwin)
