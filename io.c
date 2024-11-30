@@ -39,10 +39,10 @@
 int readline(PTSTREAM *pts) {
 	char *p = buf;
 	char c = 0;
-	int i = 0;
+	int len = 0;
 
 	/* Read one character at a time into buf, until a newline is encountered. */
-	while ( c != 10 && ( i < SIZE - 1 ) ) {
+	while ( c != '\n' && ( len < SIZE - 1 ) ) {
 		if( stream_read( pts, &c ,1) <= 0) {
 			my_perror( "Socket read error" );
 			exit( 1 );
@@ -50,19 +50,16 @@ int readline(PTSTREAM *pts) {
 
 		*p = c;
 		p++;
-		i++;
+		len++;
 	}
 
 	*p = 0;
 
-	if( args_info.verbose_flag ) {
-		/* Copy line of data into dstr without trailing newline */
-		char *dstr = calloc(1, strlen(buf) + 1);
-		strncpy( dstr, buf, strlen(buf));
-		if (strcmp(dstr, ""))
-			message( " <- %s\n", dstr );
+	if ( args_info.verbose_flag )
+		/* print an additional newline if the string doesn't end with a newline */
+		message( c == '\n' ? " <- %s" : " <- %s\n", buf);
 	}
-	return strlen( buf );
+	return len;
 }
 
 /*
@@ -92,7 +89,7 @@ void cpio(PTSTREAM *stream1, PTSTREAM *stream2) {
 	if( args_info.verbose_flag )
 		message( "\nTunnel established.\n" );
 
-        int stream_status = ACTIVE;
+	int stream_status = ACTIVE;
 	while( stream_status == ACTIVE ) {
 		/* Clear the interesting socket sets */
 		FD_ZERO( &readfds );
@@ -107,10 +104,10 @@ void cpio(PTSTREAM *stream1, PTSTREAM *stream2) {
 		FD_SET( stream_get_outgoing_fd(stream1), &exceptfds );
 		FD_SET( stream_get_incoming_fd(stream2), &exceptfds );
 		FD_SET( stream_get_outgoing_fd(stream2), &exceptfds );
-                
-                /* reset the timeout, since select() does modify this struct! */
-                select_timeout.tv_sec = 30;
-                select_timeout.tv_usec = 0;
+
+		/* reset the timeout, since select() does modify this struct! */
+		select_timeout.tv_sec = 30;
+		select_timeout.tv_usec = 0;
 
 		/* Wait/timeout something happens on the registered sockets/files */
 		int number_of_fds_ready;
