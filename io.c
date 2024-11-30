@@ -58,7 +58,7 @@ int readline(PTSTREAM *pts) {
 	if ( args_info.verbose_flag )
 		/* print an additional newline if the string doesn't end with a newline */
 		message( c == '\n' ? " <- %s" : " <- %s\n", buf);
-	}
+
 	return len;
 }
 
