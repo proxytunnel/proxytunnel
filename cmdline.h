@@ -23,7 +23,7 @@
 #ifndef _cmdline_h
 #define _cmdline_h
 
-#define MAX_HEADER_SIZE 1024
+#define MAX_HEADER_SIZE 4096
 
 struct gengetopt_args_info {
 	char *user_arg;			/* Username to send to HTTPS proxy for auth. */
