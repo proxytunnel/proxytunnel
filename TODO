@@ -7,11 +7,6 @@
   or: proxytunnel -p username:password@local-proxy:port -r username:password@remote-proxy:port -d %h:%p
 
 
-### SSL proxy support
-- Starting with Apache 2.4 using CONNECT over SSL is supported !!
-  See: http://issues.apache.org/bugzilla/show_bug.cgi?id=29744
-
-
 ### Code cleanup
 - Find some hardcore C experts to help us improve the code quality
 
