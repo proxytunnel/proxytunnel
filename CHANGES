@@ -1,3 +1,18 @@
+Changes to proxytunnel 1.12.3 -- Fri Mar 7 23:04:25 CET 2025
+
+- PR #83 from https://github.com/tofurky to avoid printing unterminated string
+  in readline().
+- PR #86 from https://github.com/e9hack to fix and improve ntlm authentication.
+- PR #89 from https://github.com/njbraun to increase MAX_HEADER_SIZE to 4k.
+- From Sven Geuer, https://github.com/68420948
+  - Chmode 755 to 644 for file CHANGES.
+  - Drop obsolete entry about SSL proxy support from file TODO. 
+
+Changes to proxytunnel 1.12.2 -- Mon Mar 25 14:50:38 CET 2024
+
+- PRs #79 and #80 from https://github.com/hoilc implementing github action to
+  build windows binary. 
+
 Changes to proxytunnel 1.12.1 -- Tue Feb  6 17:36:38 CET 2024
 
 [ Sven Geuer, https://github.com/68420948 ]
