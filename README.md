@@ -125,6 +125,10 @@ can enable SSL encryption (using -e), which will work around this
 problem, however, you need to setup stunnel4 on the other side, or
 connect to a process that understands SSL itself.
 
+A complete guide with illustrations for encrypted tunneling and
+server-side setup with Nginx, Apache or Caddy can be found in
+this article: [Tunneling corporate firewalls for developers](https://blog.frost.kiwi/tunneling-corporate-firewalls/)
+
 When all this is in place, execute an "ssh foobar" and you're in business!
 
 # Environment Variables
