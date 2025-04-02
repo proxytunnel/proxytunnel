@@ -21,7 +21,7 @@
 
         packages.proxytunnel = pkgs.stdenv.mkDerivation {
           pname = "proxytunnel";
-          version = "1.0.0";
+          version = "1.12.3";
           src = ./.;
 
           nativeBuildInputs = [pkgs.gnumake];
