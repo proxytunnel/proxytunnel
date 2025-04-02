@@ -11,29 +11,40 @@
     ...
   }: let
     # TODO: Check functionality and add support for other architectures.
-    pkgs = nixpkgs.legacyPackages."x86_64-linux";
+    supportedSystems = ["x86_64-linux"];
+    forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
+
+    mkProxyTunnel = system: let
+      pkgs = nixpkgs.legacyPackages.${system};
+    in
+      pkgs.stdenv.mkDerivation {
+        pname = "proxytunnel";
+
+        version = "1.0.0";
+
+        src = ./.;
+        nativeBuildInputs = [pkgs.gnumake];
+        buildInputs = [pkgs.openssl];
+
+        buildPhase = ''
+          make
+        '';
+
+        installPhase = ''
+          mkdir -p $out/bin
+          cp ./proxytunnel $out/bin
+        '';
+      };
   in {
-    packages.x86_64-linux.default = pkgs.stdenv.mkDerivation {
-      pname = "proxytunnel";
+    packages = forAllSystems mkProxyTunnel;
 
-      version = "1.0.0";
+    defaultPackage = forAllSystems (system: self.packages.${system});
 
-      src = ./.;
-      nativeBuildInputs = [pkgs.gnumake];
-      buildInputs = [pkgs.openssl];
-
-      buildPhase = ''
-        make
-      '';
-
-      installPhase = ''
-        mkdir -p $out/bin
-        cp ./proxytunnel $out/bin
-      '';
-    };
-
-    devShells.x86_64-linux.default = pkgs.mkShell {
-      packages = [self.packages.x86_64-linux.default];
-    };
+    devShells = forAllSystems (system: let
+      pkgs = nixpkgs.legacyPackages.${system};
+    in
+      pkgs.mkShell {
+        packages = [self.defaultPackage.${system}];
+      });
   };
 }
