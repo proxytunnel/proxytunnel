@@ -1,50 +1,45 @@
 {
-  description = "A flake that provides the proxytunnel command";
+  description = "Basic flake that provides proxytunnel as a package or as a binary in a nix shell";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    flake-parts.url = "github:hercules-ci/flake-parts";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    ...
-  }: let
-    # TODO: Check functionality and add support for other architectures.
-    supportedSystems = ["x86_64-linux"];
-    forAllSystems = nixpkgs.lib.genAttrs supportedSystems;
+  outputs = inputs @ {flake-parts, ...}:
+    flake-parts.lib.mkFlake {inherit inputs;} {
+      # TODO: Add support for more systems once checked.
+      # TODO: Maybe add configuration options for toggling Makefile {C/LD/OPT}FLAGS
+      systems = ["x86_64-linux"];
 
-    mkProxyTunnel = system: let
-      pkgs = nixpkgs.legacyPackages.${system};
-    in
-      pkgs.stdenv.mkDerivation {
-        pname = "proxytunnel";
+      perSystem = {
+        config,
+        pkgs,
+        ...
+      }: {
+        packages.default = config.packages.proxytunnel;
 
-        version = "1.0.0";
+        packages.proxytunnel = pkgs.stdenv.mkDerivation {
+          pname = "proxytunnel";
+          version = "1.0.0";
+          src = ./.;
 
-        src = ./.;
-        nativeBuildInputs = [pkgs.gnumake];
-        buildInputs = [pkgs.openssl];
+          nativeBuildInputs = [pkgs.gnumake];
+          buildInputs = [pkgs.openssl];
 
-        buildPhase = ''
-          make
-        '';
+          buildPhase = ''
+            make
+          '';
 
-        installPhase = ''
-          mkdir -p $out/bin
-          cp ./proxytunnel $out/bin
-        '';
+          installPhase = ''
+            mkdir -p $out/bin
+            cp ./proxytunnel $out/bin
+          '';
+        };
+
+        devShells.default = pkgs.mkShell {
+          packages = [config.packages.default];
+        };
       };
-  in {
-    packages = forAllSystems mkProxyTunnel;
-
-    defaultPackage = forAllSystems (system: self.packages.${system});
-
-    devShells = forAllSystems (system: let
-      pkgs = nixpkgs.legacyPackages.${system};
-    in
-      pkgs.mkShell {
-        packages = [self.defaultPackage.${system}];
-      });
-  };
+    };
 }

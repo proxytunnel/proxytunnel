@@ -10,6 +10,46 @@ to build simply run `make` and optionally `make install`.
 If you manually want to install, copy proxytunnel to /usr/local/bin
 and optionally the manual-page from the debian-subdirectory to your manpath
 
+# Nix Flakes
+
+> NOTE: The Nix Flake installation currently only supports the default Makefile flags (i.e. GNU system assumed + SSL enabled).
+
+A simple Nix Flake is included to allow for use via flake inputs. To create a temporary Nix Shell with access to the `proxytunnel` binary, you can run the command:
+```console
+nix develop github:proxytunnel/proxytunnel
+```
+If you instead want to include it as a flake input, the following `flake.nix` shows how to do so:
+```nix
+{
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+
+    # Add proxytunnel as an input
+    proxytunnel.url = "github:proxytunnel/proxytunnel";
+  };
+
+  outputs = {
+    nixpkgs,
+    proxytunnel,
+    ...
+  }: let
+    system = "x86_64-linux";
+    pkgs = import nixpkgs {system = "x86_64-linux";};
+  in {
+    devShells.${system}.default = pkgs.mkShell {
+      buildInputs = [ 
+        # Make the `proxytunnel` binary available in a Nix Shell
+        proxytunnel.packages.${system}.default
+
+        # And include any other packages as desired...
+        pkgs.gcc
+        pkgs.glibc.dev
+      ];
+    };
+  };
+}
+```
+
 # msys2
 
 To install msys2 with [chocolatey](https://chocolatey.org/install):
