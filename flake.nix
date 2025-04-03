@@ -12,12 +12,17 @@
       # TODO: Maybe add configuration options for toggling Makefile {C/LD/OPT}FLAGS
       systems = ["x86_64-linux"];
 
+      imports = [inputs.flake-parts.flakeModules.easyOverlay];
+
       perSystem = {
         config,
         pkgs,
         ...
       }: {
-        packages.default = config.packages.proxytunnel;
+        overlayAttrs = {
+          inherit (config.packages) proxytunnel;
+          enableSSL = true;
+        };
 
         packages.proxytunnel = pkgs.stdenv.mkDerivation {
           pname = "proxytunnel";
@@ -33,9 +38,15 @@
 
           installPhase = ''
             mkdir -p $out/bin
-            cp ./proxytunnel $out/bin
+            cp ./proxytunnel $out/bin/${
+              if config.overlayAttrs.enableSSL
+              then "proxytunnel-yes-ssl"
+              else "proxytunnel-no-ssl"
+            }
           '';
         };
+
+        packages.default = config.packages.proxytunnel;
 
         devShells.default = pkgs.mkShell {
           packages = [config.packages.default];
