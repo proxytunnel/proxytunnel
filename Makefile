@@ -9,7 +9,8 @@ CC ?= cc
 CFLAGS ?= -Wall -O2 
 
 # Run `make DEBUG=1` or uncomment the next 2 lines to enable debug compile flags
-# define (DEBUG)
+# define DEBUG 
+# 	1
 # endef
 
 ifdef DEBUG
