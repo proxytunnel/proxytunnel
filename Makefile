@@ -8,7 +8,7 @@ version = $(shell awk 'BEGIN { FS="\"" } /^\#define VERSION / { print $$2 }' con
 CC ?= cc
 CFLAGS ?= -Wall -O2 
 
-# Run `make DEBUG=1` or uncomment the next 2 lines to enable debug compile flags
+# Run `make DEBUG=1` or uncomment the next 3 lines to enable debug compile flags
 # define DEBUG 
 # 	1
 # endef
