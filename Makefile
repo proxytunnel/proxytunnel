@@ -6,7 +6,15 @@ name = proxytunnel
 version = $(shell awk 'BEGIN { FS="\"" } /^\#define VERSION / { print $$2 }' config.h)
 
 CC ?= cc
-CFLAGS ?= -Wall -O2 -ggdb
+CFLAGS ?= -Wall -O2 
+
+# Run `make DEBUG=1` or uncomment the next 2 lines to enable debug compile flags
+define (DEBUG)
+endef
+
+ifdef DEBUG
+	CFLAGS += -ggdb
+endif
 
 # Comment on non-gnu systems
 OPTFLAGS += -DHAVE_GETOPT_LONG
