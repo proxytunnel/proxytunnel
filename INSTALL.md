@@ -52,7 +52,8 @@ If you instead want to include it as a flake input, the following `flake.nix` sh
     devShells.${system}.default = pkgs.mkShell {
       packages = [ 
         # Make the `proxytunnel` binary available in a Nix Shell
-        proxytunnel.packages.${system}.default
+        # The above overlay adds it to nixpkgs. Without the overlay, use proxytunnel.packages.${system}.default
+        pkgs.proxytunnel
 
         # And include any other packages as desired...
         pkgs.gcc
