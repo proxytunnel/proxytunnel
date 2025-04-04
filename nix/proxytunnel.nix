@@ -1,10 +1,15 @@
 {
+  use-ssl ? true,
   gnu-system ? true,
   set-proc-title ? true,
   pkgs,
 }: let
-  # TODO: Due to the way the OPENSSL_VERSION_NUMBER macro is checked, the -DUSE_SSL flag is NECESSARY
-  optflags = "-DUSE_SSL ${
+  optflags = "${
+    if use-ssl
+    then "-DUSE_SSL"
+    else ""
+  }
+    ${
     if gnu-system
     then "-DHAVE_GETOPT_LONG"
     else ""
