@@ -34,16 +34,30 @@ If you instead want to include it as a flake input, the following `flake.nix` sh
     ...
   }: let
     system = "x86_64-linux";
-    pkgs = import nixpkgs {system = "x86_64-linux";};
+    pkgs = import nixpkgs {
+      system = "x86_64-linux";
+      overlays = [
+        (_: _: {
+          # Add an overlay with this line to add proxytunnel's default features to your nixpkgs
+          proxytunnel = proxytunnel.packages.${system}.default;
+
+          # Add an overlay with this line to override options (i.e. disable SSL support)
+          proxytunnel = proxytunnel.packages.${system}.default.override { use-ssl = false };
+
+          # For a full list of override options, see `nix/proxytunnel.nix`
+        })
+      ]
+    };
   in {
     devShells.${system}.default = pkgs.mkShell {
-      buildInputs = [ 
+      packages = [ 
         # Make the `proxytunnel` binary available in a Nix Shell
         proxytunnel.packages.${system}.default
 
         # And include any other packages as desired...
         pkgs.gcc
         pkgs.glibc.dev
+        # ...
       ];
     };
   };
