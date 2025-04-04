@@ -8,8 +8,7 @@
     if use-ssl
     then "-DUSE_SSL"
     else ""
-  }
-    ${
+  } ${
     if gnu-system
     then "-DHAVE_GETOPT_LONG"
     else ""
