@@ -12,7 +12,7 @@ and optionally the manual-page from the debian-subdirectory to your manpath
 
 # Nix Flakes
 
-> NOTE: The Nix Flake installation currently only supports the default Makefile flags (i.e. GNU system assumed + SSL enabled).
+> NOTE: The Nix Flake installation currently only supports the `x86_64-linux` platform, and has not been tested on other architectures.
 
 A simple Nix Flake is included to allow for use via flake inputs. To create a temporary Nix Shell with access to the `proxytunnel` binary, you can run the command:
 ```console
@@ -37,16 +37,11 @@ If you instead want to include it as a flake input, the following `flake.nix` sh
     pkgs = import nixpkgs {
       system = "x86_64-linux";
       overlays = [
-        (_: _: {
-          # Add an overlay with this line to add proxytunnel's default features to your nixpkgs
-          proxytunnel = proxytunnel.packages.${system}.default;
-
-          # Add an overlay with this line to override options (i.e. disable SSL support)
-          proxytunnel = proxytunnel.packages.${system}.default.override { use-ssl = false };
+          # Add proxytunnel's default features to your nixpkgs
+          proxytunnel = proxytunnel.overlays.default;
 
           # For a full list of override options, see `nix/proxytunnel.nix`
-        })
-      ]
+      ];
     };
   in {
     devShells.${system}.default = pkgs.mkShell {
@@ -57,7 +52,6 @@ If you instead want to include it as a flake input, the following `flake.nix` sh
 
         # And include any other packages as desired...
         pkgs.gcc
-        pkgs.glibc.dev
         # ...
       ];
     };

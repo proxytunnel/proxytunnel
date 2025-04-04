@@ -1,14 +1,9 @@
 {
-  use-ssl ? true,
   gnu-system ? true,
   set-proc-title ? true,
   pkgs,
 }: let
-  optflags = "${
-    if use-ssl
-    then "-DUSE_SSL"
-    else ""
-  } ${
+  optflags = "-DUSE_SSL ${
     if gnu-system
     then "-DHAVE_GETOPT_LONG"
     else ""
