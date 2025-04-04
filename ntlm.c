@@ -46,11 +46,13 @@
 #define DOMAIN_BUFLEN 256
 #define LM2_DIGEST_LEN 24
 
+#ifdef USE_SSL
 #if OPENSSL_VERSION_NUMBER >= 0x30000000L
 const EVP_MD *md4alg;
 const EVP_MD *md5alg;
 EVP_MD_CTX *mdctx;
 #endif
+#endif /* ifdef USE_SSL */
 
 int ntlm_challenge = 0;
 void message( char *s, ... );
