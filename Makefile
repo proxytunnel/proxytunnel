@@ -66,7 +66,6 @@ mandir = $(datadir)/man
 OBJ = proxytunnel.o	\
 	base64.o	\
 	strzcat.o	\
-	setproctitle.o	\
 	io.o		\
 	http.o		\
 	basicauth.o	\
@@ -76,6 +75,10 @@ OBJ = proxytunnel.o	\
 	globals.o	\
 	ntlm.o		\
 	ptstream.o
+
+ifneq (,$(findstring -DSETPROCTITLE,$(OPTFLAGS)))
+OBJ += setproctitle.o
+endif
 
 UNAME = $(shell uname)
 ifneq ($(UNAME),Darwin)
