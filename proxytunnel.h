@@ -30,8 +30,10 @@ void analyze_HTTP(PTSTREAM *pts);
 void proxy_protocol(PTSTREAM *pts);
 void closeall();
 void do_daemon();
+#ifdef SETPROCTITLE
 void initsetproctitle(int argc, char *argv[]);
 void setproctitle(const char *fmt, ...);
+#endif
 
 #if defined(__APPLE__) && defined(__MACH__)
 /* Don't include strlcat and strlcpy since they are provided as macros on OSX */
