@@ -1,4 +1,4 @@
-/* Proxytunnel - (C) 2001-2008 Jos Visser / Mark Janssen    */
+ /* Proxytunnel - (C) 2001-2008 Jos Visser / Mark Janssen    */
 /* Contact:                  josv@osp.nl / maniac@maniac.nl */
 
 /*
@@ -57,7 +57,7 @@ int readline(PTSTREAM *pts) {
 
 	if( args_info.verbose_flag ) {
 		/* Copy line of data into dstr without trailing newline */
-		char *dstr = calloc(1, strlen(buf) + 1);
+		char *dstr = malloc(strlen(buf) + 1);
 		strncpy( dstr, buf, strlen(buf));
 		if (strcmp(dstr, ""))
 			message( " <- %s\n", dstr );
@@ -89,10 +89,13 @@ void cpio(PTSTREAM *stream1, PTSTREAM *stream2) {
 	select_timeout.tv_sec = 30; /* should be fine */
 	select_timeout.tv_usec = 0;
 
-	if( args_info.verbose_flag )
+	if( args_info.verbose_flag ) {
 		message( "\nTunnel established.\n" );
-
-        int stream_status = ACTIVE;
+    }
+    if( args_info.proctitle_given ) {
+        message( "%s tunnel active\n", args_info.proctitle_arg );
+    }
+    int stream_status = ACTIVE;
 	while( stream_status == ACTIVE ) {
 		/* Clear the interesting socket sets */
 		FD_ZERO( &readfds );

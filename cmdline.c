@@ -69,8 +69,7 @@ void cmdline_parser_print_help (void) {
 "                            setups)\n"
 " -B, --buggy-encrypt-proxy  Equivalent to -E -W, provided for backwards\n"
 "                            compatibility\n"
-/*" -L, --tlsenforce           Enforce TLSv1 connection (legacy)\n"
-" -T, --no-ssl3              Do not connect using SSLv3 (legacy)\n"*/
+//" -L, --tlsenforce           Enforce TLSv1 connection (legacy)\n"
 " -z, --no-check-certificate Don't verify server SSL certificate\n"
 " -C, --cacert=STRING        Path to trusted CA certificate or directory\n"
 #endif
@@ -81,7 +80,8 @@ void cmdline_parser_print_help (void) {
 " -R, --remproxyauth=STRING  Remote proxy auth credentials user:pass combination\n"
 #ifdef USE_SSL
 " -c, --cert=FILENAME        client SSL certificate (chain)\n"
-" -k, --key=FILENAME         client SSL key\n"
+" -k, --key=FILENAME         client SSL key (PEM format)\n"
+" -T, --tpmkey=FILENAME      client TPM SSL key (TSS2 format)\n"
 #endif
 // " -u, --user=STRING       Username for proxy authentication\n"
 // " -s, --pass=STRING       Password for proxy authentication\n"
@@ -159,6 +159,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	args_info->encryptremproxy_given = 0;
 	args_info->clientcert_given = 0;
 	args_info->clientkey_given = 0;
+    args_info->tpmkey_given = 0;
 	args_info->wa_bug_29744_given = 0;
 	args_info->proctitle_given = 0;
 	/* args_info->enforcetls1_given = 0; */
@@ -193,8 +194,8 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	args_info->encryptremproxy_flag = 0; \
 	args_info->clientcert_arg = NULL; \
 	args_info->clientkey_arg = NULL; \
+	args_info->tpmkey_arg = NULL; \
 	args_info->wa_bug_29744_flag = 0; \
-	/* args_info->no_ssl3_flag = 0; */\
 	args_info->proctitle_arg = NULL; \
 	/* args_info->enforcetls1_flag = 0; */\
 	args_info->host_arg = NULL; \
@@ -245,7 +246,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 			{ "key",			1, NULL, 'k' },
 			{ "wa-bug-29744",	0, NULL, 'W' },
 			{ "buggy-encrypt-proxy",	0, NULL, 'B' },
-			{ "no-ssl3",		0, NULL, 'T' },
+			{ "tpmkey",		1, NULL, 'T' },
 			{ "no-check-certificate",0,NULL,'z' },
 			{ "cacert",         1, NULL, 'C' },
 			{ "ipv4",           0, NULL, '4' },
@@ -294,6 +295,11 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 				if (args_info->clientkey_given) {
 					fprintf (stderr, "%s: '--key' ('-k') option given more than once\n", PACKAGE);
 					clear_args ();
+					exit(1);
+				}
+				if (args_info->tpmkey_given) {
+					fprintf (stderr, "'--key' ('-k') and '--tpmkey' ('-T') are mutually exclusive\n");
+					clear_args();
 					exit(1);
 				}
 				args_info->clientkey_given = 1;
@@ -345,8 +351,10 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 
 			case 'x':
 				args_info->proctitle_given = 1;
-				message( "Proctitle override enabled\n" );
 				args_info->proctitle_arg = gengetopt_strdup (optarg);
+                if( args_info->verbose_flag ) {
+                    message( "Proctitle override enabled: %s\n", args_info->proctitle_arg);
+                }
 				break;
 
 			case 'L':
@@ -447,11 +455,21 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 					message("SSL local to remote proxy enabled\n");
 				break;
 
-			case 'T':   /* Turn off SSLv3 */
-				/* args_info->no_ssl3_flag = !(args_info->no_ssl3_flag);
-				if( args_info->verbose_flag )
-					message("SSLv3 disabled\n"); */
-				message ("Option -T/--no-ssl3 is deprecated and without effect\n");
+			 case 'T':   /* Use TPM provided key */
+				if (args_info->tpmkey_given) {
+					fprintf (stderr, "%s: '--tpmkey' ('-T') option given more than once\n", PACKAGE);
+					clear_args ();
+					exit(1);
+				}
+				if (args_info->clientkey_given) {
+					fprintf (stderr, "'--tpmkey' ('-T') and '--key' ('-k') are mutually exclusive\n");
+					clear_args();
+					exit(1);
+				}
+                args_info->tpmkey_given = 1;
+                args_info->tpmkey_arg = gengetopt_strdup (optarg);
+                if( args_info->verbose_flag )
+					message("Using TPM-backed private key\n");
 				break;
 
 			case 'd':	/* Destination host to built the tunnel to.  */
@@ -603,11 +621,13 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 		exit(1);
 	}
 
-	if ( args_info->clientcert_given ^ args_info->clientkey_given ) {
-		clear_args ();
-		message( "Both of '--cert' ('-c') and '--key' ('-k') must be specified\n" );
-		exit(1);
-	}
+	/*if ( args_info->clientcert_given ^ args_info->clientkey_given ) {
+        if (!args_info->tpmkey_given) {
+            clear_args ();
+            message( "Both of '--cert' ('-c') and '--key' ('-k') or '--tpmkey' ('-T') must be specified\n" );
+            exit(1);
+        }
+	}*/
 
 	/* Parse -p/--proxy information */
 	if (args_info->proxy_given ) {

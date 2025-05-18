@@ -24,8 +24,11 @@
 #include <openssl/opensslv.h>
 #include <openssl/crypto.h>
 #include <openssl/x509.h>
+#include <openssl/x509v3.h>
 #include <openssl/pem.h>
+#include <openssl/provider.h>
 #include <openssl/ssl.h>
+#include <openssl/store.h>
 #endif
 
 typedef struct ptstream {

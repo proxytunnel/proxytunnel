@@ -20,7 +20,6 @@
 /* ptstream.c */
 
 #include <arpa/inet.h>
-#include <openssl/x509v3.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -256,9 +255,14 @@ int stream_enable_ssl(PTSTREAM *pts, const char *proxy_arg) {
 	const SSL_METHOD *meth;
 	SSL *ssl;
 	SSL_CTX *ctx;
+    OSSL_LIB_CTX *tpm2_libctx = NULL;
+    tpm2_libctx = OSSL_LIB_CTX_new();
+    OSSL_PROVIDER *prov = NULL;
+    EVP_PKEY *TPMpkey = NULL;
+    OSSL_STORE_INFO *info = NULL;
+    OSSL_STORE_CTX *storeCtx;
 	long res = 1;
 	long ssl_options = 0;
-
 	X509* cert = NULL;
 	int status;
 	struct stat st_buf;
@@ -277,6 +281,13 @@ int stream_enable_ssl(PTSTREAM *pts, const char *proxy_arg) {
 	size_t peer_arg_len;
 	char peer_arg_fmt[32];
 	char *peer_host = NULL;
+    
+    if ((prov = OSSL_PROVIDER_load(tpm2_libctx, "default")) == NULL)
+    {
+        message("Error loading OpenSSL default provider\n");
+        goto fail;
+    }
+    message("Loaded OpenSSL default provider\n", prov);
 
 	/* Initialise the connection */
 	SSLeay_add_ssl_algorithms();
@@ -311,16 +322,70 @@ int stream_enable_ssl(PTSTREAM *pts, const char *proxy_arg) {
 	}
 
 	/* If given, load client certificate (chain) and key */
-	if ( args_info.clientcert_given && args_info.clientkey_given ) {
+	if ( args_info.clientcert_given ) {
 		if ( 1 != SSL_CTX_use_certificate_chain_file(ctx, args_info.clientcert_arg) ) {
 			message("Error loading client certificate (chain) from %s\n", args_info.clientcert_arg);
 			goto fail;
 		}
-		if ( 1 != SSL_CTX_use_PrivateKey_file(ctx, args_info.clientkey_arg, SSL_FILETYPE_PEM) ) {
-			message("Error loading client key from %s, or key does not match certificate\n", args_info.clientkey_arg);
-			goto fail;
-		}
-	}
+
+        /* -T was used - this is a TSS2 private key */
+        if ( args_info.tpmkey_given ) {
+            if ((prov = OSSL_PROVIDER_load(tpm2_libctx, "tpm2")) == NULL)
+            {
+                message("Error loading OpenSSL TPM 2.0 provider (tpm2)\n");
+                goto fail;
+            }
+            message("Loaded OpenSSL tpm2 provider\n");
+            char TPMUri[256] = "file:"; // TSS2 key file uses the file: URI format
+            char uri[sizeof(args_info.tpmkey_arg)];
+            strcpy(uri, args_info.tpmkey_arg);
+            strncat(TPMUri, uri, 250);
+            if ( args_info.verbose_flag ) {
+                message("Using TPM 2.0 provider-backed private key from %s\n", TPMUri);
+            }
+            storeCtx = OSSL_STORE_open_ex(TPMUri, tpm2_libctx, "?provider=tpm2", NULL, ctx, NULL, NULL, NULL);
+            if (storeCtx == NULL) {
+                message("Error loading client key from TPM via %s\n", TPMUri);
+                goto fail;
+            }
+            while (!OSSL_STORE_eof(storeCtx) && (info = OSSL_STORE_load(storeCtx)) != NULL) {
+                int type = OSSL_STORE_INFO_get_type(info);
+                if (type == OSSL_STORE_INFO_PKEY) {
+                    TPMpkey = OSSL_STORE_INFO_get1_PKEY(info);
+                    OSSL_STORE_INFO_free(info);
+                    if (TPMpkey) {
+                        if ( args_info.verbose_flag ) {
+                            message("OpenSSL TPM 2.0 provider initialization successful\n");
+                        }
+                        break;
+                    }
+                }
+                else {
+                    OSSL_STORE_INFO_free(info);
+                }
+            }
+            if (TPMpkey == NULL) {
+                message("Error loading TPM 2.0 provider-backed private key from %s\n", TPMUri);
+                goto fail;
+            }
+            OSSL_STORE_close(storeCtx);
+            if ( 1 != SSL_CTX_use_PrivateKey(ctx, TPMpkey) ) {
+                message("Error loading TPM 2.0 client key from %s, or key does not match certificate\n", TPMUri);
+                goto fail;
+            }
+        }
+
+        /* -k was used - this is a PEM format private key */
+        if ( args_info.clientkey_given ) {
+            if ( 1 != SSL_CTX_use_PrivateKey_file(ctx, args_info.clientkey_arg, SSL_FILETYPE_PEM) ) {
+                message("Error loading client key from %s, or key does not match certificate\n", args_info.clientkey_arg);
+                goto fail;
+            }
+            if ( args_info.verbose_flag ) {
+                message("Loaded private key from %s\n", args_info.clientkey_arg);
+            }
+        }
+    }
 
 	ssl = SSL_new (ctx);
     if ( ssl == NULL ) {
