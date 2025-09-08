@@ -89,7 +89,9 @@ int tunnel_connect() {
 	}
 	rc = getaddrinfo( args_info.proxyhost_arg, service, &hints, &result );
 	if( rc != 0 ) {
-		message( "getaddrinfo() failed to resolve local proxy: %s\n",
+		message( "getaddrinfo() failed to resolve local proxy \"%s:%s\": %s\n",
+			args_info.proxyhost_arg,
+			service,
 			gai_strerror( rc ) );
 		exit(1);
 	}
@@ -241,7 +243,7 @@ void log_client(int pid, struct sockaddr_storage *ss_client_p)
 				(void *)&(((struct sockaddr_in6 *)ss_client_p)->sin6_addr),
 			buf,
 			sizeof(buf));
-	message( "Started tunnel pid=%d for connection from %s", pid, buf );
+	message( "Started tunnel pid=%d for connection from %s\n", pid, buf );
 	return;
 }
 
