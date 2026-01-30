@@ -57,10 +57,11 @@ int readline(PTSTREAM *pts) {
 
 	if( args_info.verbose_flag ) {
 		/* Copy line of data into dstr without trailing newline */
-		char *dstr = calloc(1, strlen(buf) + 1);
-		strncpy( dstr, buf, strlen(buf));
-		if (strcmp(dstr, ""))
-			message( " <- %s\n", dstr );
+		int len = strlen(buf);
+		buf[len - 2] = 0;
+		if (strcmp(buf, ""))
+			message( " <- %s\n", buf );
+		buf[len - 2] = '\r';
 	}
 	return strlen( buf );
 }

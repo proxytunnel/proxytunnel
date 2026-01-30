@@ -17,7 +17,7 @@ OPTFLAGS += -DUSE_SSL
 # MSYS
 # The current version of gcc from MSYS defines __MSYS__ and __CYGWIN__.
 # To avoid to change the code, simply define CYGWIN additionally. 
-ifneq ($(filter $(MSYSTEM),MSYS MINGW32 MINGW64 UCRT64),)
+ifneq ($(filter $(shell uname -o),Msys Cygwin),)
 CFLAGS += -DCYGWIN
 else
 # Most systems, MSYS definitely not

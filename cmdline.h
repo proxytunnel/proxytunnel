@@ -93,6 +93,7 @@ struct gengetopt_args_info {
 	/* int enforcetls1_given;    Wheter to enforce TLSv1 */
 	int host_given;         /* Wheter we override the Host Header */
 	int cacert_given;		/* Whether cacert was given */
+	int no_sni_flag;		/* Disable SNI */
 };
 
 int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *args_info );

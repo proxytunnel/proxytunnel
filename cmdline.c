@@ -98,6 +98,7 @@ void cmdline_parser_print_help (void) {
 #ifdef SETPROCTITLE
 " -x, --proctitle=STRING     Use a different process title\n"
 #endif
+" -I, --no-sni               Disable SNI\n"
 "\n"
 "Miscellaneous options:\n"
 " -v, --verbose              Turn on verbosity\n"
@@ -164,6 +165,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	/* args_info->enforcetls1_given = 0; */
 	args_info->host_given = 0;
 	args_info->cacert_given = 0;
+	args_info->no_sni_flag = 0;
 
 /* No... we can't make this a function... -- Maniac */
 #define clear_args() \
@@ -202,6 +204,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	args_info->cacert_arg = NULL; \
 	args_info->enforceipv4_flag = 0; \
 	args_info->enforceipv6_flag = 0; \
+	args_info->no_sni_flag = 0; \
 }
 
 	clear_args();
@@ -250,12 +253,13 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 			{ "cacert",         1, NULL, 'C' },
 			{ "ipv4",           0, NULL, '4' },
 			{ "ipv6",           0, NULL, '6' },
+			{ "no-sni",         0, NULL, 'I' },
 			{ NULL,				0, NULL, 0 }
 		};
 
-		c = getopt_long (argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:c:k:vNeEXWBqLo:TzC:46", long_options, &option_index);
+		c = getopt_long (argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:c:k:vNeEXWBqLo:TzC:46I", long_options, &option_index);
 #else
-		c = getopt( argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:c:k:vNeEXWBqLo:TzC:46" );
+		c = getopt( argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:c:k:vNeEXWBqLo:TzC:46I" );
 #endif
 
 		if (c == -1)
@@ -522,6 +526,12 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 				args_info->enforceipv6_flag = 1;
 				if( args_info->verbose_flag )
 					message("IPv6 enforced\n");
+				break;
+
+			case 'I':   /* Disable SNI */
+				args_info->no_sni_flag = 1;
+				if( args_info->verbose_flag )
+					message("Disable SNI\n");
 				break;
 
 			case 0:	/* Long option with no short option */
