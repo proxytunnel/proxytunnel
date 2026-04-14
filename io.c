@@ -56,12 +56,21 @@ int readline(PTSTREAM *pts) {
 	*p = 0;
 
 	if( args_info.verbose_flag ) {
-		/* Copy line of data into dstr without trailing newline */
-		int len = strlen(buf);
-		buf[len - 2] = 0;
-		if (strcmp(buf, ""))
+		/* Move i to end of line, ignoring line break ('\n' or '\r\n') */
+		if (i > 0)
+			if (buf[i-1] == '\n') {
+				i--;
+				if (i > 0)
+					if (buf[i-1] == '\r')
+						i--;
+			}
+		/* Output non-empty line, temporarily choping line break */
+		if (i > 0) {
+			c = buf[i];
+			buf[i] = '\0';
 			message( " <- %s\n", buf );
-		buf[len - 2] = '\r';
+			buf[i] = c;
+		}
 	}
 	return strlen( buf );
 }
