@@ -14,3 +14,6 @@ jobs:
     - name: Build
       shell: bash {0}
       run: make && make docs
+    - name: Check
+      shell: bash {0}
+      run: ldd proxytunnel.exe | awk '{print $3}' | grep -v WINDOWS | sort | uniq

@@ -94,11 +94,11 @@ me@mymachine MSYS ~ cp  /usr/bin/msys-2.0.dll /usr/bin/msys-crypto-1.1.dll /usr/
 
 # Cygwin :
 
-Install from [cygwin web site](https://cygwin.com).
+Install Cygwin from [cygwin web site](https://cygwin.com).
 
 Following packages are required :
 ```
-$ setup-x86_64.exe -n -q -P gcc-core,make,libssl-devel,zip,xmlto,asciidoc
+$ setup-x86_64.exe -n -q -P gcc-core,make,binutils,libssl-devel,xmlto,asciidoc
 ```
 
 To build :

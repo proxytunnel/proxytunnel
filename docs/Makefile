@@ -21,7 +21,7 @@ clean:
 	asciidoc -d manpage -arevnumber=$(version) -arevdate=$(version_date) $<
 
 %.1: %.1.xml
-	xmlto man $<
+	xmlto --skip-validation man $<
 
 %.html: %.adoc
 	asciidoc $<
