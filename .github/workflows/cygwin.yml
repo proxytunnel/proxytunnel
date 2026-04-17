@@ -13,10 +13,7 @@ jobs:
         packages: cygwin-devel
     - name: test
       shell: bash {0}
-      run: ls /usr/include
-    - name: test2
-      shell: bash {0}
-      run: ls /usr/include/netinet
+      run: gcc --version && cc --version
     - name: Build
       shell: bash {0}
       run: make && make docs
