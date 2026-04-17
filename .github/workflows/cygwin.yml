@@ -11,5 +11,9 @@ jobs:
     - uses: cygwin/cygwin-install-action@v6.1
       with:
         packages: cygwin-devel
+    - name: test
+      run: ls /usr/include
+    - name: test2
+      run: ls /usr/include/netinet
     - name: Build
       run: make && make docs
