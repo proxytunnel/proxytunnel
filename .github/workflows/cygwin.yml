@@ -9,5 +9,7 @@ jobs:
     steps:
     - uses: actions/checkout@v6.0.2
     - uses: cygwin/cygwin-install-action@v6.1
+      with:
+        packages: cygwin-devel
     - name: Build
       run: make && make docs
