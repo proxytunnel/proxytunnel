@@ -10,7 +10,7 @@ jobs:
     - uses: actions/checkout@v6.0.2
     - uses: cygwin/cygwin-install-action@v6.1
       with:
-        packages: gcc-core make binutils libssl-devel xmlto asciidoc
+        packages: gcc-core make binutils libssl-devel xmlto asciidoc docbook-xml45
     - name: Build
       shell: bash {0}
       run: make && make docs

@@ -98,7 +98,7 @@ Install Cygwin from [cygwin web site](https://cygwin.com).
 
 Following packages are required :
 ```
-$ setup-x86_64.exe -n -q -P gcc-core,make,binutils,libssl-devel,xmlto,asciidoc
+$ setup-x86_64.exe -n -q -P gcc-core,make,binutils,libssl-devel,xmlto,asciidoc,docbook-xml45
 ```
 
 To build :
