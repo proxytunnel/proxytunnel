@@ -16,4 +16,4 @@ jobs:
       run: make && make docs
     - name: Check
       shell: bash {0}
-      run: ldd proxytunnel.exe | awk '{print $3}' | grep -v WINDOWS | sort | uniq
+      run: ldd proxytunnel.exe | awk '{print $3}' | grep -vi windows/system32 | sort | uniq

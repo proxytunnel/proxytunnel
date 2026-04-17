@@ -109,5 +109,5 @@ $ make docs
 
 To use `proxytunnel.exe` from windows, copy cygwin and openssl dll to the same directory as proxytunnel.exe (use `ldd` cmd to see what dll are used by `proxytunnel.exe`) cmd:
 ```
-$ cp $(ldd proxytunnel.exe | awk '{print $3}' | grep -v WINDOWS | sort | uniq) .
+$ cp $(ldd proxytunnel.exe | awk '{print $3}' | grep -vi windows/system32 | sort | uniq) .
 ```
