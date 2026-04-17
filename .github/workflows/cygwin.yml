@@ -10,8 +10,11 @@ jobs:
     - uses: actions/checkout@v6.0.2
     - uses: cygwin/cygwin-install-action@v6.1
     - name: test
-      run: bash "ls /usr/include"
+      shell: bash {0}
+      run: ls /usr/include
     - name: test2
-      run: bash "ls /usr/include/netinet"
+      shell: bash {0}
+      run: ls /usr/include/netinet
     - name: Build
-      run: bash "make && make docs"
+      shell: bash {0}
+      run: make && make docs
