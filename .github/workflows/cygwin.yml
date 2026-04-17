@@ -1,0 +1,13 @@
+name: Build for Windows (Cygwin)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v6.0.2
+    - uses: cygwin/cygwin-install-action@v6.1
+    - name: Build
+      run: make && make docs
