@@ -21,8 +21,10 @@ ifneq ($(filter $(shell uname -o),Msys Cygwin),)
 OPTFLAGS += -DCYGWIN
 endif
 
-# Most systems
+ifeq ($(filter $(shell uname -o),Msys),)
+# Most systems, MSYS definitely not
 OPTFLAGS += -DSETPROCTITLE -DSPT_TYPE=2
+endif
 
 # System dependant blocks... if your system is listed below, uncomment
 # the relevant lines
