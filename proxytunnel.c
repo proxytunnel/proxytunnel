@@ -284,9 +284,9 @@ void do_daemon()
 
 #ifdef SETPROCTITLE
 	if( ! args_info.proctitle_given )
-		setproctitle( "[daemon]\0" );
+		setproctitle( "[daemon]" );
 	else
-		setproctitle( "\0" );
+		setproctitle( "" );
 #else
 	if( args_info.proctitle_given )
 		message( "Setting process-title is not supported in this build\n");
@@ -374,9 +374,9 @@ void do_daemon()
 
 #ifdef SETPROCTITLE
 			if( ! args_info.proctitle_given )
-				setproctitle( "[cpio]\0" );
+				setproctitle( "[cpio]" );
 			else
-				setproctitle( "\0" );
+				setproctitle( "" );
 #else
 			if( args_info.proctitle_given )
 				message( "Setting process-title is not supported in this build\n");
@@ -406,7 +406,11 @@ int main( int argc, char *argv[] ) {
 
 	cmdline_parser( argc, argv, &args_info );
 #ifdef SETPROCTITLE
+#ifndef CYGWIN
 	initsetproctitle( argc, argv );
+#else
+	initsetproctitlecygwin( argc, argv );
+#endif
 #endif
 
 	/*
@@ -499,9 +503,9 @@ int main( int argc, char *argv[] ) {
 
 #ifdef SETPROCTITLE
 		if( ! args_info.proctitle_given )
-			setproctitle( "[cpio]\0" );
+			setproctitle( "[cpio]" );
 		else
-			setproctitle( "\0" );
+			setproctitle( "" );
 #else
 		if( args_info.proctitle_given )
 			message( "Setting process-title is not supported in this build\n");

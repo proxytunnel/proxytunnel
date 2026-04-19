@@ -14,12 +14,14 @@ OPTFLAGS += -DHAVE_GETOPT_LONG
 # Comment if you don't have/want ssl
 OPTFLAGS += -DUSE_SSL
 
-# MSYS
-# The current version of gcc from MSYS defines __MSYS__ and __CYGWIN__.
-# To avoid to change the code, simply define CYGWIN additionally. 
-ifneq ($(filter $(MSYSTEM),MSYS MINGW32 MINGW64 UCRT64),)
-CFLAGS += -DCYGWIN
-else
+# MSYS/CYGWIN
+# The current version of gcc from MSYS defines __MSYS__ and __CYGWIN__, from CYGWIN defines __CYGWIN__.
+# To avoid to change the code, simply define CYGWIN additionally.
+ifneq ($(filter $(shell uname -o),Msys Cygwin),)
+OPTFLAGS += -DCYGWIN
+endif
+
+ifeq ($(filter $(shell uname -o),Msys),)
 # Most systems, MSYS definitely not
 OPTFLAGS += -DSETPROCTITLE -DSPT_TYPE=2
 endif
@@ -38,9 +40,6 @@ endif
 #LDFLAGS += -L/usr/local/opt/openssl/lib
 #OPTFLAGS += -DDEFAULT_CA_FILE='"/usr/local/etc/openssl@1.1/cacert.pem"'
 #OPTFLAGS += -DDEFAULT_CA_DIR=NULL
-
-# CYGWIN
-#OPTFLAGS += -DCYGWIN
 
 # SOLARIS
 #LDFLAGS += -lsocket -lnsl

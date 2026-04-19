@@ -1,0 +1,19 @@
+name: Build for Windows (Cygwin)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v6.0.2
+    - uses: cygwin/cygwin-install-action@v6.1
+      with:
+        packages: gcc-core make binutils libssl-devel xmlto asciidoc docbook-xml45
+    - name: Build
+      shell: bash {0}
+      run: make && make docs
+    - name: Check
+      shell: bash {0}
+      run: ldd proxytunnel.exe | awk '{print $3}' | grep -vi windows/system32 | sort | uniq

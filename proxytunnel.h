@@ -31,7 +31,11 @@ void proxy_protocol(PTSTREAM *pts);
 void closeall();
 void do_daemon();
 #ifdef SETPROCTITLE
+#ifndef CYGWIN
 void initsetproctitle(int argc, char *argv[]);
+#else
+void initsetproctitlecygwin(int argc, char *argv[]);
+#endif
 void setproctitle(const char *fmt, ...);
 #endif
 

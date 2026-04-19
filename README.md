@@ -60,6 +60,7 @@ Additional options for specific features:
  -H, --header=STRING        Add additional HTTP headers to send to proxy
  -o, --host=STRING          Send custom Host Header/SNI
  -x, --proctitle=STRING     Use a different process title
+ -I, --no-sni               Disable SNI
 
 Miscellaneous options:
  -v, --verbose              Turn on verbosity
