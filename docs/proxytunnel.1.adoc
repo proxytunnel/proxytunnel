@@ -135,6 +135,9 @@ also be used for other proxy-traversing purposes like proxy bouncing.
 *-x*, *--proctitle*=_STRING_::
     Use a different process title.
 
+*-I*, *--no-sni*::
+    Disable SNI.
+
 
 == MISCELLANEOUS OPTIONS
 

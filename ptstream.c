@@ -340,17 +340,19 @@ int stream_enable_ssl(PTSTREAM *pts, const char *proxy_arg) {
 		goto fail;
 	}
 
-	/* SNI support */
-	if ( args_info.verbose_flag ) {
-		message( "Set SNI hostname to %s\n", peer_host);
+	if(!args_info.no_sni_flag) {
+		/* SNI support */
+		if ( args_info.verbose_flag ) {
+			message( "Set SNI hostname to %s\n", peer_host);
+		}
+		res = SSL_set_tlsext_host_name(ssl, peer_host);
+		if ( res != 1 ) {
+			message( "SSL_set_tlsext_host_name() failed for host name '%s'. "
+				"TLS SNI error, giving up\n", peer_host);
+			goto fail;
+		}
 	}
-	res = SSL_set_tlsext_host_name(ssl, peer_host);
-	if ( res != 1 ) {
-		message( "SSL_set_tlsext_host_name() failed for host name '%s'. "
-		         "TLS SNI error, giving up\n", peer_host);
-		goto fail;
-	}
-	
+
 	if ( SSL_connect (ssl) <= 0) {
         message( "SSL_connect failed\n");
         goto fail;

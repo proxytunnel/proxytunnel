@@ -1,7 +1,7 @@
 # Short guide to installing proxytunnel
 
 On most modern **unix systems**, use the normal Makefile, possibly uncommenting
-the section related to your system (darwin/cygwin/solaris/openbsd)
+the section related to your system (darwin/solaris/openbsd)
 
 If you want to enable setproctitle functionality, add a CFLAGS define
 -DSETPROCTITLE (uncomment sample in Makefile)
@@ -94,15 +94,20 @@ me@mymachine MSYS ~ cp  /usr/bin/msys-2.0.dll /usr/bin/msys-crypto-1.1.dll /usr/
 
 # Cygwin :
 
-Currently cygwin's openssl isn't in a compilable state, change md4.h and
-md5.h in /usr/include
-and replace 'size_t' with 'unsigned long'
+Install Cygwin from [cygwin web site](https://cygwin.com).
 
-To link the final executable:
-gcc -o proxytunnel *.o /lib/libcrypto.dll.a /lib/libssl.dll.a
+Following packages are required :
+```
+$ setup-x86_64.exe -n -q -P gcc-core,make,binutils,libssl-devel,xmlto,asciidoc,docbook-xml45
+```
 
-To run, copy the required dll's from the cygwin-bin dir to the windows
-system dir, or the proxytunnel directory (cygcrypto-0.9.8.dll,
-cygssl-0.9.8.dll, cygwin1.dll )
+To build :
+```
+$ make
+$ make docs
+```
 
-Setproctitle doesn't work on cygwin (afaik)
+To use `proxytunnel.exe` from windows, copy cygwin and openssl dll to the same directory as proxytunnel.exe (use `ldd` cmd to see what dll are used by `proxytunnel.exe`) cmd:
+```
+$ cp $(ldd proxytunnel.exe | awk '{print $3}' | grep -vi windows/system32 | sort | uniq) .
+```
