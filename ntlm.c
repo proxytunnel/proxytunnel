@@ -298,15 +298,19 @@ void build_type3_response() {
 
 /*
 ** Function: hmac_md5
+**
+** Parameter:
+** unsigned char* text      pointer to data stream
+** int text_len             length of data stream
+** unsigned char* key       pointer to authentication key
+** int key_len              length of authentication key
+** unsigned char digest[16] caller digest to be filled in
 */
 
-void
-hmac_md5(text, text_len, key, key_len, digest)
-unsigned char* text; /* pointer to data stream */
-int text_len; /* length of data stream */
-unsigned char* key; /* pointer to authentication key */
-int key_len; /* length of authentication key */
-unsigned char digest[16]; /* caller digest to be filled in */
+void hmac_md5(
+		unsigned char* text, int text_len,
+		unsigned char* key, int key_len,
+		unsigned char digest[16])
 {
 #if OPENSSL_VERSION_NUMBER >= 0x30000000L
 #else
