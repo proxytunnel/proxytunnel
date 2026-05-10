@@ -67,11 +67,7 @@ static size_t argv_env_len = 0;
 
 #endif /* HAVE_SETPROCTITLE */
 
-#ifndef CYGWIN
-void initsetproctitle(int argc, char *argv[]) {
-#else
-void initsetproctitlecygwin(int argc, char *argv[]) {
-#endif
+void pt_initsetproctitle(int argc, char *argv[]) {
 #if defined(SPT_TYPE) && SPT_TYPE == SPT_REUSEARGV
 	extern char **environ;
 	char *lastargv = NULL;

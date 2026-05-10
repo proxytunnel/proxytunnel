@@ -406,11 +406,7 @@ int main( int argc, char *argv[] ) {
 
 	cmdline_parser( argc, argv, &args_info );
 #ifdef SETPROCTITLE
-#ifndef CYGWIN
-	initsetproctitle( argc, argv );
-#else
-	initsetproctitlecygwin( argc, argv );
-#endif
+	pt_initsetproctitle( argc, argv );
 #endif
 
 	/*
