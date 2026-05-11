@@ -140,10 +140,10 @@ Proxytunnel can make use of the following environment variables:
 ```
 PROXYUSER		Username for the proxy-authentication
 PROXYPASS		Password for the proxy-authentication
-REMPROXYUSER		Username for remote proxy-authentication
-REMPROXYPASS		Password for remote proxy-authentication
+REMPROXYUSER	Username for remote proxy-authentication
+REMPROXYPASS	Password for remote proxy-authentication
 HTTP_PROXY		Primary proxy host and port information
-			Format: HTTP_PROXY=http://<host>:<port>/
+				Format: HTTP_PROXY=http://<host>:<port>/
 ```
 
 # Authentication File
