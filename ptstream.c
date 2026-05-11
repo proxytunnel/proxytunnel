@@ -159,54 +159,7 @@ int stream_copy(PTSTREAM *pts_from, PTSTREAM *pts_to) {
 }
 
 
-/* Check the certificate host name against the expected host name */
-/* Return 1 if peer hostname is valid, any other value indicates failure */
-int check_cert_valid_host(const char *cert_host, const char *peer_host) {
-	if (cert_host == NULL || peer_host == NULL) {
-		return 0;
-	}
-	if (cert_host[0] == '*') {
-		if (strncmp(cert_host, "*.", 2) != 0) {
-			/* Invalid wildcard hostname */
-			return 0;
-		}
-		/* Skip "*." */
-		cert_host += 2;
-		/* Wildcards can only match the first subdomain component */
-		while (*peer_host++ != '.' && *peer_host != '\0')
-			;;
-	}
-	if (strlen(cert_host) == 0 || strlen(peer_host) == 0) {
-		return 0;
-	}
-	return strcmp(cert_host, peer_host) == 0;
-}
-
-
-int check_cert_valid_ip6(const unsigned char *cert_ip_data, const int cert_ip_len, const struct in6_addr *addr6) {
-	int i;
-	for (i = 0; i < cert_ip_len; i++) {
-		if (cert_ip_data[i] != addr6->s6_addr[i]) {
-			return 0;
-		}
-	}
-	return 1;
-}
-
-
-int check_cert_valid_ip(const unsigned char *cert_ip_data, const int cert_ip_len, const struct in_addr *addr) {
-	int i;
-	for (i = 0; i < cert_ip_len; i++) {
-		if (cert_ip_data[i] != ((addr->s_addr >> (i * 8)) & 0xFF)) {
-			return 0;
-		}
-	}
-	return 1;
-}
-
-
 int check_cert_names(X509 *cert, char *peer_host) {
-#if OPENSSL_VERSION_NUMBER >= 0x10200000L
 	char peer_cn[256];
 	struct in_addr addr;
 	struct in6_addr addr6;
@@ -228,49 +181,6 @@ int check_cert_names(X509 *cert, char *peer_host) {
 			message("Host name %s does not match certificate common name %s or any subject alternative names\n", peer_host, peer_cn);
 		}
 	}
-#else
-	char peer_cn[256];
-	const GENERAL_NAME *gn;
-	STACK_OF(GENERAL_NAME) *gen_names;
-	struct in_addr addr;
-	struct in6_addr addr6;
-	int peer_host_is_ipv4 = 0, peer_host_is_ipv6 = 0;
-	int i, san_count;
-
-	gen_names = X509_get_ext_d2i(cert, NID_subject_alt_name, NULL, NULL);
-	san_count = sk_GENERAL_NAME_num(gen_names);
-	if (san_count > 0) {
-		peer_host_is_ipv4 = (inet_pton(AF_INET, peer_host, &addr) == 1);
-		peer_host_is_ipv6 = (peer_host_is_ipv4 ? 0 : inet_pton(AF_INET6, peer_host, &addr6) == 1);
-		for (i = 0; i < san_count; i++) {
-			gn = sk_GENERAL_NAME_value(gen_names, i);
-			if (gn->type == GEN_DNS && !(peer_host_is_ipv4 || peer_host_is_ipv6)) {
-#if OPENSSL_VERSION_NUMBER >= 0x10100000L
-				if (check_cert_valid_host((char*)ASN1_STRING_get0_data(gn->d.ia5), peer_host)) {
-#else
-				if (check_cert_valid_host((char*)ASN1_STRING_data(gn->d.ia5), peer_host)) {
-#endif
-					return 1;
-				}
-			} else if (gn->type == GEN_IPADD) {
-				if (gn->d.ip->length == 4 && peer_host_is_ipv4) {
-					if (check_cert_valid_ip(gn->d.ip->data, gn->d.ip->length, &addr)) {
-						return 1;
-					}
-				} else if (gn->d.ip->length == 16 && peer_host_is_ipv6) {
-					if (check_cert_valid_ip6(gn->d.ip->data, gn->d.ip->length, &addr6)) {
-						return 1;
-					}
-				}
-			}
-		}
-		message("Host name %s does not match certificate subject alternative names\n", peer_host);
-	} else {
-		X509_NAME_get_text_by_NID(X509_get_subject_name(cert), NID_commonName, peer_cn, sizeof(peer_cn));
-		message("Host name %s does not match certificate common name %s or any subject alternative names\n", peer_host, peer_cn);
-		return check_cert_valid_host(peer_cn, peer_host);
-	}
-#endif
 	return 0;
 }
 
@@ -304,11 +214,7 @@ int stream_enable_ssl(PTSTREAM *pts, const char *proxy_arg) {
 
 	/* Initialise the connection */
 	SSLeay_add_ssl_algorithms();
-#if OPENSSL_VERSION_NUMBER >= 0x10100000L
 	meth = TLS_client_method();
-#else
-	meth = SSLv23_client_method();
-#endif
 	SSL_load_error_strings();
 
 	ctx = SSL_CTX_new (meth);
