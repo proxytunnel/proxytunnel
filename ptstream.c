@@ -206,6 +206,29 @@ int check_cert_valid_ip(const unsigned char *cert_ip_data, const int cert_ip_len
 
 
 int check_cert_names(X509 *cert, char *peer_host) {
+#if OPENSSL_VERSION_NUMBER >= 0x10200000L
+	char peer_cn[256];
+	struct in_addr addr;
+	struct in6_addr addr6;
+	int peer_host_is_ipv4 = 0, peer_host_is_ipv6 = 0;
+
+	peer_host_is_ipv4 = (inet_pton(AF_INET, peer_host, &addr) == 1);
+	peer_host_is_ipv6 = (peer_host_is_ipv4 ? 0 : inet_pton(AF_INET6, peer_host, &addr6) == 1);
+	if (peer_host_is_ipv4 || peer_host_is_ipv6) {
+		if (X509_check_ip_asc(cert, peer_host, 0) == 1) {
+			return 1;
+		} else {
+			message("Host IP address %s does not match any subject alternative names\n", peer_host);
+		}
+	} else {
+		if (X509_check_host(cert, peer_host, strlen(peer_host), 0, NULL) == 1) {
+			return 1;
+		} else {
+			X509_NAME_get_text_by_NID(X509_get_subject_name(cert), NID_commonName, peer_cn, sizeof(peer_cn));
+			message("Host name %s does not match certificate common name %s or any subject alternative names\n", peer_host, peer_cn);
+		}
+	}
+#else
 	char peer_cn[256];
 	const GENERAL_NAME *gn;
 	STACK_OF(GENERAL_NAME) *gen_names;
@@ -247,6 +270,7 @@ int check_cert_names(X509 *cert, char *peer_host) {
 		message("Host name %s does not match certificate common name %s or any subject alternative names\n", peer_host, peer_cn);
 		return check_cert_valid_host(peer_cn, peer_host);
 	}
+#endif
 	return 0;
 }
 
