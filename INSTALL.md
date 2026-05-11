@@ -1,14 +1,14 @@
 # Short guide to installing proxytunnel
 
 On most modern **unix systems**, use the normal Makefile, possibly uncommenting
-the section related to your system (darwin/solaris/openbsd)
+the section related to your system (darwin/solaris/openbsd).
 
-If you want to enable setproctitle functionality, add a CFLAGS define
--DSETPROCTITLE (uncomment sample in Makefile)
+If you want to disable setproctitle functionality, remove -DSETPROCTITLE from
+OPTFLAGS (comment sample in Makefile).
 
-to build simply run `make` and optionally `make install`.
+To build simply run `make`, `make docs` and optionally `make install`.
 If you manually want to install, copy proxytunnel to /usr/local/bin
-and optionally the manual-page from the debian-subdirectory to your manpath
+and optionally the manual page from the docs subdirectory to your manpath.
 
 # Nix Flakes
 
@@ -92,7 +92,7 @@ To use `proxytunnel.exe` from windows, copy msys and openssl dll to the same dir
 me@mymachine MSYS ~ cp  /usr/bin/msys-2.0.dll /usr/bin/msys-crypto-1.1.dll /usr/bin/msys-ssl-1.1.dll /usr/bin/msys-z.dll .
 ```
 
-# Cygwin :
+# Cygwin
 
 Install Cygwin from [cygwin web site](https://cygwin.com).
 
