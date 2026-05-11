@@ -128,7 +128,8 @@ connect to a process that understands SSL itself.
 
 A complete guide with illustrations for encrypted tunneling and
 server-side setup with Nginx, Apache or Caddy can be found in
-this article: [Tunneling corporate firewalls for developers](https://blog.frost.kiwi/tunneling-corporate-firewalls/)
+this article: [Tunneling corporate firewalls for developers](https://blog.frost.kiwi/tunneling-corporate-firewalls/),
+especially chapter [HTTPS Tunneling](https://blog.frost.kiwi/ssh-over-https-tunneling/#%E2%9C%A8-https-tunneling-%E2%9C%A8).
 
 When all this is in place, execute an "ssh foobar" and you're in business!
 
