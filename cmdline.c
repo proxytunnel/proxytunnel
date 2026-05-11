@@ -56,14 +56,11 @@ void cmdline_parser_print_help (void) {
 " -p, --proxy=STRING         Local proxy host:port combination\n"
 " -r, --remproxy=STRING      Remote proxy host:port combination (using 2 proxies)\n"
 " -d, --dest=STRING          Destination host:port combination\n"
-#ifdef USE_SSL
 " -e, --encrypt              SSL encrypt data between local proxy and destination\n"
 " -E, --encrypt-proxy        SSL encrypt data between client and local proxy\n"
 " -X, --encrypt-remproxy     SSL encrypt data between local and remote proxy\n"
-#endif
 "\n"
 "Additional options for specific features:\n"
-#ifdef USE_SSL
 " -W, --wa-bug-29744         Workaround ASF Bugzilla 29744: if SSL is active\n"
 "                            stop using it after CONNECT (might not work on all\n"
 "                            setups)\n"
@@ -73,16 +70,13 @@ void cmdline_parser_print_help (void) {
 " -T, --no-ssl3              Do not connect using SSLv3 (legacy)\n"*/
 " -z, --no-check-certificate Don't verify server SSL certificate\n"
 " -C, --cacert=STRING        Path to trusted CA certificate or directory\n"
-#endif
 " -4, --ipv4                 Enforce IPv4 connection to local proxy\n"
 " -6, --ipv6                 Enforce IPv6 connection to local proxy\n"
 " -F, --passfile=STRING      File with credentials for proxy authentication\n"
 " -P, --proxyauth=STRING     Proxy auth credentials user:pass combination\n"
 " -R, --remproxyauth=STRING  Remote proxy auth credentials user:pass combination\n"
-#ifdef USE_SSL
 " -c, --cert=FILENAME        client SSL certificate (chain)\n"
 " -k, --key=FILENAME         client SSL key\n"
-#endif
 // " -u, --user=STRING       Username for proxy authentication\n"
 // " -s, --pass=STRING       Password for proxy authentication\n"
 // " -U, --uservar=STRING    Environment variable that holds username\n"
@@ -90,11 +84,7 @@ void cmdline_parser_print_help (void) {
 " -N, --ntlm                 Use NTLM based authentication\n"
 " -t, --domain=STRING        NTLM domain (default: autodetect)\n"
 " -H, --header=STRING        Add additional HTTP headers to send to proxy\n"
-#ifdef USE_SSL
 " -o, --host=STRING          Send custom Host Header/SNI\n"
-#else
-" -o, --host=STRING          Send custom Host Header\n"
-#endif
 #ifdef SETPROCTITLE
 " -x, --proctitle=STRING     Use a different process title\n"
 #endif
@@ -270,8 +260,6 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 				clear_args ();
 				cmdline_parser_print_help ();
 				exit(0);
-
-#ifdef USE_SSL
 			case 'e':       /* Turn on SSL encryption */
 				args_info->encrypt_flag = !(args_info->encrypt_flag);
 				if( args_info->verbose_flag )
@@ -316,8 +304,6 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 				if( args_info->verbose_flag )
 					message("SSL client to proxy enabled, only until CONNECT\n");
 				break;
-#endif
-
 			case 'i':	/* Run from inetd. */
 				if ( args_info->standalone_arg > 0 ) {
 					fprintf( stderr, "%s: '--inetd' ('-i') conflicts with '--standalone' ('-a')\n", PACKAGE );

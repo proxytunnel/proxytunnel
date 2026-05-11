@@ -11,9 +11,6 @@ CFLAGS ?= -Wall -O2 -ggdb
 # Comment on non-gnu systems
 OPTFLAGS += -DHAVE_GETOPT_LONG
 
-# Comment if you don't have/want ssl
-OPTFLAGS += -DUSE_SSL
-
 # MSYS/CYGWIN
 # The current version of gcc from MSYS defines __MSYS__ and __CYGWIN__, from CYGWIN defines __CYGWIN__.
 # To avoid to change the code, simply define CYGWIN additionally.

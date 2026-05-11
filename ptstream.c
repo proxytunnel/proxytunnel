@@ -50,14 +50,12 @@ PTSTREAM *stream_open(int incoming_fd, int outgoing_fd) {
 
 /* Close a stream */
 int stream_close(PTSTREAM *pts) {
-#ifdef USE_SSL
 	/* Destroy the SSL context */
 	if (pts->ssl) {
 		SSL_shutdown (pts->ssl);
 		SSL_free (pts->ssl);
 		SSL_CTX_free (pts->ctx);
 	}
-#endif /* USE_SSL */
 
 	/* Close the incoming fd */
 	close(pts->incoming_fd);
@@ -81,13 +79,8 @@ int stream_read(PTSTREAM *pts, void *buf, size_t len) {
 		/* For a non-SSL stream... */
 		bytes_read = read(pts->incoming_fd, buf, len);
 	} else {
-#ifdef USE_SSL
 		/* For an SSL stream... */
 		bytes_read = SSL_read(pts->ssl, buf, len);
-#else
-		/* No SSL support, so must use a non-SSL stream */
-		bytes_read = read(pts->incoming_fd, buf, len);
-#endif /* USE_SSL */
 	}
 
 	return bytes_read;
@@ -107,17 +100,10 @@ int stream_write(PTSTREAM *pts, void *buf, size_t len) {
 					      buf + total_bytes_written,
 					      len - total_bytes_written);
 		} else {
-#ifdef USE_SSL
 			/* For an SSL stream... */
 			bytes_written = SSL_write(pts->ssl,
 						  buf + total_bytes_written,
 						  len - total_bytes_written);
-#else
-			/* No SSL support, so must use a non-SSL stream */
-			bytes_written = write(pts->outgoing_fd,
-					      buf + total_bytes_written,
-					      len - total_bytes_written);
-#endif /* USE_SSL */
 		}
 
 		if (bytes_written <= 0) {
@@ -186,7 +172,6 @@ int check_cert_names(X509 *cert, char *peer_host) {
 
 /* Initiate an SSL handshake on this stream and encrypt all subsequent data */
 int stream_enable_ssl(PTSTREAM *pts, const char *proxy_arg) {
-#ifdef USE_SSL
 	const SSL_METHOD *meth;
 	SSL *ssl;
 	SSL_CTX *ctx;
@@ -315,18 +300,13 @@ int stream_enable_ssl(PTSTREAM *pts, const char *proxy_arg) {
 	/* Store ssl and ctx parameters */
 	pts->ssl = ssl;
 	pts->ctx = ctx;
-#else
-	message("Warning: stream_open(): SSL stream requested but no SSL support available; using unencrypted connection");
-#endif /* USE_SSL */
 
 	return 1;
 
 fail:
-#ifdef USE_SSL
 	if (cert != NULL) {
 		X509_free(cert);
 	}
-#endif /* USE_SSL */
 	exit(1);
 }
 
@@ -337,11 +317,7 @@ int stream_get_incoming_fd(PTSTREAM *pts) {
 	if (!pts->ssl)
 		return pts->incoming_fd;
 	else
-#ifdef USE_SSL
 		return SSL_get_rfd(pts->ssl);
-#else
-		return pts->incoming_fd;
-#endif /* USE_SSL */
 }
 
 /* Return the outgoing_fd for a given stream */
@@ -349,11 +325,7 @@ int stream_get_outgoing_fd(PTSTREAM *pts) {
 	if (!pts->ssl)
 		return pts->outgoing_fd;
 	else
-#ifdef USE_SSL
 		return SSL_get_wfd(pts->ssl);
-#else
-		return pts->outgoing_fd;
-#endif /* USE_SSL */
 }
 
 // vim:noexpandtab:ts=4

@@ -20,24 +20,17 @@
 /* ptstream.h */
 
 #include <stddef.h>
-#ifdef USE_SSL
 #include <openssl/opensslv.h>
 #include <openssl/crypto.h>
 #include <openssl/x509.h>
 #include <openssl/pem.h>
 #include <openssl/ssl.h>
-#endif
 
 typedef struct ptstream {
 	int incoming_fd;
 	int outgoing_fd;
-#ifdef USE_SSL
 	SSL *ssl;
 	SSL_CTX *ctx;
-#else
-	void *ssl;
-	void *ctx;
-#endif
 } PTSTREAM;
 
 

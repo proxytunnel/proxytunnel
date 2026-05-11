@@ -3,7 +3,7 @@
   set-proc-title ? true,
   pkgs,
 }: let
-  optflags = "-DUSE_SSL ${
+  optflags = "${
     if gnu-system
     then "-DHAVE_GETOPT_LONG"
     else ""
