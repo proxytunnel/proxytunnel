@@ -68,7 +68,8 @@ OBJ = proxytunnel.o	\
 	cmdline.o	\
 	globals.o	\
 	ntlm.o		\
-	ptstream.o
+	ptstream.o	\
+	socks.o
 
 ifneq (,$(findstring -DSETPROCTITLE,$(OPTFLAGS)))
 OBJ += setproctitle.o

@@ -28,6 +28,9 @@ void signal_handler( int signal );
 int tunnel_connect();
 void analyze_HTTP(PTSTREAM *pts);
 void proxy_protocol(PTSTREAM *pts);
+void socks5_protocol(PTSTREAM *pts, const char *target,
+                     int resolve_remote,
+                     const char *user, const char *pass);
 void closeall();
 void do_daemon();
 #ifdef SETPROCTITLE

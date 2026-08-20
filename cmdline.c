@@ -37,6 +37,52 @@ extern char * optarg;
 #include "cmdline.h"
 static char *getCredentialsFromFile( const char* filename, char **user, char **pass, char **rem_user, char **rem_pass);
 
+/*
+ * Strip an optional scheme prefix from a -p/--proxy or -r/--remproxy
+ * argument and report the corresponding proxy protocol type.
+ *
+ * Recognised prefixes:
+ *   "socks5://..." -> PROXY_TYPE_SOCKS5  (client resolves hostname)
+ *   "socks5h://..." -> PROXY_TYPE_SOCKS5H (proxy resolves hostname)
+ *   "http://..."    -> PROXY_TYPE_HTTP   (plain HTTP CONNECT proxy)
+ *   anything else   -> PROXY_TYPE_HTTP   (legacy "host:port" syntax)
+ *
+ * On success, *type_out is set to the detected proxy type and a
+ * newly-malloc()ed string holding the remainder (the "host:port"
+ * part) is returned. The caller owns the returned memory. On
+ * allocation failure the program exits via message()/exit().
+ */
+static char *parse_proxy_scheme(const char *arg, int *type_out) {
+	const char *remainder;
+	char *result;
+
+	if (arg == NULL) {
+		message("parse_proxy_scheme: NULL argument\n");
+		exit(1);
+	}
+
+	if (strncmp(arg, "socks5h://", 10) == 0) {
+		*type_out = PROXY_TYPE_SOCKS5H;
+		remainder = arg + 10;
+	} else if (strncmp(arg, "socks5://", 9) == 0) {
+		*type_out = PROXY_TYPE_SOCKS5;
+		remainder = arg + 9;
+	} else if (strncmp(arg, "http://", 7) == 0) {
+		*type_out = PROXY_TYPE_HTTP;
+		remainder = arg + 7;
+	} else {
+		*type_out = PROXY_TYPE_HTTP;
+		remainder = arg;
+	}
+
+	result = strdup(remainder);
+	if (result == NULL) {
+		message("parse_proxy_scheme: out of memory\n");
+		exit(1);
+	}
+	return result;
+}
+
 void cmdline_parser_print_version (void) {
 	printf ("%s %s Copyright 2001-%s Proxytunnel Project\n", PACKAGE, VERSION, VERSION_YEAR);
 }
@@ -53,8 +99,10 @@ void cmdline_parser_print_help (void) {
 " -a, --standalone=STRING    Run as standalone daemon on specified port or\n"
 "                            address:port combination\n"
 // FIXME: " -f, --nobackground         Don't fork to background in standalone mode\n"
-" -p, --proxy=STRING         Local proxy host:port combination\n"
-" -r, --remproxy=STRING      Remote proxy host:port combination (using 2 proxies)\n"
+" -p, --proxy=STRING         Local proxy. Accepts host:port (HTTP proxy),\n"
+"                            http://host:port, socks5://host:port (local DNS),\n"
+"                            or socks5h://host:port (proxy-side DNS)\n"
+" -r, --remproxy=STRING      Remote proxy using the same syntax as -p\n"
 " -d, --dest=STRING          Destination host:port combination\n"
 " -e, --encrypt              SSL encrypt data between local proxy and destination\n"
 " -E, --encrypt-proxy        SSL encrypt data between client and local proxy\n"
@@ -144,6 +192,8 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	args_info->host_given = 0;
 	args_info->cacert_given = 0;
 	args_info->no_sni_flag = 0;
+	args_info->proxytype_given = 0;
+	args_info->remproxytype_given = 0;
 
 /* No... we can't make this a function... -- Maniac */
 #define clear_args() \
@@ -159,6 +209,8 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 	args_info->dest_arg = NULL; \
 	args_info->remproxy_arg = NULL; \
 	args_info->remproxyauth_arg = NULL; \
+	args_info->proxytype_arg = PROXY_TYPE_HTTP; \
+	args_info->remproxytype_arg = PROXY_TYPE_HTTP; \
 	args_info->header_arg[0] = '\0'; \
 	args_info->verbose_flag = 0; \
 	args_info->quiet_flag = 0; \
@@ -377,7 +429,18 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 					exit(1);
 				}
 				args_info->proxy_given = 1;
-				args_info->proxy_arg = gengetopt_strdup (optarg);
+				{
+					/* Accept either the legacy "host:port" form or the
+					 * new URL-style "scheme://host:port" forms used by
+					 * curl. The scheme selector is stored in
+					 * proxytype_arg; proxy_arg itself is rewritten to
+					 * the bare "host:port" so that downstream consumers
+					 * (SSL SNI, getaddrinfo(), etc.) do not need to
+					 * care about the scheme. */
+					char *stripped = parse_proxy_scheme(optarg, &args_info->proxytype_arg);
+					args_info->proxy_arg = stripped;
+					args_info->proxytype_given = 1;
+				}
 				break;
 
 			case 'P':       /* HTTPS Proxy auth user:pass for local proxy */
@@ -397,7 +460,15 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 					exit(1);
 				}
 				args_info->remproxy_given = 1;
-				args_info->remproxy_arg = gengetopt_strdup (optarg);
+				{
+					/* Mirror the -p/--proxy logic: allow http://,
+					 * socks5://, socks5h:// (or no scheme at all) and
+					 * record the selected protocol type in
+					 * remproxytype_arg. */
+					char *stripped = parse_proxy_scheme(optarg, &args_info->remproxytype_arg);
+					args_info->remproxy_arg = stripped;
+					args_info->remproxytype_given = 1;
+				}
 				break;
 
 			case 'R':       /* HTTPS Proxy auth user:pass for remote proxy */
