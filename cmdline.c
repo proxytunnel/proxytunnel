@@ -116,6 +116,7 @@ void cmdline_parser_print_help (void) {
 " -F, --passfile=STRING      File with credentials for proxy authentication\n"
 " -P, --proxyauth=STRING     Proxy auth credentials user:pass combination\n"
 " -R, --remproxyauth=STRING  Remote proxy auth credentials user:pass combination\n"
+" -Z, --nopass               Do not ask password when only user is given\n"
 " -c, --cert=FILENAME        client SSL certificate (chain)\n"
 " -k, --key=FILENAME         client SSL key\n"
 " -N, --ntlm                 Use NTLM based authentication\n"
@@ -162,6 +163,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 
 	args_info->help_given = 0;
 	args_info->version_given = 0;
+	args_info->allow_nopass = 0;
 	args_info->user_given = 0;
 	args_info->pass_given = 0;
 	args_info->remuser_given = 0;
@@ -260,6 +262,7 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 			{ "dest",			1, NULL, 'd' },
 			{ "remproxy",		1, NULL, 'r' },
 			{ "remproxyauth",	1, NULL, 'R' },
+			{ "nopass",		0, NULL, 'Z' },
 			{ "proctitle",		1, NULL, 'x' },
 			{ "host",           1, NULL, 'o' },
 			{ "header",			1, NULL, 'H' },
@@ -283,9 +286,9 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 			{ NULL,				0, NULL, 0 }
 		};
 
-		c = getopt_long (argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:c:k:vNeEXWBqo:zC:46I", long_options, &option_index);
+		c = getopt_long (argc, argv, "hVia:u:s:t:F:p:P:r:R:Zd:H:x:c:k:vNeEXWBqo:zC:46I", long_options, &option_index);
 #else
-		c = getopt( argc, argv, "hVia:u:s:t:F:p:P:r:R:d:H:x:c:k:vNeEXWBqo:zC:46I" );
+		c = getopt( argc, argv, "hVia:u:s:t:F:p:P:r:R:Zd:H:x:c:k:vNeEXWBqo:zC:46I" );
 #endif
 
 		if (c == -1)
@@ -561,6 +564,11 @@ int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *ar
 				args_info->no_sni_flag = 1;
 				if( args_info->verbose_flag )
 					message("Disable SNI\n");
+				break;
+			case 'Z':   /* allow nopass */
+				args_info->allow_nopass = 1;
+				if( args_info->verbose_flag )
+					message("Allow nopass\n");
 				break;
 
 			case 0:	/* Long option with no short option */

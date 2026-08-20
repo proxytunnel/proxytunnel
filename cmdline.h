@@ -73,6 +73,7 @@ struct gengetopt_args_info {
 	char *cacert_arg; 		/* Trusted CA certificate (or directory) for server SSL certificate verification */
 	int help_given;			/* Whether help was given. */
 	int version_given;		/* Whether version was given. */
+	int allow_nopass;		/* Whether nopass is allowed. */
 	int user_given;			/* Whether user was given. */
 	int pass_given;			/* Whether pass was given. */
 	int remuser_given;		/* Whether remote user was given. */
