@@ -25,6 +25,16 @@
 
 #define MAX_HEADER_SIZE 4096
 
+/* Proxy protocol types for the -p and -r options. The default (and the
+ * legacy "host:port" syntax) is PROXY_TYPE_HTTP. The new URL-style
+ * syntax in cmdline.c selects one of the SOCKS5 variants when a
+ * "socks5://" or "socks5h://" scheme prefix is used. */
+enum proxytype {
+	PROXY_TYPE_HTTP    = 0,  /* Plain HTTP proxy (RFC 7231 CONNECT) */
+	PROXY_TYPE_SOCKS5  = 1,  /* SOCKS5 (RFC 1928), client resolves hostname */
+	PROXY_TYPE_SOCKS5H = 2,  /* SOCKS5 (RFC 1928), proxy resolves hostname */
+};
+
 struct gengetopt_args_info {
 	char *user_arg;			/* Username to send to HTTPS proxy for auth. */
 	char *pass_arg;			/* Password to send to HTTPS proxy for auth. */
@@ -55,12 +65,15 @@ struct gengetopt_args_info {
 	int wa_bug_29744_flag;	/* Use SSL encryption only until CONNECT, if at all (def=off).*/
 	char *proctitle_arg;	/* Override process title (default=off). */
 	char *host_arg;         /* Optional Host Header */
+	int proxytype_arg;      /* Local proxy protocol: PROXY_TYPE_HTTP / _SOCKS5 / _SOCKS5H */
+	int remproxytype_arg;   /* Remote proxy protocol: PROXY_TYPE_HTTP / _SOCKS5 / _SOCKS5H */
 	int no_check_cert_flag;	/* Turn off server SSL certificate verification (default=on) */
 	int enforceipv4_flag;   /* Enforce IPv4 (default=off). */
 	int enforceipv6_flag;   /* Enforce IPv6 (default=off). */
 	char *cacert_arg; 		/* Trusted CA certificate (or directory) for server SSL certificate verification */
 	int help_given;			/* Whether help was given. */
 	int version_given;		/* Whether version was given. */
+	int allow_nopass;		/* Whether nopass is allowed. */
 	int user_given;			/* Whether user was given. */
 	int pass_given;			/* Whether pass was given. */
 	int remuser_given;		/* Whether remote user was given. */
@@ -91,6 +104,8 @@ struct gengetopt_args_info {
 	int host_given;         /* Wheter we override the Host Header */
 	int cacert_given;		/* Whether cacert was given */
 	int no_sni_flag;		/* Disable SNI */
+	int proxytype_given;	/* Whether the proxy type was explicitly set */
+	int remproxytype_given;	/* Whether the remote proxy type was explicitly set */
 };
 
 int cmdline_parser( int argc, char * const *argv, struct gengetopt_args_info *args_info );

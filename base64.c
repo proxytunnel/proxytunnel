@@ -59,6 +59,17 @@ static const char base64val[] = {
  * 
  */
 
+/*
+ * Calculate necessary space for base64 encoding:
+ * 3-byte inputs are encoded to 4-byte outputs, while
+ * remaining 1 or 2 bytes are also encoded to a 4-byte
+ * output with '='.
+ */
+int b64len(int ilen)
+{
+	return 4 * ((ilen / 3) + !!(ilen % 3));
+}
+
 /* raw bytes to null-terminated base 64 string */
 void base64(unsigned char *out, const unsigned char *in, int len) {
 	while (len >= 3) {
