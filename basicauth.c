@@ -32,19 +32,21 @@
  * is stored in basicauth.
  */
 char *basicauth(char *user, char *pass) {
-	char *b64str = malloc(160);
-
-	int len = strlen( user ) + strlen( pass ) + 2;
+	int len = strlen( user ) + (pass ? strlen( pass ) : 0) + 2;
 	char *p = (char *) alloca( len );
 
 	/* Set up the cookie in clear text */
-	sprintf( p, "%s:%s", user, pass );
+	snprintf( p, len, "%s:%s", user, pass ? pass : "" );
+
+	len = strlen(p);
+	char *b64str = malloc( b64len(len) );
 
 	/*
 	 * Base64 encode the clear text cookie to create the HTTP base64
 	 * authentication cookie
 	 */
-	base64( (unsigned char *)b64str, (unsigned char *)p, strlen(p) );
+	if (b64str)
+		base64( (unsigned char *)b64str, (unsigned char *)p, len );
 
 //	if( args_info.verbose_flag ) {
 //		message( "Proxy basic auth of %s is %s\n", p, basicauth );

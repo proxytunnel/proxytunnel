@@ -19,6 +19,7 @@
 
 /* base64.h */
 
+int b64len(int ilen);
 void base64(unsigned char *out, const unsigned char *in, int len);
 int unbase64(unsigned char *out, const unsigned char *in, int maxlen);
 
